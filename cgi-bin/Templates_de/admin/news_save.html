@@ -1,0 +1,35 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_news}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+</head>
+
+<body onload="if (parent.news) document.sendForm.submit()">
+
+<form name="sendForm" method="post" action="{GET|$runtime.chaturl}">
+{GET|$runtime.hiddenfields}
+<input type=hidden name=action value="admin_news">
+
+<script>
+	if (parent.news)
+	{
+		for (var i=0;i<parent.news.length;i++)
+		{
+			var item = parent.news[i];
+			if (!item.date)
+				item.date = "";
+			if (!item.author)
+				item.author = "";
+
+			document.write('<input type=hidden name=date'+i+' value="'+item.date+'">');
+			document.write('<input type=hidden name=author'+i+' value="'+item.author+'">');
+			document.write('<input type=hidden name=message'+i+' value="'+item.message.replace(/<br>/gi,'\n')+'">');
+		}
+	}
+</script>
+
+</form>
+
+</body>
+</html> 

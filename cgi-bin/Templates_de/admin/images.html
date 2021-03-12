@@ -1,0 +1,55 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_images}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+</head>
+
+<body onload="parent.autosize(window)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>Verf&uuml;gbare Bilder (ohne Dateierweiterung)</th>
+		<th>Breite</th>
+		<th>H&ouml;he</th>
+		<th>&nbsp;</th>
+	</tr>
+	<tr class=row2>
+		<form method=POST action="{GET|$runtime.chaturl}">
+		{GET|$runtime.hiddenfields}
+		<input type=hidden name=action value="admin_images">
+		<td colspan=4 align=right>
+			<input type=submit class="plain" class="netscape-dummy" value="Liste neu erstellen">
+			&nbsp;
+			<input type=button class="plain" class="netscape-dummy" value="Zur&uuml;ck zum Menu" onclick="parent.writeMenu();return false">
+		</td>
+		</form>
+	</tr>
+
+	{FOREACH|$image|$settings.images}
+		<tr class=row2>
+			<td valign=top>{GET|$image.name}</td>
+			<td valign=top>{GET|$image.value[0]}</td>
+			<td valign=top>{GET|$image.value[1]}</td>
+			<td valign=top>{IMAGE|$image.name}</td>
+		</tr>
+	{ENDFOR}
+
+	<tr class=row2>
+		<form method=POST action="{GET|$runtime.chaturl}">
+		{GET|$runtime.hiddenfields}
+		<input type=hidden name=action value="admin_images">
+		<td colspan=4 align=right>
+			<input type=submit class="plain" class="netscape-dummy" value="Liste neu erstellen">
+			&nbsp;
+			<input type=button class="plain" class="netscape-dummy" value="Zur&uuml;ck zum Menu" onclick="parent.writeMenu();return false">
+		</td>
+		</form>
+	</tr>
+</table>
+</td></tr></table>
+
+</body>
+</html> 

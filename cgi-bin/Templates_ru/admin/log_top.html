@@ -1,0 +1,17 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+</head>
+<body>
+
+<div align=right>
+	<form>
+		<input type=button class="plain" class="netscape-dummy" value="Запустить другой анализ" onclick="document.location.replace('{GET_JS|$runtime.completeurl}&template=admin.log');return false">
+		&nbsp;
+		<input type=button class="plain" class="netscape-dummy" value="Обратно к меню" onclick="parent.writeMenu();return false">
+	</form>
+</div>
+
+Анализ лог-файла {GET|$log_filename}:<br><br>

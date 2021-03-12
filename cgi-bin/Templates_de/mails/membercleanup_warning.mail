@@ -1,0 +1,11 @@
+{SET|$to|$user.email}{SET|$subject|Warnung: Ihr Chat-Account wird demnächst gelöscht}
+Hallo {GET|$user.nick},
+
+Sie haben Ihren Chat-Account lange nicht benutzt,
+deswegen wird dieser demnächst gelöscht. Um das zu
+verhindern, loggen Sie sich im Chat ein. Klicken
+Sie einfach auf die Adresse:
+
+{GET|$settings.urls.chaturl}?nickname={GET_ESCAPED|$user.nick}
+
+

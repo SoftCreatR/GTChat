@@ -1,0 +1,182 @@
+<html>
+<head>
+	{PROXYCHECK}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+	<script language="JavaScript">
+		cgi='{GET_JS|$runtime.completeurl}';
+	</script>
+</head>
+<body marginwidth=36 leftmargin=36>
+
+<div class="headertext">
+	<table border=0 width="100%" cellspacing=5>
+		<tr>
+			<td width="100%">&nbsp;</td>
+			{FOREACH|$language|$settings.languages}
+				<td align="center">
+					{IF|$language ne $runtime.language}<a href="{GET|$runtime.completeurl}&language={GET|$language}">{ELSE}<b>{ENDIF}
+						{IMAGE|$language}<br>
+						{GETLNG|$language|$lang_name}
+					{IF|$language ne $runtime.language}</a>{ELSE}</b>{ENDIF}
+				</td>
+			{ENDFOR}
+		</tr>
+	</table>
+
+	<noscript>
+		<br><br>
+		<font color="red">
+			Для использования этого чата требуется Яваскрипт, который в Вашем браузере отключён.
+			Инструкция, как включать Яваскрипт, есть в <a href="faq.html" class="stdlink" target="_blank">FAQ</a>.
+		</font>
+	</noscript>
+	{IF|$input.proxy}
+		<br><br>
+		<font color="red">
+			Проверка вашего соединения показала, что вы можете пользоваться чатом только в безопасном режиме.
+			Нажмите <a href="{GET|$runtime.completeurl}&action=proxycheck" class="stdlink">здесь</a>, чтобы проверить соединение ещё раз.
+		</font>
+	{ENDIF}
+	
+	<br><br>
+	
+	А здесь можно поставить приветствие, надо исправить в темплейте login.html...<br>
+	Если у вас проблемы с чатом, загляните в <a href="faq.html" class="stdlink" target="_blank">FAQ</a>.
+	<br>
+	<br>
+	{IF|$news.message}
+		<b>Новости чата</b> ({GETDATE|$news.date}): {DOFILTER|links|formatting|smileys}{GET|$news.message}{ENDDO} {IF|$news.author}- <i>от {GET|$news.author}</i>{ENDIF}
+		<br>
+		{IF|$news.messagecount>1}
+			<div class="smalltext">
+				<a href="{GET|$runtime.completeurl}&template=allnews" onclick="openWindow('allnews',600,200);return false;" class="stdlink">Показать все новости</a>
+			</div>
+		{ENDIF}
+	{ENDIF}
+</div>
+
+{NEED|$environment}
+{NEED|$roomlist&onlineusers}
+<table border=0 width="100%" cellspacing=0 cellpadding=10>
+<tr>
+	<td width="70%" valign=top>
+
+		<form method=POST action="{GET|$runtime.chaturl}" name=loginForm target="_top">
+		{GET|$runtime.hiddenfields}
+		<input type=hidden name=action value=login>
+
+		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+		<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+		<tr>
+			<th>Вход в чат</th>
+		</tr>
+		<tr class="row2"><td><table cellspacing=5>
+		<tr>
+			<td colspan=2>Ещё не зарегистрировали себе постоянное имя? <a href="{GET|$runtime.completeurl}&template=register">Здесь</a> Вы можете это сделать! Можно войти и без регистрации - просто не вводить пароль.</td>
+		</tr>
+		<tr>
+			<td colspan=2>&nbsp;</td>
+		</tr>
+		<tr>
+			<td><b>{IIF|$environment.is_username|Имя&nbsp;пользователя|Ник}:<input type="hidden" name="is_username" value="{GET|$environment.is_username}"></b></td>
+			<td width="100%">
+				{IF|$environment.has_password}
+					{GET|$environment.name}<input type=hidden name=name value="{GET|$environment.name}">
+				{ELSE}
+					<input type=text name=name size=20 style="width:100%" maxlength="{IF|$environment.is_username}{GET|$settings.check_profile_fields_length.name[0]}{ELSE}{GET|$settings.check_profile_fields_length.nick[0]}{ENDIF}" value="{GET|$environment.name}">
+				{ENDIF}
+			<td>
+		</tr>
+		{IF|!$environment.has_password}
+			<tr>
+				<td><b>Пароль:</b></td>
+				<td><input type=password name=password size=20 style="width:100%"></td>
+			</tr>
+		{ENDIF}
+		<tr>
+			<td><b>Комната:</b></td>
+			<td>
+				<select name=room style="width:100%">
+					{FOREACH|$room|$roomlist}
+						<option value="{GET|$room.name_lc}" {IIF|$room.name_lc eq $environment.room|selected}> {GET|$room.name}
+					{ENDFOR}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td><input type=checkbox name=pull value="1" {IIF|$environment.pull|checked}> Безопасный&nbsp;режим</td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+			<td>
+				<input type=checkbox name=cookie value="1" {IIF|$environment.has_cookie|checked}> Запомнить данные для следущего раза
+				{IF|$environment.has_cookie}
+					(<a href="{GET|$runtime.completeurl}&action=removecookie" class=smalltext>Удалить записанные данные</a>)
+				{ENDIF}
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 align=center><input type=submit value="Вход"></td>
+		</tr>
+		{IF|!$environment.has_password}
+			<tr>
+				<td colspan=2 align=center class="smalltext">
+					<a href="{GET|$runtime.completeurl}&template=reminder" onclick="openWindow('reminder',460,300);return false;">Забыли свой пароль? Жмите сюда!</a>
+				</td>
+			</tr>
+		{ENDIF}
+		<tr><td colspan=2></td></tr>
+		</table></td></tr>
+
+		</table>
+		</td></tr></table>
+
+		</form>
+	</td>
+	<td width="30%" valign=top>
+
+		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+		<table border=0 width="100%" cellspacing=1 cellpadding=0>
+		<tr>
+			<th>{GET|$onlineusers_count} человек(а) в чате</th>
+		</tr>
+			<TR class="row2"><TD><TABLE width="100%" cellspacing=5>
+			{FOREACH|$room|$roomlist&onlineusers}
+				{IF|$room.onlineusers_count}
+					{SET|$flag|1}
+					<tr class="row1">
+						<td><b>{GET|$room.name}</b></td>
+					</tr>
+					<tr class="row2"><td>
+						{FOREACH|$user|$room.onlineusers}
+							&nbsp;&nbsp;&nbsp;{GET|$user.nick} {IF_HAS_GROUPTAG|$user.tempgroup}({GROUPTAG|$user.tempgroup}){ENDIF}{NOTLAST}<br>
+						{ENDFOR}
+					</td></tr>
+				{ENDIF}
+			{ENDFOR}
+			{IF|!$flag}
+				<tr class="row2">
+					<td>{IIF|$onlineusers_count|В общих комнатах пользователей нет...|В чате никого нет...}</td>
+				</tr>
+			{ENDIF}
+		</table>
+		</td></tr></table>
+
+		</td></tr></table>
+
+	</td>
+</tr>
+</table>
+
+<div align=center class="headertext">
+	{COPYRIGHT}
+</div>
+
+</body>
+</html> 

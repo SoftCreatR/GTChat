@@ -1,0 +1,237 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_general_settings}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+
+	<script language="JavaScript">
+		var info = '{DOFILTER|escape_js}{INCLUDE|admin/general_settings_info}{ENDDO}';
+
+		var old_settings = new Array();
+		{FOREACH|$entry|$settings}
+			old_settings['settings.{GET_JS|$entry.name}'] = '{GET_JS|$entry.value}';
+		{ENDFOR}
+		
+		function toHTML(str)
+		{
+			var replacements = new Array();
+			replacements['&'] = '&amp;';
+			replacements['"'] = '&quot;';
+			replacements['<'] = '&lt;';
+			replacements['>'] = '&gt;';
+
+			// escape relevant HTML symbols
+			// must do it this way, Opera doesn't know RegExp
+			var pos;
+			var ret = "";
+			str = str.replace(/\n/g,'');
+			str = str.replace(/\r/g,'');
+			while ((pos = str.search(/([&"<>])/)) != -1)
+			{
+				ret += str.substr(0, pos) + replacements[str.substr(pos,1)];
+				str = str.substring(pos+1, str.length);
+			}
+			ret += str;
+			return ret;
+		}
+
+		function showInfo(text)
+		{
+			var wnd = top.opener.openCenteredWindow('','general_settings_info',400,100);
+			wnd.document.open('text/html','replace');
+			wnd.document.write(info.replace(/\%\%text\%\%/g,text));
+			wnd.document.close();
+		}
+
+		function checkInput(form)
+		{
+			form['settings.chatname'].value = toHTML(form['settings.chatname'].value);
+			form['settings.webmaster_email'].value = form['settings.webmaster_email'].value.replace(/[<>"&]/g,'');
+		
+			form['settings.alive_test_rate_push'].value = parseInt(form['settings.alive_test_rate_push'].value) || 2;
+			if (form['settings.alive_test_rate_push'].value < 2)
+				form['settings.alive_test_rate_push'].value = 2;
+
+			form['settings.alive_test_rate_pull'].value = parseInt(form['settings.alive_test_rate_pull'].value) || 2;
+			if (form['settings.alive_test_rate_pull'].value < 2)
+				form['settings.alive_test_rate_pull'].value = 2;
+
+			form['settings.autokick_test_rate'].value = parseInt(form['settings.autokick_test_rate'].value) || 0;
+			if (form['settings.autokick_test_rate'].value < 0)
+				form['settings.autokick_test_rate'].value = 0;
+
+			form['settings.send_blocking_timeout'].value = parseInt(form['settings.send_blocking_timeout'].value) || 2;
+			if (form['settings.send_blocking_timeout'].value < 2)
+				form['settings.send_blocking_timeout'].value = 2;
+
+			form['settings.logoutreason_keeping_time'].value = parseInt(form['settings.logoutreason_keeping_time'].value) || 0;
+			if (form['settings.logoutreason_keeping_time'].value < 0)
+				form['settings.logoutreason_keeping_time'].value = 0;
+
+			form['settings.pwseed'].value = form['settings.pwseed'].value.replace(/[<>"&]/g,'');
+			while (form['settings.pwseed'].value.length<2)
+				form['settings.pwseed'].value += 'a';
+				
+			window.cancelled = 1;
+		}
+
+		function cancel(unload)
+		{
+			if (window.cancelled)
+				return;
+
+			var elements = document.inputForm.elements;
+			var changed = false;
+			for (var i=0;!changed && i<elements.length;i++)
+			{
+				if (elements[i].name.match(/^settings\.(.*)/))
+				{
+					if (elements[i].type.match(/select/))
+						changed = (elements[i].options[elements[i].selectedIndex].value != old_settings[elements[i].name]);
+					else
+						changed = (elements[i].value != old_settings[elements[i].name]);
+				}
+			}
+			
+			if (changed)
+			{
+				var msg = 'Wollen Sie wirklich alle Änderungen verwerfen?';
+				if (unload)
+					return msg;
+				else if (!confirm(msg))
+					return;
+			}
+
+			window.cancelled = 1;
+				
+			parent.writeMenu();
+		}
+	</script>
+</head>
+
+<body onload="parent.autosize(window)" onbeforeunload="return cancel(1)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>Allgemeine Einstellungen</th>
+	</tr>
+	<form name="inputForm" method="post" action="{GET|$runtime.chaturl}" onsubmit="checkInput(this)">
+	{GET|$runtime.hiddenfields}
+	<input type=hidden name=action value="admin_general_settings">
+	<tr class="row2">
+		<td align=right><input type=submit class="plain" class="netscape-dummy" value="Speichern"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Abbrechen" onclick="cancel();return false"></td>
+	</tr>
+	<tr class="row2">
+		<td><table border=0 cellpadding=5 cellpadding=0 width="100%">
+		<tr>
+			<td>{IMAGE|error}</td>
+			<td width="100%">Viele dieser Einstellungen k&ouml;nnen den Chat-Betrieb erheblich beeintr&auml;chtigen. &Auml;ndern Sie nur dann etwas, wenn Sie genau wissen, was Sie tun! Klicken Sie auf das Fragezeichen, um eine genauere Erkl&auml;rung zu der Einstellung zu bekommen.</td>
+		</tr>
+		</table></td>
+	</tr>
+	<tr class="row2">
+		<td><table border=0 cellspacing=5 cellpadding=0 width="100%">
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Bezeichnung Ihres Chats, die in den Systemmeldungen und als &Uuml;berschrift in vielen HTML-Seiten erscheint.');return false">{IMAGE|question}</a></td>
+			<td>Chat-Bezeichnung:</td>
+			<td><input type=text name="settings.chatname" maxlength=255 style="width:100%" value="{GET|$settings.chatname}"></td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Email-Adresse, die als Absender-Adresse bei den Mails eingetragen werden soll, die vom Chat verschickt werden.');return false">{IMAGE|question}</a></td>
+			<td>Email-Adresse des Chat-Besitzers:</td>
+			<td><input type=text name="settings.webmaster_email" maxlength=255 style="width:100%" value="{GET|$settings.webmaster_email}"></td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Der Browser schickt regelm&auml;ssig eine Nachricht an den Server, die anzeigt, da&szlig; der Benutzer noch verbunden ist. Bleibt diese Nachricht eine Zeitlang aus, ist es ein Anzeichen daf&uuml;r, da&szlig; der Benutzer den Browser geschlossen hat, ohne sich auszuloggen. Hier wird die Zeitspanne eingestellt, nach der der Benutzer im normalen Modus automatisch ausgeloggt werden soll, wenn nichts mehr von ihm empfangen wird.');return false">{IMAGE|question}</a></td>
+			<td>Verbindungs&uuml;berpr&uuml;fung im normalen Modus:</td>
+			<td><input type=text name="settings.alive_test_rate_push" length=5 maxlength=4 value="{GET|$settings.alive_test_rate_push}"> Sekunden</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Der Browser schickt regelm&auml;ssig eine Nachricht an den Server, die anzeigt, da&szlig; der Benutzer noch verbunden ist. Bleibt diese Nachricht eine Zeitlang aus, ist es ein Anzeichen daf&uuml;r, da&szlig; der Benutzer den Browser geschlossen hat, ohne sich auszuloggen. Hier wird die Zeitspanne eingestellt, nach der der Benutzer im sicheren Modus automatisch ausgeloggt werden soll, wenn nichts mehr von ihm empfangen wird.');return false">{IMAGE|question}</a></td>
+			<td>Verbindungs&uuml;berpr&uuml;fung im sicheren Modus:</td>
+			<td><input type=text name="settings.alive_test_rate_pull" length=5 maxlength=4 value="{GET|$settings.alive_test_rate_pull}"> Sekunden</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Die Zeitspanne, nach der ein Benutzer ausgeloggt wird (mit einer entsprechender Meldung), wenn er nichts sagt. Um das automatische Ausloggen zu deaktivieren, stellt man hier 0 Sekunden ein.');return false">{IMAGE|question}</a></td>
+			<td>Autokick nach:</td>
+			<td><input type=text name="settings.autokick_test_rate" length=5 maxlength=4 value="{GET|$settings.autokick_test_rate}"> Sekunden</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Hat ein Benutzer auf &quot;Senden&quot; geklickt, werden alle weiteren Sendeversuche zur&uuml;ckgestellt, bis eine positive R&uuml;ckmeldung vom Server kommt. Kommt diese nicht innerhalb dieser Zeitspanne, gilt der Sendeversuch als fehlgeschlagen und wird wiederholt.');return false">{IMAGE|question}</a></td>
+			<td>Sendeversuch abbrechen nach:</td>
+			<td><input type=text name="settings.send_blocking_timeout" length=5 maxlength=4 value="{GET|$settings.send_blocking_timeout}"> Sekunden</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Wurde der Benutzer aus irgendeinem Grund vom Chat ausgeloggt, wird dieser Grund in einer Datei gespeichert, aus der er von der Logout-Seite abgerufen und dem Benutzer angezeigt wird. Wenn der Benutzer nicht auf der Logout-Seite angekommen ist, kann sein Logout-Grund nach dieser Zeitspanne gel&ouml;scht werden.');return false">{IMAGE|question}</a></td>
+			<td>Logout-Grund speichern f&uuml;r:</td>
+			<td><input type=text name="settings.logoutreason_keeping_time" length=5 maxlength=4 value="{GET|$settings.logoutreason_keeping_time}"> Sekunden</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Haupts&auml;chlich relevant f&uuml;r mod_perl. Unter mod_perl werden Templates serverweit im Cache gehalten, auch ohne mod_perl gibt es ein eingeschr&auml;nktes Caching. Ist die &Uuml;berpr&uuml;fung aktiviert, wird vor jeder Benutzung des Templates &uuml;berpr&uuml;ft, ob sich dieses auf der Festplatte ge&auml;ndert hat und ggf. neu geladen werden mu&szlig;. Sollen die Templates in n&auml;chster Zeit nicht ge&auml;ndert werden, kann man diese Funktion aus Geschwindigkeitsgr&uuml;nden deaktivieren.');return false">{IMAGE|question}</a></td>
+			<td>Templates auf &Auml;nderungen &uuml;berpr&uuml;fen:</td>
+			<td>
+				<select name="settings.check_template_modification" style="width:100%">
+					<option value=1 {IIF|$settings.check_template_modification|selected}>ja
+					<option value=0 {IIF|!$settings.check_template_modification|selected}>nein
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Nur relevant f&uuml;r mod_perl. Unter mod_perl werden Plugins serverweit im Cache gehalten. Ist die &Uuml;berpr&uuml;fung aktiviert, wird vor jeder Benutzung des Plugins &uuml;berpr&uuml;ft, ob sich dieser auf der Festplatte ge&auml;ndert hat und ggf. neu geladen werden mu&szlig;. Sollen die Plugins in n&auml;chster Zeit nicht ge&auml;ndert werden, kann man diese Funktion aus Geschwindigkeitsgr&uuml;nden deaktivieren.');return false">{IMAGE|question}</a></td>
+			<td>Plugins auf &Auml;nderungen &uuml;berpr&uuml;fen:</td>
+			<td>
+				<select name="settings.check_module_modification" style="width:100%">
+					<option value=1 {IIF|$settings.check_module_modification|selected}>ja
+					<option value=0 {IIF|!$settings.check_module_modification|selected}>nein
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Der Chat kann aus den HTML-Seiten, die er generiert, unn&ouml;tige Leerzeilen und Leerzeichen entfernen. Die Traffic-Ersparnis ist nicht nennenswert, diese Funktion gibt es h&ouml;chstens aus &auml;stetischen Gr&uuml;nden.');return false">{IMAGE|question}</a></td>
+			<td>Leerzeilen aus der Ausgabe entfernen:</td>
+			<td>
+				<select name="settings.compress_output" style="width:100%">
+					<option value=1 {IIF|$settings.compress_output|selected}>ja
+					<option value=0 {IIF|!$settings.compress_output|selected}>nein
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Die Methode, mit der Dateien vor gleichzeitigem Zugriff gesch&uuml;tzt werden. Normalerweise sollte die flock()-Funktion benutzt werden. Dateisperren unter Verwendung des Perl-Moduls Win32::Semaphore sind als Ausweichm&ouml;glichkeit f&uuml;r Windows 95/98/ME gedacht, wo es diese Funktion nicht gibt. Man sollte die Sperren nie ganz abschalten, das k&ouml;nnte zu massiven Datenverlusten f&uuml;hren.');return false">{IMAGE|question}</a></td>
+			<td>Art der Dateisperren:</td>
+			<td>
+				<select name="settings.lock_type" style="width:100%">
+					<option value=0 {IIF|$settings.lock_type == 0|selected}>keine
+					<option value=1 {IIF|$settings.lock_type == 1|selected}>flock
+					<option value=2 {IIF|$settings.lock_type == 2|selected}>Win32::Semaphore
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Normalerweise sollte die betriebssystem-eigene Verschl&uuml;sselungsfunktion crypt() f&uuml;r die Pa&szlig;w&ouml;rter benutzt werden. Da crypt() bei &auml;lteren Window-Perl-Versionen fehlt, bringt GTChat eine eigene Crypt-Bibliotek als Ersatz mit. Diese ist aber sehr ineffizient und sollte nur dann verwendet werden, wenn es nicht anders geht.');return false">{IMAGE|question}</a></td>
+			<td>Interne Verschl&uuml;sselungsroutine benutzen:</td>
+			<td>
+				<select name="settings.use_internal_crypt" style="width:100%">
+					<option value=1 {IIF|$settings.use_internal_crypt|selected}>ja
+					<option value=0 {IIF|!$settings.use_internal_crypt|selected}>nein
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Der Parameter salt der crypt()-Funktion, der f&uuml;r das Verschl&uuml;sseln von Pa&szlig;w&ouml;rtern verwendet wird.');return false">{IMAGE|question}</a></td>
+			<td>Salt f&uuml;r Pa&szlig;wort-Verschl&uuml;sselung:</td>
+			<td><input type=text name="settings.pwseed" maxlength=2 style="width:100%" value="{GET|$settings.pwseed}"></td>
+		</tr>
+		</table></td>
+	</tr>
+	<tr class="row2">
+		<td align=right><input type=submit class="plain" class="netscape-dummy" value="Speichern"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Abbrechen" onclick="cancel();return false"></td>
+	</tr>
+	</form>
+</table>
+</td></tr></table>
+
+</body>
+</html> 

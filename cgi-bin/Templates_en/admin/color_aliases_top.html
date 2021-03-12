@@ -1,0 +1,36 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+</head>
+
+<body>
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>Color name</th>
+		<th>Stands for</th>
+		<th>All languages</th>
+		{FOREACH|$language|$settings.languages}
+			<th>{GETLNG|$language|$lang_name}</th>
+		{ENDFOR}
+	</tr>
+	<tr class=row2>
+		<form action="javascript:void(0)" onsubmit="parent.addEntry(alias.value);return false">
+		<td colspan="%%cols%%">
+			<table border=0 width="100%">
+			<tr>
+				<td align=left>
+					New color:
+					<input type=text name=alias>
+					<input type=submit class="plain" class="netscape-dummy" value="Add">
+				</td>
+				<td align=right><input type=button class="plain" class="netscape-dummy" value="Save" onclick="parent.setTimeout('save()',0);return false"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Cancel" onclick="parent.setTimeout('cancel()',0);return false"></td>
+			</tr>
+			</table>
+		</td>
+		</form>
+	</tr>
+	<form action="javascript:void(0)" onsubmit="return false" name="inputForm">

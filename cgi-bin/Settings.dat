@@ -1,166 +1,733 @@
 ###############################################
 #  You should not change this file manually.  #
-#  Use instead the General Settings option    #
-#  in the Admin functions menu.               #
+#  Use the Admin functions menu instead.      #
 ###############################################
 
-$language = "german";                      # Language of your chat (determines the name of the language file)
+return {
+	####################
+	# General settings #
+	####################
 
-$maintenance = 0;                          # Set to 1 to enable Maintenance mode
-$chatname = "Private Chat";                # The name of your chat
-$alive_test_rate = 120;                    # Time in seconds between testing if the connection is still alive (server push mode)
-$alive_test_rate_pull = 20;                # Time in seconds between testing if the connection is still alive (client pull mode)
-$log_clean_rate = 7200;                    # Log cleaning interval, set 0 to disable logging
-$log_length = 10800;                       # Time in seconds to leave messages in log
-$log_private_msgs = 0;                     # Set 1 if you want to have private messages in you log as well
-$time_distance = 0;                        # Time offset in hours
-$enable_news = 1;                          # Set 0 if you do not want Chat News
-$enable_traffic_stat = 0;                  # Set 0 if you do not want traffic statistics to be counted
-$enable_smileys = 1;                       # Set 0 if you do not want smileys in your chat
-$allow_guestlogin = 1;                     # Set 0 if you do not want unregistered users to come in your chat
-$cookie_name = "chat_userdata";            # Name of the cookie used by the chat
-$use_usernames = 1;                        # Set 0 if you want to have only nick names
-$use_server_auth = 0;                      # Set 1 if the user should be authenticated by .htaccess
-$pull_mode_only = 0;                       # Set 1 if your server doesn't allow server push
-$display_userlist_shortcuts = 1;           # Set 0 if you do not want shortcuts for /msg and nick: to be shown in the list of users in the room
-$max_users = 0;                            # The maximum number of users to be in the chat (0 = unlimited)
-$roomlist_cols = 0;                        # The maximum number of columns in the room selection frame (0 = unlimited)
+	# URLs and paths
+	urls => {
+		htmlurl     => "http://www.server.com/gtchat/",                        # absolute URL of your chat's HTML pages (with trailing '/')
+		chaturl     => "http://www.server.com/cgi-bin/gtchat/chat.pl",         # complete URL of the chat script, including chat.pl
+		logouturl   => "",                                          # if given: the position to go after the logout other than the default login page
+		imagesurl   => "images/",                                   # URL of your images directory, can be relative to htmlurl
+	},
 
-$max_username_len = 15;                    # Maximum length for usernames
-$max_nickname_len = 15;                    # Maximum length for nicknames
-$max_password_len = 10;                    # Maximum length for passwords
-$max_websitetitle_len = 50;                # Maximum length for homepage titles
-$max_websiteurl_len = 50;                  # Maximum length for homepage urls
-$max_email_len = 50;                       # Maximum length for emails
-$max_roomname_len = 15;                    # Maximum length for room names
+	directories => {
+		sourcedir   => "Sources",              # Directory with chat source files
+		vardir      => "Variables",            # Directory with variable files
+		onlinedir   => "Online",               # Directory with online users data
+		tmpdir      => "Temp",                 # Directory with temporary files (queues and pipes)
+		memberdir   => "Members",              # Directory with member data
+		roomdir     => "Rooms",                # Directory with room data
+		plugindir   => "Plugins",              # Plugin directory
+		wwwdir      => "../www",               # Directory with chat.js and style.css
+		imagesdir   => "../www/images",        # Directory of the chat images
+	},
 
-$webmaster_email = 'webmaster@ihr.server.de';    # Put your mail address here
-$mailprog = "/usr/sbin/sendmail";          # Location of sendmail on your server
-$externalmknod = 0;                        # Set to 1 if your perl doesn't have the necessary files for internal mknod, set $mknodprog or $mkfifoprog then
-$mknodprog = "mknod";                      # Location of mknod on your server
-$mkfifoprog = "mkfifo";                    # Location of mkfifo on your server
+	# General settings
+	languages => ['german','english','russian'],  # Existing language files
+	maintenance => 0,                          # Set 1 to enable maintenance mode
+	chatname => "Private Chat",                # The name of your chat
+	pwseed => "ya",                            # Password crypting seed
+	logoutreason_keeping_time => 20,           # Time in seconds to keep the logout reason for a user in the file logout.reasons
 
-$pwseed = "ya";                            # Password crypting seed
+	lock_type => 1,                            # Set 0 to use no locks, 1 for flock() or 2 for Win32::Semaphore
+	use_internal_crypt => 1,                   # Set 0 to use default Perl's crypt(), 1 to use module Crypt.pm
+	compress_output => 1,                      # Set 1 to remove empty lines and unnecessary spaces from the output
 
-$defaultcolor = "#404040";                 # Default color, every user gets on his first login
-@palette = ("#000000","#606060","#909090","#880000","#FF0000","#FF8888","#004400","#00BB00","#44FF44","#0000AA","#4444FF","#AAAAFF","#FFA000","#606000","#A0A000","#FF00FF","#A000A0");
+	alive_test_rate_push => 120,               # Time in seconds the user is allowed to make no server requests (server push mode)
+	alive_test_rate_pull => 60,                # Time in seconds the user is allowed to make no server requests (client pull mode)
+	autokick_test_rate => 0,                   # Time in seconds the user is allowed not to talk or 0 to deactivate autokick
+	send_blocking_timeout => 8,                # Maximum time in seconds sending should be blocked (blocking is usually disabled automatically after receiving the server's response)
+	
+	forward_params => ['css','proxy'],         # Query string parameters to be forwarded
+	
+	check_module_modification => 1,            # Set 1 to enable testing if a module has been modified since it's last use before using the cached data, 0 to disable
+	check_template_modification => 1,          # Set 1 to enable testing if a template has been modified since it's last use before using the cached data, 0 to disable
 
-$defaultroom = "Lobby";
+	preload_modules => ['sourcedir::','plugindir::','german.lng','english.lng','russian.lng','german.commands','english.commands','russian.commands','german.admin','english.admin','russian.admin'],
+	preload_templates => ['Templates_de/','Templates_en/','Templates_ru/'],
+ 
+	# User defaults (defaults for the template variable $environment)
+	default =>
+	{
+		language => 'german',                  # Default language of your chat (determines the name of the language files)
+		is_username => 1,                      # Set 0 to login with nick names by default or 1 to login with user names
+		pull => 0,                             # Set 1 to make Safe mode checked by default
+		room => 'lobby',
+		color => '#404040',
+		style => 'style',                      # usually style.css is the default style
+		privateemail => 1,
+		gender => 0,
+		timeoffset => 0,
+		nosmileys => 0,
+		popup_privatemsg => 1,
+		show_time => 0,
+	},
+	
+	####################
+	# Plugins settings #
+	####################
 
-######## Smiley definitions ##########
-$smileys_defs = "smiley1|:-)) :o))|smiley|:) :-) :o)|wink|;) ;-) ;o)|cheesy|:D|grin|;D|angry|):(|sad|:-( :( :o(|cool|8)|huh|???|smiley2|:-o|smiley3|:-P :oP|smiley4|:-I :oI|smiley5|:-] :o]|smiley6|:-[ :o[|smiley7|:crazy|smiley8|:dream|smiley9|:shy|smiley10|:tasty|smiley11|:pukey|shocked|:o";
+	# Settings for ProfileCheck.pm
+	check_profile_fields_range => {             # Sets the minimal and maximal allowed value for integer profile fields
+		privateemail => [0,1],
+		timeoffset => [-24,24],
+		nosmileys => [0,1],
+		popup_privatemsg => [0,1],
+		show_time => [0,1],
+		gender => [0,2],
+	},
+	check_profile_fields_length => {            # Sets the maximal allowed length for profile fields and the error message to show
+		name => [15,'max_username_len'],
+		nick => [15,'max_nickname_len'],
+		homepage => [50,'max_homepage_len'],
+		homepagetitle => [50,'max_homepagetitle_len'],
+		email => [50,'max_email_len'],
+	},
+	min_nickchange_interval => 10,              # Minimum time (in minutes) between two nick changes
 
-######## command aliases #################
-$alias{'/farbe'} = "/color";
-$alias{'/col'} = "/color";
-$alias{'/exit'} = "/quit";
-$alias{'/raus'} = "/quit";
-$alias{'/logout'} = "/quit";
-$alias{'/bye'} = "/quit";
-$alias{'/join'} = "/room";
-$alias{'/raum'} = "/room";
-$alias{'/channel'} = "/room";
-$alias{'/go'} = "/room";
-$alias{'/talk'} = "/msg";
-$alias{'/tell'} = "/msg";
-$alias{'/t'} = "/msg";
-$alias{'/txt'} = "/me";
-$alias{'/smileysoff'} = "/smileys off";
-$alias{'/smileyson'} = "/smileys on";
-$alias{'/weg'} = "/away";
-$alias{'/schubs'} = "/push";
-$alias{'/knebel'} = "/gag";
-$alias{'/atall'} = "/broadcast";
-$alias{'/analle'} = '/broadcast';
-$alias{'/einlad'} = "/invite";
-$alias{'/auslad'} = "/uninvite";
+	# Settings for RoomCheck.pm
+	check_room_fields_range => {                # Sets the minimal and maximal allowed value for integer room fields
+		closed => [0,1],
+		permanent => [0,1],
+		moderated => [0,1],
+		max_users => [0,100000],
+	},
+	check_room_fields_length => {               # Sets the maximal allowed length for room fields and the error message to show
+		name => [15,'max_roomname_len'],
+		topic => [100,'max_topic_len'],
+	},
 
-######## color aliases #################
-$color{'white'} = "white";
-$color{'black'} = "black";
-$color{'red'} = "red";
-$color{'yellow'} = "yellow";
-$color{'pink'} = "pink";
-$color{'green'} = "green";
-$color{'orange'} = "orange";
-$color{'purple'} = "purple";
-$color{'blue'} = "blue";
-$color{'beige'} = "beige";
-$color{'brown'} = "brown";
+	# Settings for DataModules/UserModule.pm and DataModules/RoomModule.pm
+	# The characters in this string cannot be used in usernames, nicknames and roomnames
+	custom_forbidden_chars => "\255\240",
 
-$color{'weiЯ'} = "white";
-$color{'schwarz'} = "black";
-$color{'rot'} = "red";
-$color{'gelb'} = "yellow";
-$color{'grьn'} = "green";
-$color{'purpur'} = "purple";
-$color{'blau'} = "blue";
-$color{'braun'} = "brown";
+	# Settings for CommandHandlers/Ignoring.pm
+	ignore_messages => {                       # List of message types to be ignored
+		'message'      => 1,
+		'text'         => 1,
+		'broadcast'    => 1,
+		'callop'       => 1,
+		'me'           => 1,
+		'img'          => 1,
+		'leaved'       => 1,
+		'entered',     => 1,
+		'private'      => 1,
+		'nick_changed' => 1,
+		'room_entered' => 1,
+		'room_leaved'  => 1,
+	},
 
-######## Image sizes ##########
-$image{'angry'} = "16,16";
-$image{'cheesy'} = "16,16";
-$image{'cool'} = "21,15";
-$image{'grin'} = "16,16";
-$image{'huh'} = "15,22";
-$image{'sad'} = "16,16";
-$image{'shocked'} = "15,15";
-$image{'smiley'} = "16,16";
-$image{'smiley1'} = "15,15";
-$image{'smiley10'} = "15,15";
-$image{'smiley11'} = "15,15";
-$image{'smiley2'} = "15,15";
-$image{'smiley3'} = "15,15";
-$image{'smiley4'} = "21,16";
-$image{'smiley5'} = "25,15";
-$image{'smiley6'} = "22,19";
-$image{'smiley7'} = "16,16";
-$image{'smiley8'} = "15,15";
-$image{'smiley9'} = "15,15";
-$image{'wink'} = "16,16";
-$image{'question'} = "13,14";
-$image{'msg'} = "18,13";
-$image{'at'} = "15,14";
+	# Settings for Logging/MessagesLog.pm
+	log_messages => {                          # List of message types to be logged in the messages log
+		'text'         => 1,
+		'admin'        => 1,
+		'me'           => 1,
+		'broadcast'    => 1,
+		'callop'       => 1,
+		'img'          => 1,
+		'entered',     => 1,
+		'leaved'       => 1,
+		'nick_changed' => 1,
+		'room_entered' => 1,
+		'room_leaved'  => 1,
+	},
+	max_messageslog_size => 262144,            # Maximum size in bytes of the messages log (see log_messages)
+	messageslog_backups_count => 4,            # Number of old messages logs to save
 
-######## Permissions ##########
-$permission{admin} = "1";
-$permission{admin_banlist} = "1";
-$permission{admin_traffic} = "1";
-$permission{admin_news} = "1";
-$permission{admin_settings} = "3";
-$permission{admin_permissions} = "3";
-$permission{admin_smileys} = "3";
-$permission{admin_aliases0} = "3";
-$permission{admin_aliases1} = "3";
-$permission{admin_messages} = "3";
-$permission{admin_texts} = "3";
-$permission{admin_list0} = "3";
-$permission{admin_list1} = "3";
-$permission{admin_list2} = "3";
-$permission{admin_maintenance} = "3";
+	# Settings for Logging/UsersLog.pm
+	max_userslog_size => 4096,                 # Maximum size in bytes of the users log (registrations and cancellations of accounts)
+	userslog_backups_count => 4,               # Number of old users logs to save
+	
+	# Settings for CookieHandler.pm
+	cookie_name => "chat_userdata",            # Name of the cookie used by the chat
+	
+	# Settings for MaxUsers.pm
+	max_users => 0,                            # The maximum number of users to be in the chat (0 = unlimited)
 
-$permission{img} = "1";
-$permission{kick} = "1";
-$permission{gag} = "1";
-$permission{push} = "1";
-$permission{broadcast} = "1";
-$permission{privaterooms} = "1";
-$permission{invite} = "1";
+	# Mail settings
+	webmaster_email => 'webmaster@server.com', # Put your mail address here
+	mailprog => "/usr/sbin/sendmail",          # Location of sendmail on your server (used by MailModules/SendmailModule.pm)
+	smtp_server => "mail.server.com",          # SMTP server to sen mail (used by MailModules/SMTPModule.pm)
 
-$permission{profile_seeemail} = "1";
-$permission{profile_seelastlogin} = "1";
-$permission{profile_seeip} = "1";
-$permission{profile_seepullmode} = "1";
-$permission{profile_modify} = "1";
+	# Settings for VarHandlers/RouteTracer.pm
+	tracerouteprog => "/usr/sbin/traceroute",  # Location of traceroute on your server, usually /usr/sbin/traceroute on a Unix server and c:/windows/system32/tracert.exe on Windows
+ 
+	# Settings for PipeModules/SysVPipeModule.pm
+	SYS_mknod => 14,                           # System constant, don't change if you don't know what it is
+	S_IFIFO => 4096,                           # System constant, don't change if you don't know what it is
+	mknodprog => "mknod",                      # Location of mknod program on your server
+	mkfifoprog => "mkfifo",                    # Location of mkfifo program on your server
+	
+	# Settings for Logging/TrafficLog.pm
+	traffic_statistics_days => 14,             # Number of days to keep in the traffic statistics (0 to keep everything)
+	
+	# Smileys list for TextFilters/Formatting.pm
+	smileys => [
+		[ 'smiley1', ':))', ':-))' , ':o))' ],
+		[ 'smiley', ':)' , ':-)' , ':o)' ],
+		[ 'wink', ';)' , ';-)' , ';o)' ],
+		[ 'cheesy', ':D' ],
+		[ 'grin', ';D' ],
+		[ 'angry', '):(' ],
+		[ 'sad', ':-(' , ':(' , ':o(' ],
+		[ 'cool', '8)' ],
+		[ 'huh', '???' ],
+		[ 'rtfm', ':rtfm' ],
+		[ 'shocked', ':-O' ],
+		[ 'smiley2', ':-o' ],
+		[ 'smiley3', ':-P' , ':oP' ],
+		[ 'smiley4', ':-I' , ':oI' ],
+		[ 'smiley5', ':-]' , ':o]' ],
+		[ 'smiley6', ':-[' , ':o[' ],
+		[ 'smiley7', ':crazy' ],
+		[ 'smiley8', ':dream' ],
+		[ 'smiley9', ':shy' ],
+		[ 'smiley10', ':tasty' ],
+		[ 'smiley11', ':o' ],
+		[ 'smiley12', 'O:-)' ],
+		[ 'smiley13', ':tea', ':coffee' ],
+		[ 'fist', ':fist' ],
+		[ 'kiss', ':kiss' ],
+	],
+	
+	# Command aliases for CommandAliases.pm
+	aliases => {
+		col => 'color',
+		exit => 'quit',
+		logout => 'quit',
+		bye => 'quit',
+		join => 'room',
+		channel => 'room',
+		go => 'room',
+		talk => 'msg',
+		tell => 'msg',
+		t => 'msg',
+		txt => 'me',
+		smileysoff => 'smileys off',
+		smileyson => 'smileys on',
+		atall => 'broadcast',
+		callvip => 'callop',
+		settings => 'editprofile',
+	},
+	
+	# JavaScript-based commands
+	jscommands => {
+		clear => 'clear()',
+		refresh => 'parent.users.location.href=(window.cgi || parent.cgi)+"&template=users"',
+		profile => 'postToTemplate("profile",600,480,"nickname",(list.length>1?list[1]:""))',
+		editprofile => 'postToTemplate("editprofile",600,480,"nickname",(list.length>1?list[1]:""))',
+		roomlist => 'openWindow("roomlist",600,480)',
+		editroom => 'postToTemplate("editroom",600,480,"roomname",(list.length>1?list[1]:""))',
+	},
+	
+	# Color aliases for $main->toColor()
+	colors => {
+		'white' => '#FFFFFF',
+		'black' => '#000000',
+		'red' => '#FF0000',
+		'yellow' => '#FFFF00',
+		'pink' => '#FF00FF',
+		'purple' => '#800080',
+		'green' => '#008000',
+		'orange' => '#FF8000',
+		'blue' => '#0000FF',
+		'beige' => '#F5F5DC',
+		'brown' => '#804000',
+	},
+	
+	# Predefined image sizes for the {IMAGE} tag
+	images => {
+		angry => [15,15],
+		cheesy => [15,15],
+		cool => [21,15],
+		fist => [33,15],
+		grin => [15,15],
+		huh => [15,22],
+		kiss => [15,15],
+		rtfm => [24,23],
+		sad => [15,15],
+		shocked => [15,15],
+		smiley => [15,15],
+		smiley1 => [15,15],
+		smiley10 => [15,15],
+		smiley11 => [15,15],
+		smiley12 => [15,20],
+		smiley13 => [28,23],
+		smiley2 => [15,15],
+		smiley3 => [15,15],
+		smiley4 => [21,16],
+		smiley5 => [25,15],
+		smiley6 => [23,15],
+		smiley7 => [15,15],
+		smiley8 => [15,15],
+		smiley9 => [15,15],
+		wink => [15,15],
+		question => [10,15],
+		msg => [16,16],
+		at => [19,17],
+		error => [40,40],
+		german => [60,30],
+		english => [60,30],
+		russian => [60,30],
+		line0 => [25,20],
+		line1 => [25,20],
+		line2 => [25,20],
+		line3 => [25,20],
+		edit => [22,22],
+		remove => [22,22],
+		up => [14,14],
+		down => [14,14],
+		send => [22,22],
+		palette => [24,24],
+	},
+	
+	# Permissions #
+	# -1 = Guest, 0 = User, 1 = Superuser, 5 = Administrator, 10 = Chat master
+	permissions => {
+		user => -1,
+	
+		'command.admin' => 1,
+		'command.img' => 1,
+		'command.imgmsg' => 1,
+		'command.kick' => 1,
+		'command.gag' => 1,
+		'command.ungag' => 1,
+		'command.push' => 1,
+		'command.broadcast' => 1,
+		invite => 1,
+		callop => 1,
+		privaterooms => 1,
+		
+		profile_seeemail => 1,
+		profile_seelastlogin => 1,
+		profile_seeregistration => 1,
+		profile_seeip => 1,
+		profile_traceroute => 5,
+		profile_seepullmode => 1,
+		profile_seepermissions => 1,
+		profile_seecommandpermissions => 1,
+		profile_modify => 1,
+		profile_modify_permissions => 5,
+		profile_modify_commandpermissions => 5,
+		profile_settempgroup => 5,
+		profile_change_nick => -1,
+		
+		rooms_create => -1,
+		rooms_createprivate => -1,
+		rooms_createpublic => -1,
+		rooms_createpermanent => 1,
+		rooms_changeowner => 1,
+		rooms_modify => 1,
+		rooms_createmoderated => 1,
+		rooms_moderate => 1,
+		
+		ignore_max_users => 1,
+		ignore_maintenance => 10,
+		ignore_nickchange_interval => 5,
 
-$permission{rooms_create} = "-1";
-$permission{rooms_createprivate} = "-1";
-$permission{rooms_createpermanent} = "1";
-$permission{rooms_changeowner} = "1";
-$permission{rooms_modify} = "1";
-$permission{rooms_createmoderated} = "1";
-$permission{rooms_moderate} = "1";
+		admin => 1,
+		admin_news => 1,
+		admin_images => 10,
+		admin_smileys => 10,
+		admin_maintenance => 10,
+		admin_general_settings => 10,
+		admin_defaults => 10,
+		admin_commandpermissions => 10,
+		admin_permissions => 10,
+		admin_command_aliases => 5,
+		admin_color_aliases => 5,
+		admin_log => 5,
+		admin_cleanupmembers => 10,
+	},
+	
+	# Settings for DataModules/UserModule.pm
+	custom_profile_fields => ['nosmileys', 'gagtime', 'birth_date', 'homepage', 'homepagetitle','popup_privatemsg','lastnickchange','gender','show_time','style'],
+	
+	# Settings for DataModules/RoomModule.pm
+	custom_room_fields =>  ['max_users', 'topic', 'moderated', 'vips'],
 
-$permission{ignore_max_users} = "1";
+	# Settings for Moderation.pm
+	moderation_ignore_messages => {
+	},
+	
+	moderation_error_messages => {
+		'me' => 1,
+		'img' => 1,
+		'private' => 1,
+	},
 
-1;
+	# Settings for VarHandlers/Permissions.pm
+	hide_commandpermissions => {
+		'' => 1,
+		'alive' => 1,
+	},
+
+	#########################
+	# Custom event handlers #
+	#########################
+	
+	custom_traffic_logger => ['plugindir::Logging/TrafficLog.pm'],
+
+	custom_action_handlers => {
+		reminder => 'plugindir::Reminder.pm',
+		search => 'plugindir::Search.pm',
+		removecookie => 'plugindir::CookieHandler.pm',
+		proxycheck => 'plugindir::ProxyCheck.pm',
+		traceroute => 'plugindir::RouteTracer.pm',
+		admin_news => 'plugindir::Administration/News.pm',
+		admin_images => 'plugindir::Administration/Settings.pm',
+		admin_smileys => 'plugindir::Administration/Settings.pm',
+		admin_maintenance => 'plugindir::Administration/Settings.pm',
+		admin_general_settings => 'plugindir::Administration/Settings.pm',
+		admin_defaults => 'plugindir::Administration/Settings.pm',
+		admin_commandpermissions => 'plugindir::Administration/Settings.pm',
+		admin_permissions => 'plugindir::Administration/Settings.pm',
+		admin_command_aliases => 'plugindir::Administration/Settings.pm',
+		admin_color_aliases => 'plugindir::Administration/Settings.pm',
+		admin_log => 'plugindir::Administration/Log.pm',
+		admin_changemembercleanuplimit => 'plugindir::Administration/CleanupMembers.pm',
+		admin_cleanupwarnmembers => 'plugindir::Administration/CleanupMembers.pm',
+		admin_cleanupdeletemembers => 'plugindir::Administration/CleanupMembers.pm',
+		admin_cleanupprocessmembers => 'plugindir::Administration/CleanupMembers.pm',
+	},
+	
+	custom_template_commands => {
+		GROUPTAG => 'plugindir::SimpleTemplateEngine/GroupTags.pm',
+		GROUPNAME => 'plugindir::SimpleTemplateEngine/GroupTags.pm',
+		GETTIME => 'plugindir::SimpleTemplateEngine/TimeTags.pm',
+		GETDATE => 'plugindir::SimpleTemplateEngine/TimeTags.pm',
+		GETSTDDATE => 'plugindir::SimpleTemplateEngine/TimeTags.pm',
+		GETDATETIME => 'plugindir::SimpleTemplateEngine/TimeTags.pm',
+		READDATE => 'plugindir::SimpleTemplateEngine/TimeTags.pm',
+		READSTDDATE => 'plugindir::SimpleTemplateEngine/TimeTags.pm',
+		INCLUDE => 'plugindir::SimpleTemplateEngine/IncludeTags.pm',
+		UPDATE_ONLINEINFO => 'plugindir::SimpleTemplateEngine/UpdateTags.pm',
+		UPDATE_MEMBERINFO => 'plugindir::SimpleTemplateEngine/UpdateTags.pm',
+		PROXYCHECK => 'plugindir::ProxyCheck.pm',
+	},
+	
+	custom_template_blocks => {
+		IF_HAS_GROUPTAG => 'plugindir::SimpleTemplateEngine/GroupTags.pm',
+		IF_HAS_GROUPNAME => 'plugindir::SimpleTemplateEngine/GroupTags.pm',
+		DOFILTER => 'plugindir::SimpleTemplateEngine/FilterTags.pm',
+	},
+
+	custom_var_handlers => {
+		'news.messagenum' => 'plugindir::VarHandlers/News.pm',
+		'news.message' => 'plugindir::VarHandlers/News.pm',
+		'news.author' => 'plugindir::VarHandlers/News.pm',
+		'news.date' => 'plugindir::VarHandlers/News.pm',
+		'news.messages' => 'plugindir::VarHandlers/News.pm',
+		'news.messagecount' => 'plugindir::VarHandlers/News.pm',
+		'user_information' => 'plugindir::VarHandlers/ProfileLoader.pm',
+		'current_room' => 'plugindir::VarHandlers/RoomLoader.pm',
+		'room_information' => 'plugindir::VarHandlers/RoomLoader.pm',
+		'offlinemsgs_exist' => 'plugindir::CommandHandlers/PrivateMessages.pm',
+		'offlinemsgs' => 'plugindir::CommandHandlers/PrivateMessages.pm',
+		'roomlist' => 'plugindir::VarHandlers/Roomlist.pm',
+		'roomlist_count' => 'plugindir::VarHandlers/Roomlist.pm',
+		'onlineusers' => 'plugindir::VarHandlers/Roomlist.pm',
+		'onlineusers_count' => 'plugindir::VarHandlers/Roomlist.pm',
+		'roomlist&onlineusers' => 'plugindir::VarHandlers/Roomlist.pm',
+		'commandslist' => 'plugindir::VarHandlers/CommandsList.pm',
+		'commands_count' => 'plugindir::VarHandlers/CommandsList.pm',
+		'permissions' => 'plugindir::VarHandlers/Permissions.pm',
+		'permissions_count' => 'plugindir::VarHandlers/Permissions.pm',
+		'commandpermissions' => 'plugindir::VarHandlers/Permissions.pm',
+		'commandpermissions_count' => 'plugindir::VarHandlers/Permissions.pm',
+		'allusers' => 'plugindir::VarHandlers/AllUsers.pm',
+		'allusers_count' => 'plugindir::VarHandlers/AllUsers.pm',
+		'admin_menu' => 'plugindir::Administration/Menu.pm',
+		'admin_aliases' => 'plugindir::Administration/Settings.pm',
+		'admin_colors' => 'plugindir::Administration/Settings.pm',
+		'admin_messageslogs' => 'plugindir::Administration/Log.pm',
+		'admin_inactiveaccounts' => 'plugindir::Administration/CleanupMembers.pm',
+	},
+	
+	custom_send_checker => [],
+
+	custom_messages_filter => ['plugindir::Moderation.pm'],
+ 
+	custom_messages_logger => ['plugindir::Logging/MessagesLog.pm'],
+	
+	custom_output_params => {
+		'alive' => [],
+		'message' => ['message'],
+		'changed' => ['name','room','oldroom'],
+		'text' => ['name','nick','color','text'],
+		'admin' => ['name','nick','color','text'],
+		'broadcast' => ['name','nick','color','text'],
+		'callop' => ['name','nick','color','text'],
+		'me' => ['name','nick','color','text'],
+		'img' => ['name','nick','color','text'],
+		'leaved' => ['name','nick','room'],
+		'entered' => ['name','nick','room'],
+		'private' => ['name','nick','color','text','url'],
+		'private_sent' => ['toname','tonick','color','text','url'],
+		'offline_sent' => ['toname','tonick','color','text','url'],
+		'user_changed' => [],
+		'room_entered' => ['name','nick','fromroom','toroom'],
+		'room_leaved' => ['name','nick','fromroom','toroom'],
+		'room_greeting' => ['name','nick','fromroom','toroom'],
+		'nick_changed' => ['name','nick','oldnick'],
+		'color_changed' => ['color'],
+		'moderated_text' => ['id','name','nick','color','text'],
+		'moderated_sent' => ['id'],
+		'moderation_disable' => ['disable'],
+	},
+	
+	custom_text_filters => {
+		'escape_js' => 'plugindir::TextFilters/Converters.pm',
+		'escape_html' => 'plugindir::TextFilters/Converters.pm',
+		'urlencode' => 'plugindir::TextFilters/Converters.pm',
+		'formatting' => 'plugindir::TextFilters/Formatting.pm',
+		'links' => 'plugindir::TextFilters/Formatting.pm',
+		'smileys' => 'plugindir::TextFilters/Formatting.pm',
+	},
+
+	custom_command_handlers => {
+		'' => 'plugindir::CommandHandlers/TextCommands.pm',
+		'admin' => 'plugindir::CommandHandlers/TextCommands.pm',
+		'broadcast' => 'plugindir::CommandHandlers/TextCommands.pm',
+		'callop' => 'plugindir::CommandHandlers/TextCommands.pm',
+		'me' => 'plugindir::CommandHandlers/TextCommands.pm',
+		'img' => 'plugindir::CommandHandlers/TextCommands.pm',
+		'msg' => 'plugindir::CommandHandlers/PrivateMessages.pm',
+		'imgmsg' => 'plugindir::CommandHandlers/PrivateMessages.pm',
+		'away' => 'plugindir::CommandHandlers/TextCommands.pm',
+		'alive' => 'plugindir::CommandHandlers/MiscCommands.pm',
+		'quit' => 'plugindir::CommandHandlers/MiscCommands.pm',
+		'room' => 'plugindir::CommandHandlers/MiscCommands.pm',
+		'color' => 'plugindir::CommandHandlers/MiscCommands.pm',
+		'nick' => 'plugindir::CommandHandlers/MiscCommands.pm',
+		'invite' => 'plugindir::CommandHandlers/Invitations.pm',
+		'uninvite' => 'plugindir::CommandHandlers/Invitations.pm',
+		'ignore' => 'plugindir::CommandHandlers/Ignoring.pm',
+		'unignore' => 'plugindir::CommandHandlers/Ignoring.pm',
+		'kick' => 'plugindir::CommandHandlers/AdminCommands.pm',
+		'gag' => 'plugindir::CommandHandlers/AdminCommands.pm',
+		'ungag' => 'plugindir::CommandHandlers/AdminCommands.pm',
+		'push' => 'plugindir::CommandHandlers/AdminCommands.pm',
+		'moderated_text' => 'plugindir::Moderation.pm',
+		'addvip' => 'plugindir::CommandHandlers/ModerationCommands.pm',
+		'removevip' => 'plugindir::CommandHandlers/ModerationCommands.pm',
+		'enablemoderation' => 'plugindir::CommandHandlers/ModerationCommands.pm',
+		'disablemoderation' => 'plugindir::CommandHandlers/ModerationCommands.pm',
+	},
+	
+	custom_environment_handlers => ['plugindir::ProxyCheck.pm','plugindir::BasicAuth.pm','plugindir::CookieHandler.pm'],
+
+	custom_user_generators => ['plugindir::GuestLogin.pm'],
+
+	custom_profile_checker => ['plugindir::DataModules/UserModule.pm','plugindir::ProfileCheck.pm'],
+	
+	custom_room_checker => ['plugindir::RoomCheck.pm'],
+
+	custom_login_checker => ['plugindir::BanList.pm','plugindir::MaxUsers.pm'],
+
+	custom_registration_logger => ['plugindir::Logging/UsersLog.pm'],
+
+	custom_deletedusers_logger => ['plugindir::Logging/UsersLog.pm'],
+
+	custom_login_logger => ['plugindir::CookieHandler.pm'],
+
+	custom_logout_logger => [],
+
+	custom_subs => {
+		# User database functions, default module is plugindir::DataModules/UserModule.pm
+		getUsername => 'plugindir::DataModules/UserModule.pm',
+		getPossibleUsernames => 'plugindir::DataModules/UserModule.pm',
+		getAllUsers => 'plugindir::DataModules/UserModule.pm',
+		existsUser => 'plugindir::DataModules/UserModule.pm',
+		addUser => 'plugindir::DataModules/UserModule.pm',
+		saveUser => 'plugindir::DataModules/UserModule.pm',
+		loadUser => 'plugindir::DataModules/UserModule.pm',
+		removeUser => 'plugindir::DataModules/UserModule.pm',
+		getProfileFieldsList => 'plugindir::DataModules/UserModule.pm',
+
+		# Room list functions, default module is plugindir::DataModules/RoomModule.pm
+		getAllRooms => 'plugindir::DataModules/RoomModule.pm',
+		existsRoom => 'plugindir::DataModules/RoomModule.pm',
+		addRoom => 'plugindir::DataModules/RoomModule.pm',
+		saveRoom => 'plugindir::DataModules/RoomModule.pm',
+		loadRoom => 'plugindir::DataModules/RoomModule.pm',
+		removeRoom => 'plugindir::DataModules/RoomModule.pm',
+		isRoomPermitted => 'plugindir::DataModules/RoomModule.pm',
+		getRoomFieldsList => 'plugindir::DataModules/RoomModule.pm',
+
+		# Online list functions, default module is plugindir::DataModules/OnlineModule.pm
+		getUsernameFromID => 'plugindir::DataModules/OnlineModule.pm',
+		getOnlineUsersCount => 'plugindir::DataModules/OnlineModule.pm',
+		getOnlineUsers => 'plugindir::DataModules/OnlineModule.pm',
+		getPossibleOnlineUsers => 'plugindir::DataModules/OnlineModule.pm',
+		isOnline => 'plugindir::DataModules/OnlineModule.pm',
+		addOnlineInfo => 'plugindir::DataModules/OnlineModule.pm',
+		saveOnlineInfo => 'plugindir::DataModules/OnlineModule.pm',
+		getOnlineString => 'plugindir::DataModules/OnlineModule.pm',
+		translateOnlineString => 'plugindir::DataModules/OnlineModule.pm',
+		loadOnlineInfo => 'plugindir::DataModules/OnlineModule.pm',
+		kickUser => 'plugindir::DataModules/OnlineModule.pm',
+		getOnlineFieldsList => 'plugindir::DataModules/OnlineModule.pm',
+
+		# This functions create an array with output parameters, default module is plugindir::Output.pm
+		createOutput => 'plugindir::Output.pm',
+		createErrorOutput => 'plugindir::Output.pm',
+		createInfoOutput => 'plugindir::Output.pm',
+
+		# Mailer functions, default module is plugindir::MailModules/SendmailModule.pm, replace by plugindir::MailModules/SMTPModule.pm if no sendmail program available
+		# plugindir::MailModules/SendmailModule.pm needs the variable 'mailprog', plugindir::MailModules/SMTPModule.pm needs 'smtp_server' to be set.
+		sendMail => 'plugindir::MailModules/SendmailModule.pm',
+
+		# Pipe functions (interprocess communication)
+		# You can use plugindir::PipeModules/SysVPipeModule.pm with Unix-like operation systems
+		# For Windows you need plugindir::PipeModules/SysVPipeModule.pm
+		createPipe => 'plugindir::PipeModules/SysVPipeModule.pm',
+		openPipe => 'plugindir::PipeModules/SysVPipeModule.pm',
+		removePipe => 'plugindir::PipeModules/SysVPipeModule.pm',
+
+		# Template tag equivalents - for alternative template engines
+		proxyCheck => 'plugindir::ProxyCheck.pm',
+		getTimeText => 'plugindir::SimpleTemplateEngine/TimeTags.pm',
+		filterText => 'plugindir::SimpleTemplateEngine/FilterTags.pm',
+
+		# Administration functions
+		saveSettings => 'plugindir::Administration/Settings.pm',
+	},
+
+	###############################
+	# Language dependent settings #
+	###############################
+
+	language_dependent => {
+		german => {
+			lang_name => "Deutsch",
+			
+			directories => {
+				templatedir => "Templates_de",         # Directory with HTML template files
+			},
+
+			aliases => {
+				farbe => 'color',
+				raus => 'quit',
+				raum => 'room',
+				weg => 'away',
+				schubs => 'push',
+				knebel => 'gag',
+				unknebel => 'ungag',
+				analle => 'broadcast',
+				einlad => 'invite',
+				auslad => 'uninvite',
+				profil => 'profile',
+				einstell => 'editprofile',
+			},
+
+			colors => {
+				'weiЯ' => '#FFFFFF',
+				'schwarz' => '#000000',
+				'rot' => '#FF0000',
+				'gelb' => '#FFFF00',
+				'grьn' => '#008000',
+				'purpur' => '#800080',
+				'blau' => '#0000FF',
+				'braun' => '#804000',
+			},
+
+			styles => [
+				['style','Standard'],
+				['style01','Farbschema 1'],
+				['style02','Farbschema 2'],
+				['style03','Farbschema 3'],
+				['style04','Farbschema 4'],
+				['style05','Farbschema 5'],
+				['style06','Farbschema 6'],
+			],
+		},
+
+		english => {
+			lang_name => "English",
+
+			directories => {
+				templatedir => "Templates_en",         # Directory with HTML template files
+			},
+
+			styles => [
+				['style','Default'],
+				['style01','Color scheme 1'],
+				['style02','Color scheme 2'],
+				['style03','Color scheme 3'],
+				['style04','Color scheme 4'],
+				['style05','Color scheme 5'],
+				['style06','Color scheme 6'],
+			],
+		},
+
+		russian => {
+			lang_name => "Russian",
+
+			directories => {
+				templatedir => "Templates_ru",         # Directory with HTML template files
+			},
+
+			aliases => {
+				'цвет' => 'color',
+				'ник' => 'nick',
+				'выйти' => 'quit',
+				'комната' => 'room',
+				'перейти' => 'room',
+				'приват' => 'msg',
+				'уйти' => 'away',
+				'ушёл' => 'away',
+				'ушел' => 'away',
+				'безулыбок' => 'smileys off',
+				'сулыбками' => 'smileys on',
+				'игнорировать' => 'ignore',
+				'игнор' => 'ignore',
+				'-игнорировать' => 'unignore',
+				'-игнор' => 'unignore',
+				'пригласить' => 'invite',
+				'-пригласить' => 'uninvite',
+				'картинка' => 'img',
+				'всем' => 'broadcast',
+				'выкинуть' => 'kick',
+				'толкнуть' => 'push',
+				'заткнуть' => 'gag',
+				'-заткнуть' => 'ungag',
+				'админ' => 'admin',
+				'профиль' => 'profile',
+			},
+
+			colors => {
+				'белый' => '#FFFFFF',
+				'чёрный' => '#000000',
+				'черный' => '#000000',
+				'красный' => '#FF0000',
+				'жёлтый' => '#FFFF00',
+				'желтый' => '#FFFF00',
+				'розовый' => '#FF00FF',
+				'зелёный' => '#008000',
+				'зеленый' => '#008000',
+				'оранжевый' => '#FF8000',
+				'пурпурный' => '#800080',
+				'синий' => '#0000FF',
+				'бежевый' => '#F5F5DC',
+				'коричневый' => '#804000',
+			},
+
+			styles => [
+				['style','Стандарный'],
+				['style01','Скин 1'],
+				['style02','Скин 2'],
+				['style03','Скин 3'],
+				['style04','Скин 4'],
+				['style05','Скин 5'],
+				['style06','Скин 6'],
+			],
+		},
+	},
+};

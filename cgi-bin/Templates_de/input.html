@@ -1,0 +1,173 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+	<script language="JavaScript">
+		cgi='{GET_JS|$runtime.completeurl}';
+
+		function openLog(width,height)
+		{
+			var left = (screen.availWidth-width)/2;
+			var top = (screen.availHeight-height)/2;
+
+			var toDo = "";
+			if (parent.log)
+				toDo += parent.log;
+			
+			if (parent.messages && parent.messages.document && parent.messages.document.body && parent.messages.document.body.innerHTML)
+			{
+				var text = parent.messages.document.body.innerHTML;
+				if (text.indexOf('Wladimir Palant -->'))
+					text=text.substr(text.indexOf('Wladimir Palant -->')+19);
+				if (text.indexOf('Sascha Heldt -->'))
+					text=text.substr(text.indexOf('Sascha Heldt -->')+16);
+				toDo += text;
+			}
+
+			var html = '{DOFILTER|escape_js}{INCLUDE|log_top}{ENDDO}\n';
+			var lines = toDo.split("\n");
+			var isScript = 0;
+			for (var i=0;i<lines.length;i++)
+			{
+				if (!isScript && lines[i].match(/<script>/i))
+					isScript = 1;
+				else if (isScript && lines[i].match(/<\/script>/i))
+					isScript = 0;
+				else if (!isScript)
+				{
+					lines[i]=lines[i].replace(/ onclick=\"[^\"]*\"/ig,"").replace(/ href=\"javascript:[^\"]*\"/ig," href=\"javascript:void(0)\"");
+					html += lines[i]+'\n';
+				}
+			}
+
+			html += '{DOFILTER|escape_js}{INCLUDE|log_bottom}{ENDDO}';
+
+			var wnd = window.open('','log','resizable=yes,scrollbars=yes,width='+width+',height='+height+',left='+left+',top='+top);
+			wnd.document.open('text/html; charset={GET_JS|$current_language.charset}');
+			wnd.document.writeln(html);
+			wnd.document.close();
+			wnd.htmlcode = html;
+			wnd.focus();
+		}
+
+		function init()
+		{
+			parent.admin_mode = 0;
+
+			{IF|$current_user.pull}
+				parent.aliveInterval={GET|$settings.alive_test_rate_pull}*1000/10;
+			{ELSE}
+				parent.aliveInterval={GET|$settings.alive_test_rate_push}*1000/2.5;
+			{ENDIF}
+			parent.send_blocking_timeout={GET|$settings.send_blocking_timeout}*1000;
+			
+			parent.delayFactor = 1;
+
+			parent.aliases = new Array();
+			{FOREACH|$alias|$settings.aliases}
+				parent.aliases[' /{GET_JS|$alias.name}'] = '/{GET_JS|$alias.value}';
+			{ENDFOR}
+
+			parent.jscommands = new Array();
+			{FOREACH|$command|$settings.jscommands}
+				parent.jscommands[' /{GET_JS|$command.name}'] = '{GET_JS|$command.value}';
+			{ENDFOR}
+
+			document.inputForm.text.onkeydown=keyHandler;
+
+			parent.lasttextid = '';
+			parent.setTimeout("if (window.lasttextid == '"+parent.lasttextid+"' && window.input) window.input.sendText('/alive')",parent.aliveInterval);
+			setNewTextId(1);
+			
+			document.inputForm.text.focus()
+		}
+
+		function keyHandler(e)
+		{
+			if (window.event)
+				e=event;
+
+			if (e && e.keyCode == 13 && e.ctrlKey)
+			{
+				doSend();
+				event.returnValue = false;
+			}
+		}
+	</script>
+</head>
+<body marginheight=0 marginwidth=0 leftmargin=0 topmargin=0 onload="init();addFocusHandlers();">
+
+<table border=0 width="100%">
+<tr>
+	<form name="sendForm" method="POST" action="{GET_JS|$runtime.chaturl}" target="dummy">
+		{GET|$runtime.hiddenfields}
+		<input type=hidden name=action value=send>
+		<input type=hidden name=text value="">
+		<input type=hidden name=textid value="">
+	</form>
+	<form name="auxForm" method="POST" action="{GET_JS|$runtime.chaturl}">
+		{GET|$runtime.hiddenfields}
+		<input type=hidden name=template>
+		<input type=hidden name=param>
+	</form>
+	<form name="inputForm" onSubmit="doSend();return false;" action="javascript:void(0)">
+	<td width="100%">
+		<input type=text name=text value="" size=50 maxlength=255 style="width:100%" autocomplete=off onselect="storeCaret(this)" onclick="storeCaret(this)" onkeyup="storeCaret(this)">
+	</td>
+	<td id="testcell">
+		<input type=submit value="Senden">
+	</td>
+	<script language="JavaScript">
+		if (document.getElementById)
+		{
+			document.write(
+				'<td valign=center align="center">'+
+					'<table border=0 cellpadding=0 cellspacing=0 width=51 class=outer><tr><td>'+
+						'<table border=0 cellspacing=1 cellpadding=0 width=51><tr class=row2><td>'+
+							'<table border=0 cellspacing=0 cellpadding=0 width=51><tr>'+
+								'<td id="connection" title="Verbindungsqualität" bgcolor="#00FF00" width="100%">{IMAGE|blank|width=1 height=10}</td>'+
+								'<td>{IMAGE|blank|width=1 height=10}</td>'+
+								'<td></td>'+
+							'</tr></table>'+
+						'</td></tr></table>'+
+					'</td></tr></table>'+
+					'<span class="smalltext">connection</span>'+
+				'</td>');
+		}
+	</script>
+	</form>
+</tr>
+</table>
+<table witdth="100%" border=0>
+<form>
+<tr>
+	<td nowrap width="100%">
+		<a href="javascript:void(0)" onclick="openWindow('smileys',200,480);return false;" class="stdlink">Smileys</a> &nbsp;
+		<a href="javascript:void(0)" onclick="openWindow('editprofile',480,480);return false;" class="stdlink">Einstellungen</a> &nbsp;
+		<script language="JavaScript">
+			if (document.body && document.body.innerHTML)
+				document.writeln('<a href="javascript:void(0)" onclick="openLog(600,480);return false;" class="stdlink">Log</a> &nbsp;');
+		</script>
+		<a href="javascript:void(0)" onclick="openWindow('search',480,300);return false;" class="stdlink">Benutzersuche</a> &nbsp;
+		<a href="javascript:void(0)" onclick="openWindow('roomlist',600,480);return false;" class="stdlink">Raumliste</a> &nbsp;
+		{IF|permission(admin)}
+			<a href="javascript:void(0)" onclick="openWindow('admin.menu',700,480);return false;" class="stdlink">Admin</a> &nbsp;
+		{ENDIF}
+		<a href="javascript:void(0)" onclick="sendText('/quit');return false;" class="stdlink">Logout</a> &nbsp; &nbsp; &nbsp;
+		<a href="javascript:void(0)" onclick="openWindow('commands',800,480);return false;" class="stdlink">Hilfe</a>
+	</td>
+	{IF|permission(command.admin)}
+		<td nowrap>
+			<input type=checkbox value=1 onclick="parent.admin_mode=checked">Admin-Modus
+		</td>
+	{ENDIF}
+</tr>
+</form>
+</table>
+
+</body>
+</html> 

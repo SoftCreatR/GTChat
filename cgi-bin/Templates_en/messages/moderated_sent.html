@@ -1,0 +1,6 @@
+{NEED|$current_room}
+{IF|$current_room.owner eq $current_user.name or permission(rooms_moderate)}
+<script>
+	removeModeratedText('{GET_JS|$params.id}');
+</script>
+{ENDIF}

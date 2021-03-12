@@ -1,0 +1,16 @@
+# Allow to access only files with pl or cgi extension
+
+AuthUserFile /dev/null
+AuthGroupFile /dev/null
+AuthName DenyViaWeb
+AuthType Basic
+
+order allow,deny
+deny from all
+
+<FilesMatch \.(pl|cgi)$>
+	order deny,allow
+
+	deny from none
+	allow from all
+</FilesMatch>

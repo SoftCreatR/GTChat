@@ -1,0 +1,7 @@
+{IF|$current_user.popup_privatemsg}
+	<script>
+		writePrivateMsg('{GET_ESCAPED|$params.name}','{GET_ESCAPED|$params.nick}','{IF|$current_user.show_time}({GETTIME}) {ENDIF}<FONT color="{GET_JS|$params.color}"><b>{GET_JS|$params.nick}:</b> {IF|$params.url}<img src="{GET_JS|$params.url}">{ELSE}{DOFILTER|links|formatting|smileys}{GET_JS|$params.text}{ENDDO}{ENDIF}</font><br>');
+	</script>
+{ELSE}
+	{IF|$current_user.show_time}({GETTIME}) {ENDIF}<font color="{GET|$params.color}"><b><a href="javascript:void(0)" onfocus="resetFocus()" onclick="insertText('/msg {GET_JS|$params.nick} ');return false;" style="color:{GET|$params.color}">{GET|$params.nick}</a> (приват):</b> {IF|$params.url}<img src="{GET|$params.url}">{ELSE}{DOFILTER|links|formatting|smileys}{GET|$params.text}{ENDDO}{ENDIF}</font><br> 
+{ENDIF} 

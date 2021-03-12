@@ -1,0 +1,27 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<title>{GET|$settings.chatname}</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+	<script language="JavaScript">
+		function doLogout()
+		{
+			if (!window.exiting)
+			{
+				window.exiting = 1;
+				openCenteredWindow('{GET_JS|$runtime.completeurl}&action=send&text=%2Fquit&textid='+(new Date).getTime()+'&template=message&message=error_logout&image=error','_blank',480,150);
+			}
+		}
+	</script>
+</head>
+<frameset rows="*,70,0" frameborder=0 border=0 framespacing=0 onbeforeunload="doLogout()" onunload="doLogout()">
+	<frameset cols="*,200">
+		<frame name=messages src="{GET|$runtime.completeurl}&action=messages" scrolling=auto>
+		<frame name=users src="{GET|$runtime.completeurl}&template=users" scrolling=auto>
+	</frameset>
+	<frame name=input src="{GET|$runtime.completeurl}&template=input" scrolling=no>
+	<frame name=dummy src="dummy.html" scrolling=no noresize>
+</frameset>
+</html> 

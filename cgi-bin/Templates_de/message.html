@@ -1,0 +1,23 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+</head>
+
+<body onload="autosize(window)">
+
+<table align=center valign=center border="0">
+<tr>
+	<td>{IF|$input.image}{IMAGE|$input.image}{ELSE}&nbsp;{ENDIF}</td>
+	<td>{MESSAGE|$input.message}</td>
+</tr>
+<tr>
+	<td colspan="2" align="center"><form><input type="button" value="Fenster schlie&szlig;en" onclick="window.close()"></form></td>
+</tr>
+</table>
+
+</body>
+</html> 

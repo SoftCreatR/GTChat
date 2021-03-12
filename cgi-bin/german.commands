@@ -1,0 +1,159 @@
+return {
+	__order => ['','admin','broadcast','callop','me','away','img','msg','imgmsg','quit','clear','refresh','room','nick','color','ignore','unignore','invite','uninvite','kick','gag','ungag','push','profile','editprofile','roomlist','editroom','addvip','removevip','disablemoderation','enablemoderation'],
+	__hide => ['alive','moderated_text'],
+	'' => 
+	{
+		params => '[@Nick1] [@Nick2] Text',
+		description => 'Schickt einen Text an alle Benutzer in diesem Raum. Falls vor dem Text einer oder mehrere Nicks mit dem @-Zeichen stehen, wird "(an Nick1, Nick2)" dazugeschrieben.',
+	},
+	'broadcast' =>
+	{
+		params => 'Text',
+		description => 'Schickt eine Nachricht an alle Benutzer im Chat, auch die in anderen Räumen.',
+	},
+	'callop' =>
+	{
+		params => 'Text',
+		description => 'Schickt eine Nachricht an alle Administratoren, die sich gerade im Chat befinden, auch die in anderen Räumen.',
+	},
+	'me' => 
+	{
+		params => 'Text',
+		description => 'Zeigt den Text als Aktion an, z.B. ergibt die Eingabe von "/me geht jetzt weg" durch Benutzer Musteruser den Text "<Musteruser geht jetzt weg>".',
+	},
+	'away' =>
+	{
+		params => 'Grund',
+		description => 'Benachrichtigt die Benutzer in dem Raum, daß man weg ist, es kann auch ein Grund angegeben werden. Der Name wird dann in der Benutzerliste kursiv und in Klammern angezeigt, im Profil steht der Abwesenheitsgrund. Man ist "wieder da", sobald man etwas im Chat schreibt.',
+	},
+	'img' =>
+	{
+		params => 'Bild-URL',
+		description => 'Schickt ein Bild an alle Benutzer in diesem Raum.',
+	},
+	'msg' =>
+	{
+		params => 'Nick Text',
+		description => 'Schickt eine Privatnachricht an einen Benutzer, der sich auch in einem anderen Raum befinden darf. Wenn der Benutzer nicht im Chat ist, wird eine Offline-Nachricht hinterlassen.',
+	},
+	'imgmsg' =>
+	{
+		params => 'Nick Bild-URL',
+		description => 'Schickt ein Bild als eine Privatnachricht an einen Benutzer. Wenn der Benutzer nicht im Chat ist, wird eine Offline-Nachricht hinterlassen.',
+	},
+	'quit' =>
+	{
+		params => '',
+		description => 'Den Chat verlassen.',
+	},
+	'clear' =>
+	{
+		params => '',
+		description => 'Leert den Chat. Das ist sinnvoll, falls sich im Chat so viel Text gesammelt hat, daß der Browser dadurch langsam wird.',
+	},
+	'refresh' =>
+	{
+		params => '',
+		description => 'Lädt die Benutzerliste neu (sollte normalerweise automatisch passieren).',
+	},
+	'room' =>
+	{
+		params => 'Raumname',
+		description => 'Wechselt in einen anderen Raum.',
+	},
+	'nick' =>
+	{
+		params => 'Nick',
+		description => 'Ändern den Nick, falls der neue Nick noch frei ist.',
+	},
+	'color' =>
+	{
+		params => 'Farbwert',
+		description => 'Ändert die Farbe, mit der die Texte geschickt werden. Mögliche Farben sind "rot", "grün" usw. oder ein RGB-Wert wie z.B. "A0B8CD" (siehe Farbpalette im Profil)',
+	},
+	'ignore' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Setzt neue Namen auf die Liste der ignorierten Benutzer, diese erhalten dann eine Benachrichtigung und man kann von ihnen nichts mehr empfangen. Mit jedem Login wird die Liste geleert. /ignore ohne Namen dahinter gibt die Liste ignorierter Benutzer aus.',
+	},
+	'unignore' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Entfernt Namen von der Liste der ignorierten Benutzer.',
+	},
+	'invite' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Nur für Raumbesitzer und Admins: lädt Benutzer in einen privaten Raum ein. Die Einladung ist dauerhaft und bleibt auch nach dem Logout erhalten. Falls kein Nick angegeben ist, wird die Liste der eigeladenen Benutzer ausgegeben.',
+	},
+	'uninvite' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Nur für Raumbesitzer und Admins: streicht Benutzer von der Liste der Einladungen für einen privaten Raum. Falls der Benutzer noch im Raum ist, wird er rausgeschmissen.',
+	},
+	'kick' =>
+	{
+		params => 'Nick',
+		description => 'Schmeißt einen Benutzer aus dem Chat.',
+	},
+	'gag' =>
+	{
+		params => 'Nick Zeit',
+		description => 'Knebelt einen Benutzer für eine Anzahl von Minuten (5 Minuten sind Standard). Dieser kann dann nichts mehr sagen.',
+	},
+	'ungag' =>
+	{
+		params => 'Nick',
+		description => 'Erlaubt einem geknebelten Benutzer wieder das Sprechen.',
+	},
+	'push' =>
+	{
+		params => 'Nick Raum',
+		description => 'Schmeißt einen Benutzer in einen anderen Raum. Falls kein Raum genannt wird, wird der Standardraum genommen.',
+	},
+	'profile' =>
+	{
+		params => 'Nick',
+		description => 'Ein Profil anzeigen, falls kein Nick angegeben, wird das eigene Profil geöffnet.',
+	},
+	'editprofile' =>
+	{
+		params => 'Nick',
+		description => 'Profil bearbeiten, falls kein Nick angegeben, wird das Dialog zum Bearbeiten des eigenen Profils geöffnet.',
+	},
+	'roomlist' =>
+	{
+		params => '',
+		description => 'Raumliste öffnen.',
+	},
+	'editroom' =>
+	{
+		params => 'Raum',
+		description => 'Raum bearbeiten, falls kein Raumname angegeben, wird der aktuellen Raum genommen.',
+	},
+	'admin' =>
+	{
+		params => '[@Nick1] [@Nick2] Text',
+		description => 'Genau wie normaler Text, aber der Text erscheint etwas größer, um die Aufmerksamkeit der Benutzer zu erringen.',
+	},
+	'addvip' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Nur für Moderatoren: einen oder mehrere Benutzer zu VIPs im aktuellen Raum ernennen.',
+	},
+	'removevip' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Nur für Moderatoren: einem oder mehreren Benutzern den VIP-Status im aktuellen raum wegnehmen.',
+	},
+	'disablemoderation' =>
+	{
+		params => '',
+		description => 'Moderationsinterface abschalten. Hat man Moderationsrechte in einem Raum, erscheint das Moderationsfenster bei ankommenden Texten nicht mehr. Beim erneuten Login ist das Moderationsinterface automatisch wieder aktiv.',
+	},
+	'enablemoderation' =>
+	{
+		params => '',
+		description => 'Aktiviert das Moderationsinterface wieder, nachdem es mit /disablemoderation abgeschaltet wurde. Beim erneuten Login passiert das automatisch.',
+	},
+};

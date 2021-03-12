@@ -1,0 +1,37 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+</head>
+
+<body>
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>Смайлик</th>
+		<th>Сокращения (разделять пробелами)</th>
+		<th>Показывать в списке</th>
+		<th>&nbsp;</th>
+	</tr>
+	<tr class=row2>
+		<form action="javascript:void(0)" onsubmit="parent.addEntry(smiley.value);return false">
+		<td colspan=4>
+			<table border=0 width="100%">
+			<tr>
+				<td align=left>
+					Новый смайлик:
+					<select name=smiley>
+						<option value="">Выберите картинку
+						%%options%%
+					</select>
+					<input type=submit class="plain" class="netscape-dummy" value="Добавить">
+				</td>
+				<td align=right><input type=button class="plain" class="netscape-dummy" value="Записать" onclick="parent.setTimeout('save()',0);return false">&nbsp;<input type=button class="plain" class="netscape-dummy" value="Отменить" onclick="parent.setTimeout('cancel()',0);return false"></td>
+			</tr>
+			</table>
+		</td>
+		</form>
+	</tr>
+	<form action="javascript:void(0)" onsubmit="return false" name="inputForm">

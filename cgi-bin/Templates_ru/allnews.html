@@ -1,0 +1,33 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>Новости чата</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+</head>
+
+<body onload="autosize(window)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th colspan="2">Новости чата</th>
+	</tr>
+
+	{FOREACH|$message|$news.messages}
+		<tr class="row2">
+			<td>{GETDATE|$message.date}</td>
+			<td>{DOFILTER|links|formatting|smileys}{GET|$message.message}{ENDDO} {IF|$message.author}- <i>от {GET|$message.author}</I>{ENDIF}</td>
+		</tr>
+	{ENDFOR}
+</table>
+</td></tr></table>
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Закрыть окно</a>
+</div>
+
+</body>
+</html> 

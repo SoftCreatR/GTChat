@@ -1,0 +1,190 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+	<script language="JavaScript">
+		cgi='{GET_JS|$runtime.completeurl}';
+	</script>
+</head>
+<body marginwidth=36 leftmargin=36>
+
+<div class="headertext">
+	<br><br>
+	{IF|$news.message}
+		<b>Chat-News</b> ({GETDATE|$news.date}): {DOFILTER|links|formatting|smileys}{GET|$news.message}{ENDDO} {IF|$news.author}- <i>von {GET|$news.author}</i>{ENDIF}
+		<br>
+		{IF|$news.messagecount>1}
+			<div class="smalltext">
+				<a href="{GET|$runtime.completeurl}&template=allnews" onclick="openWindow('allnews',600,200);return false;" class="stdlink">Alle Chat-News anzeigen</a>
+			</div>
+		{ENDIF}
+	{ENDIF}
+	<br>
+</div>
+
+{NEED|$environment}
+<form method=POST action="{GET|$runtime.chaturl}">
+{GET|$runtime.hiddenfields}
+<input type=hidden name=action value=register>
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+<tr>
+	<th>Neuen Chat-Account erstellen</th>
+</tr>
+<tr class="row2"><td><table width="100%" cellspacing=5>
+	<tr>
+		<td colspan=2>
+			{IF|!$environment.has_uncrypted_password}
+				Es ist wichtig, da&szlig; Sie eine korrekte Mail-Adresse angeben, f&uuml;r den Fall, da&szlig; Sie Ihr Pa&szlig;wort vergessen.
+				<br><br>
+			{ENDIF}
+			<a href="{GET|$runtime.completeurl}&template=allusers" onclick="openWindow('allusers',430,480);return false;">Hier</a> findet man die Liste bereits existierender Nicknames. Sie k&ouml;nnen kein Nickname nehmen, das bereits verwendet wird.
+			<br><br>
+		</td>
+	</tr>
+	<tr class="row1">
+		<td colspan=2><b>Ben&ouml;tigte Informationen</b></td>
+	</tr>
+
+	{IF|$environment.is_username}
+		<tr>
+			<td>Benutzername:</td>
+			<td>
+				{IF|$environment.has_uncrypted_password}
+					<input type=hidden name=name value="{GET|$environment.name}">{GET|$environment.name}
+				{ELSE}
+					<input type=text name=name size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.name[0]}" value="{GET|$environment.name}">
+				{ENDIF}
+			</td>
+		</tr>
+	{ENDIF}
+	<tr>
+		<td width="30%">Nickname:</td>
+		<td width="70%">
+			{IF|$environment.is_username}
+				<input type=text name=nick size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.nick[0]}">
+			{ELSE}
+					{IF|$environment.has_uncrypted_password}
+						<input type=hidden name=nick value="{GET|$environment.name}">{GET|$environment.name}
+					{ELSE}
+						<input type=text name=nick size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.nick[0]}" value="{GET|$environment.name}">
+					{ENDIF}
+			{ENDIF}
+		</td>
+	</tr>
+	{IF|!$environment.has_uncrypted_password}
+		<tr>
+			<td>Pa&szlig;wort:</td>
+			<td><input type=password name=password size=30 style="width:100%" maxlength=10></td>
+		</tr>
+		<tr>
+			<td>Pa&szlig;wortwiederholung:</td>
+			<td><input type=password name=password2 size=30 style="width:100%" maxlength=10></td>
+		</tr>
+	{ENDIF}
+	<tr>
+		<td>E-Mail:</td>
+		<td>
+			<input type=text name=email size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.email[0]}"><br>
+			<input type=checkbox name=privateemail value="1"{IIF|$environment.privateemail| checked}><span class="smalltext">nur den Admins zeigen</span>
+		</td>
+	</tr>
+
+	<tr class="row1">
+		<td colspan=2><b>Zus&auml;tzliche Informationen</b></td>
+	</tr>
+
+	<tr>
+		<td width="30%">Website&nbsp;(Bezeichnung):</td>
+		<td width="70%"><input type=text name=homepagetitle size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.homepagetitle[0]}"></td>
+	</tr>
+	<tr>
+		<td>Website&nbsp;(URL):</td>
+		<td><input type=text name=homepage size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.homepage[0]}" value="http://"></td>
+	</tr>
+
+	<tr>
+		<td>Geschlecht:</td>
+		<td>
+			<select name="gender">
+				<option value=0>(kein Kommentar)
+				<option value=1{IIF|$environment.gender==1| selected}>m&auml;nnlich
+				<option value=2{IIF|$environment.gender==2| selected}>weiblich
+			</select>
+		</td>
+	</tr>
+
+	<tr>
+		<td>Geburtsdatum:</td>
+		<td>
+			<input type=text name="birth_day" size=4 maxlength=3 value="Tag" onFocus="if (value=='Tag') value=''" onBlur="if (value=='') value='Tag'">
+			<select name="birth_month">
+				<option value=0>Monat
+				<option value=1>Januar
+				<option value=2>Februar
+				<option value=3>M&auml;rz
+				<option value=4>April
+				<option value=5>Mai
+				<option value=6>Juni
+				<option value=7>Juli
+				<option value=8>August
+				<option value=9>September
+				<option value=10>Oktober
+				<option value=11>November
+				<option value=12>Dezember
+			</select>
+			<input type=text name="birth_year" size=4 maxlength=4 value="Jahr" onFocus="if (value=='Jahr') value=''" onBlur="if (value=='') value='Jahr'">
+		</td>
+	</tr>
+
+	<tr class="row1">
+		<td colspan=2><b>Chat-Einstellungen</b></td>
+	</tr>
+
+	<tr>
+		<td width="30%">
+			Zeitdifferenz:<br>
+			<span class="smalltext">Anzahl Stunden +/- zur Chat-Zeit f&uuml;r Zeit-Anzeigen</span>
+		</td>
+		<td width="70%">
+			<input type=input name=timeoffset size=6 maxlength=3 value="{GET|$environment.timeoffset}"><br>
+			<span class="smalltext">Aktuelle Chat-Zeit: {GETTIME}</span>
+		</td>
+	</tr>
+	<tr>
+		<td>Smileys deaktivieren:</td>
+		<td><input type=checkbox name=nosmileys value="1"{IIF|$environment.nosmileys| checked}></td>
+	</tr>
+	<tr>
+		<td>Privatnachrichten im Extra-Fenster anzeigen:</td>
+		<td><input type=checkbox name="popup_privatemsg" value="1"{IIF|$environment.popup_privatemsg| checked}></td>
+	</tr>
+	<tr>
+		<td>Zeit anzeigen:</td>
+		<td><input type=checkbox name="show_time" value="1"{IIF|$environment.show_time| checked}></td>
+	</tr>
+
+	<tr>
+		<td colspan=2>&nbsp;</td>
+	</tr>
+	<tr>
+		<td colspan=2 align=center><input type=submit value="Account erstellen"></td>
+	</tr>
+
+</td></tr></table>
+
+</table>
+</td></tr></table>
+
+</form>
+
+<div align=center class="headertext">
+	{COPYRIGHT}
+</div>
+
+</body>
+</html> 

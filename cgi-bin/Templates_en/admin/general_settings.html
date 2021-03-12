@@ -1,0 +1,237 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_general_settings}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+
+	<script language="JavaScript">
+		var info = '{DOFILTER|escape_js}{INCLUDE|admin/general_settings_info}{ENDDO}';
+
+		var old_settings = new Array();
+		{FOREACH|$entry|$settings}
+			old_settings['settings.{GET_JS|$entry.name}'] = '{GET_JS|$entry.value}';
+		{ENDFOR}
+		
+		function toHTML(str)
+		{
+			var replacements = new Array();
+			replacements['&'] = '&amp;';
+			replacements['"'] = '&quot;';
+			replacements['<'] = '&lt;';
+			replacements['>'] = '&gt;';
+
+			// escape relevant HTML symbols
+			// must do it this way, Opera doesn't know RegExp
+			var pos;
+			var ret = "";
+			str = str.replace(/\n/g,'');
+			str = str.replace(/\r/g,'');
+			while ((pos = str.search(/([&"<>])/)) != -1)
+			{
+				ret += str.substr(0, pos) + replacements[str.substr(pos,1)];
+				str = str.substring(pos+1, str.length);
+			}
+			ret += str;
+			return ret;
+		}
+
+		function showInfo(text)
+		{
+			var wnd = top.opener.openCenteredWindow('','general_settings_info',400,100);
+			wnd.document.open('text/html','replace');
+			wnd.document.write(info.replace(/\%\%text\%\%/g,text));
+			wnd.document.close();
+		}
+
+		function checkInput(form)
+		{
+			form['settings.chatname'].value = toHTML(form['settings.chatname'].value);
+			form['settings.webmaster_email'].value = form['settings.webmaster_email'].value.replace(/[<>"&]/g,'');
+		
+			form['settings.alive_test_rate_push'].value = parseInt(form['settings.alive_test_rate_push'].value) || 2;
+			if (form['settings.alive_test_rate_push'].value < 2)
+				form['settings.alive_test_rate_push'].value = 2;
+
+			form['settings.alive_test_rate_pull'].value = parseInt(form['settings.alive_test_rate_pull'].value) || 2;
+			if (form['settings.alive_test_rate_pull'].value < 2)
+				form['settings.alive_test_rate_pull'].value = 2;
+
+			form['settings.autokick_test_rate'].value = parseInt(form['settings.autokick_test_rate'].value) || 0;
+			if (form['settings.autokick_test_rate'].value < 0)
+				form['settings.autokick_test_rate'].value = 0;
+
+			form['settings.send_blocking_timeout'].value = parseInt(form['settings.send_blocking_timeout'].value) || 2;
+			if (form['settings.send_blocking_timeout'].value < 2)
+				form['settings.send_blocking_timeout'].value = 2;
+
+			form['settings.logoutreason_keeping_time'].value = parseInt(form['settings.logoutreason_keeping_time'].value) || 0;
+			if (form['settings.logoutreason_keeping_time'].value < 0)
+				form['settings.logoutreason_keeping_time'].value = 0;
+
+			form['settings.pwseed'].value = form['settings.pwseed'].value.replace(/[<>"&]/g,'');
+			while (form['settings.pwseed'].value.length<2)
+				form['settings.pwseed'].value += 'a';
+				
+			window.cancelled = 1;
+		}
+
+		function cancel(unload)
+		{
+			if (window.cancelled)
+				return;
+
+			var elements = document.inputForm.elements;
+			var changed = false;
+			for (var i=0;!changed && i<elements.length;i++)
+			{
+				if (elements[i].name.match(/^settings\.(.*)/))
+				{
+					if (elements[i].type.match(/select/))
+						changed = (elements[i].options[elements[i].selectedIndex].value != old_settings[elements[i].name]);
+					else
+						changed = (elements[i].value != old_settings[elements[i].name]);
+				}
+			}
+			
+			if (changed)
+			{
+				var msg = 'Do you really want to discard all changes?';
+				if (unload)
+					return msg;
+				else if (!confirm(msg))
+					return;
+			}
+
+			window.cancelled = 1;
+				
+			parent.writeMenu();
+		}
+	</script>
+</head>
+
+<body onload="parent.autosize(window)" onbeforeunload="return cancel(1)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>General setting</th>
+	</tr>
+	<form name="inputForm" method="post" action="{GET|$runtime.chaturl}" onsubmit="checkInput(this)">
+	{GET|$runtime.hiddenfields}
+	<input type=hidden name=action value="admin_general_settings">
+	<tr class="row2">
+		<td align=right><input type=submit class="plain" class="netscape-dummy" value="Save"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Cancel" onclick="cancel();return false"></td>
+	</tr>
+	<tr class="row2">
+		<td><table border=0 cellpadding=5 cellpadding=0 width="100%">
+		<tr>
+			<td>{IMAGE|error}</td>
+			<td width="100%">Many of this settings can cause severe problems when used the wrong way. If you change anything here make sure that you know exactly what you do! Click on the question mark to obtain a more detailed description of the setting.</td>
+		</tr>
+		</table></td>
+	</tr>
+	<tr class="row2">
+		<td><table border=0 cellspacing=5 cellpadding=0 width="100%">
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Name of your chat that will be displayed in system messages and as a title in many HTML pages.');return false">{IMAGE|question}</a></td>
+			<td>Chat name:</td>
+			<td><input type=text name="settings.chatname" maxlength=255 style="width:100%" value="{GET|$settings.chatname}"></td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Address that will be put into the From field of the mails sent by the chat.');return false">{IMAGE|question}</a></td>
+			<td>Email address of the chat's owner:</td>
+			<td><input type=text name="settings.webmaster_email" maxlength=255 style="width:100%" value="{GET|$settings.webmaster_email}"></td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Browser sends automatic messages to the server at regular intervals to show that the user is still online. If no messages are received for some time this indicates that the user closed his browser window without logging out. Here you can set the period of time in the standard mode after that the user is logged out automatically if no messages are received.');return false">{IMAGE|question}</a></td>
+			<td>Connection checking in standard mode every:</td>
+			<td><input type=text name="settings.alive_test_rate_push" length=5 maxlength=4 value="{GET|$settings.alive_test_rate_push}"> seconds</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Browser sends automatic messages to the server at regular intervals to show that the user is still online. If no messages are received for some time this indicates that the user closed his browser window without logging out. Here you can set the period of time in the safe mode after that the user is logged out automatically if no messages are received.');return false">{IMAGE|question}</a></td>
+			<td>Connection checking in safe mode every:</td>
+			<td><input type=text name="settings.alive_test_rate_pull" length=5 maxlength=4 value="{GET|$settings.alive_test_rate_pull}"> seconds</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Period of time after which users should be logged out automatically (with an appropriate message) if they don\'t say anything. Set it to 0 seconds to deactivate the feature.');return false">{IMAGE|question}</a></td>
+			<td>Kick silent users out after:</td>
+			<td><input type=text name="settings.autokick_test_rate" length=5 maxlength=4 value="{GET|$settings.autokick_test_rate}"> seconds</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('After user clicks the &quot;Send&quot; button all new texts are queued instead of being sent until a positive response from the server is received. This setting sets the time period to wait for the response, after which the attempt to send is aborted and repeated anew.');return false">{IMAGE|question}</a></td>
+			<td>Abort an attempt to send after:</td>
+			<td><input type=text name="settings.send_blocking_timeout" length=5 maxlength=4 value="{GET|$settings.send_blocking_timeout}"> seconds</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('When a user is logged out by some reason, the reason is saved into a file to be retrieved and displayed in the logout page. If the user didn\'t reach the logout page his logout reason can be removed after this period of time.');return false">{IMAGE|question}</a></td>
+			<td>Keep the logout reason:</td>
+			<td><input type=text name="settings.logoutreason_keeping_time" length=5 maxlength=4 value="{GET|$settings.logoutreason_keeping_time}"> seconds</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Mostly important with mod_perl. With mod_perl the templates are cached in memory, there is a limited caching with normal CGI as well. If this option is selected the chat will perform a check before using the template. If the template has changed on disk it will be reloaded. Normally templates aren\'t changed very often so this option should be deactivated for performance reasons.');return false">{IMAGE|question}</a></td>
+			<td>Check the templates for modification:</td>
+			<td>
+				<select name="settings.check_template_modification" style="width:100%">
+					<option value=1 {IIF|$settings.check_template_modification|selected}>yes
+					<option value=0 {IIF|!$settings.check_template_modification|selected}>no
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Only important with mod_perl. With mod_perl the plugins are cached in memory. If this option is selected the chat will perform a check before using the plugin. If the plugin has changed on disk it will be reloaded. Normally plugins aren\'t changed very often so this option should be deactivated for performance reasons.');return false">{IMAGE|question}</a></td>
+			<td>Check the plugins for modification:</td>
+			<td>
+				<select name="settings.check_module_modification" style="width:100%">
+					<option value=1 {IIF|$settings.check_module_modification|selected}>yes
+					<option value=0 {IIF|!$settings.check_module_modification|selected}>no
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('The chat can remove empty lines and superfluous spaces from the generated HTML pages. This doesn\'t save any noteworthy amount of traffic and has only aesthetical reasons.');return false">{IMAGE|question}</a></td>
+			<td>Remove empty lines from HTML pages:</td>
+			<td>
+				<select name="settings.compress_output" style="width:100%">
+					<option value=1 {IIF|$settings.compress_output|selected}>yes
+					<option value=0 {IIF|!$settings.compress_output|selected}>no
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Method used to prevent simultaneous file access. Usually the flock() function should be used. Locking by the Perl module Win32::Semaphore should be only used on Windows 95/98/ME that doesn\'t implement this function. You should never deactivate file locking completely, this could lead to severe data loss.');return false">{IMAGE|question}</a></td>
+			<td>File blocking method:</td>
+			<td>
+				<select name="settings.lock_type" style="width:100%">
+					<option value=0 {IIF|$settings.lock_type == 0|selected}>no locking
+					<option value=1 {IIF|$settings.lock_type == 1|selected}>flock
+					<option value=2 {IIF|$settings.lock_type == 2|selected}>Win32::Semaphore
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Usually the function crypt() should be used for encryption of the passwords. This function is missing in some older Perl for Windows builds, therefore GTChat contains an encryption library to replace it. This library is very slow and should be used only if there is no other way out.');return false">{IMAGE|question}</a></td>
+			<td>Use built-in encryption library:</td>
+			<td>
+				<select name="settings.use_internal_crypt" style="width:100%">
+					<option value=1 {IIF|$settings.use_internal_crypt|selected}>yes
+					<option value=0 {IIF|!$settings.use_internal_crypt|selected}>no
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="javascript:void(0)" onclick="showInfo('Parameter salt of the function crypt() that is used for password encryption.');return false">{IMAGE|question}</a></td>
+			<td>Salt for encryption:</td>
+			<td><input type=text name="settings.pwseed" maxlength=2 style="width:100%" value="{GET|$settings.pwseed}"></td>
+		</tr>
+		</table></td>
+	</tr>
+	<tr class="row2">
+		<td align=right><input type=submit class="plain" class="netscape-dummy" value="Save"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Cancel" onclick="cancel();return false"></td>
+	</tr>
+	</form>
+</table>
+</td></tr></table>
+
+</body>
+</html> 

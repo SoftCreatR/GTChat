@@ -1,0 +1,203 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_defaults}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+
+	<script language="JavaScript">
+		parent.cgi = '{GET_JS|$runtime.completeurl}';
+		function setColor(text)
+		{
+			document.inputForm['default.color'].value = text;
+		}
+		
+		var old_defaults = new Array();
+		{FOREACH|$entry|$settings.default}
+			old_defaults['default.{GET_JS|$entry.name}'] = '{GET_JS|$entry.value}';
+		{ENDFOR}
+		
+		function checkInput(form)
+		{
+			if (!form['default.color'].value.match(/^#/))
+				form['default.color'].value = '#'+form['default.color'].value;
+			if (!form['default.color'].value.match(/^#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$/))
+			{
+				alert('Sie haben eine ungültige Farbe eingegeben');
+				form['default.color'].focus();
+				return false;
+			}
+			form['default.timeoffset'].value = parseInt(form['default.timeoffset'].value);
+			if (form['default.timeoffset'].value < -24)
+				form['default.timeoffset'].value = -24;
+			if (form['default.timeoffset'].value > 24)
+				form['default.timeoffset'].value = 24;
+			
+			// Copy data from the dummy checkbox fields
+			form['default.privateemail'].value = form['privateemail_dummy'].checked ? 1 : 0;
+			form['default.nosmileys'].value = form['nosmileys_dummy'].checked ? 1 : 0;
+			form['default.popup_privatemsg'].value = form['popup_privatemsg_dummy'].checked ? 1 : 0;
+			form['default.show_time'].value = form['show_time_dummy'].checked ? 1 : 0;
+
+			window.cancelled = 1;
+
+			return true;
+		}
+		
+		function cancel(unload)
+		{
+			if (window.cancelled)
+				return;
+		
+			var elements = document.inputForm.elements;
+			var changed = false;
+			for (var i=0;!changed && i<elements.length;i++)
+			{
+				if (elements[i].name.match(/^default\./))
+				{
+					var field = elements[i].name.substring('default.'.length,elements[i].name.length);
+					if (elements[field + '_dummy'])
+						changed = ((elements[field + '_dummy'].checked ? 1 : 0) != old_defaults[elements[i].name]);
+					else if (elements[i].type.match(/select/))
+						changed = (elements[i].options[elements[i].selectedIndex].value != old_defaults[elements[i].name]);
+					else
+						changed = (elements[i].value != old_defaults[elements[i].name]);
+				}
+			}
+			
+			if (changed)
+			{
+				var msg = 'Wollen Sie wirklich alle Änderungen verwerfen?';
+				if (unload)
+					return msg;
+				else if (!confirm(msg))
+					return;
+			}
+
+			window.cancelled = 1;
+				
+			parent.writeMenu();
+		}
+	</script>
+</head>
+
+<body onload="parent.autosize(window)" onbeforeunload="return cancel(1)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>Standardwerte</th>
+	</tr>
+	<form name="inputForm" method="post" action="{GET|$runtime.chaturl}" onsubmit="return checkInput(this)">
+	{GET|$runtime.hiddenfields}
+	<input type=hidden name=action value="admin_defaults">
+	<tr class="row2">
+		<td align=right><input type=submit class="plain" class="netscape-dummy" value="Speichern"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Abbrechen" onclick="cancel();return false"></td>
+	</tr>
+	<tr class="row2">
+		<td><table border=0 cellspacing=5 cellpadding=0 width="100%">
+		<tr>
+			<td>Interface-Sprache:</td>
+			<td>
+				<select name="default.language" style="width:100%">
+					{FOREACH|$language|$settings.languages}
+						<option value="{GET|$language}" {IIF|$settings.default.language eq $language|selected}>{GETLNG|$language|$lang_name}
+					{ENDFOR}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Einloggen&nbsp;mit:</td>
+			<td>
+				<select name="default.is_username" style="width:100%">
+					<option value=0 {IIF|!$settings.default.is_username|selected}>Nicknamen
+					<option value=1 {IIF|$settings.default.is_username|selected}>Benutzernamen
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Sicherer Modus:</td>
+			<td>
+				<select name="default.pull" style="width:100%">
+					<option value=0 {IIF|!$settings.default.pull|selected}>nein
+					<option value=1 {IIF|$settings.default.pull|selected}>ja
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Raum:</td>
+			<td>
+				<select name="default.room" style="width:100%">
+					{FOREACH|$room|$roomlist}
+						{IF|$room.permanent and !$room.closed}
+							<option value="{GET|$room.name_lc}" {IIF|$settings.default.room eq $room.name_lc|selected}>{GET|$room.name}
+						{ENDIF}
+					{ENDFOR}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Farbe:</td>
+			<td>
+				<table border=0 cellspacing=0 cellpadding=0 width="100%"><tr>
+				<td width="100%"><input type=text name="default.color" size=10 style="width:100%" maxlength=10 value="{GET|$settings.default.color}"></td>
+				<td><a href="javascript:void(0)" onclick="top.opener.setColor=setColor;top.opener.openWindow('palette',300,250);return false">{IMAGE|palette|alt="Farbe ausw&auml;hlen"}</a></td>
+				</tr></table>
+			</td>
+		</tr>
+		<tr>
+			<td>Geschlecht:</td>
+			<td>
+				<select name="default.gender" style="width=100%">
+					<option value=0>(kein Kommentar)
+					<option value=1 {IIF|$settings.default.gender==1|selected}>m&auml;nnlich
+					<option value=2 {IIF|$settings.default.gender==2|selected}>weiblich
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Farbschema:</td>
+			<td>
+				<select name="default.style" style="width=100%">
+					{FOREACH|$style|$settings.styles}
+						<option value="{GET|$style[0]}" {IIF|$style[0] eq $settings.default.style|selected}>{GET|$style[1]}
+					{ENDFOR}
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td width="30%">
+				Zeitdifferenz:<br>
+				<span class="smalltext">Anzahl Stunden +/- zur Chat-Zeit f&uuml;r Zeit-Anzeigen</span>
+			</td>
+			<td width="70%">
+				<input type=input name="default.timeoffset" size=6 maxlength=3 value="{GET|$settings.default.timeoffset}"><br>
+			</td>
+		</tr>
+		<tr>
+			<td>Email nur den Admins zeigen:</td>
+			<td><input type=hidden name="default.privateemail"><input type=checkbox name="privateemail_dummy" value="1" {IIF|$settings.default.privateemail|checked}></td>
+		</tr>
+		<tr>
+			<td>Smileys deaktivieren:</td>
+			<td><input type=hidden name="default.nosmileys"><input type=checkbox name="nosmileys_dummy" value="1" {IIF|$settings.default.nosmileys|checked}></td>
+		</tr>
+		<tr>
+			<td>Privatnachrichten im Extra-Fenster anzeigen:</td>
+			<td><input type=hidden name="default.popup_privatemsg"><input type=checkbox name="popup_privatemsg_dummy" value="1" {IIF|$settings.default.popup_privatemsg|checked}></td>
+		</tr>
+		<tr>
+			<td>Zeit anzeigen:</td>
+			<td><input type=hidden name="default.show_time"><input type=checkbox name="show_time_dummy" value="1" {IIF|$settings.default.show_time|checked}></td>
+		</tr>
+		</table></td>
+	</tr>
+	<tr class="row2">
+		<td align=right><input type=submit class="plain" class="netscape-dummy" value="Speichern"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Abbrechen" onclick="cancel();return false"></td>
+	</tr>
+	</form>
+</table>
+</td></tr></table>
+
+</body>
+</html> 

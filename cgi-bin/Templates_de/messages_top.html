@@ -1,0 +1,86 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+	<script language="JavaScript">
+		cgi='{GET_JS|$runtime.completeurl}';
+		parent.exiting = 0;
+		parent.setInterval('if (self.messages && messages.doScroll) messages.doScroll()',150);
+
+		/* Automatic reconnect
+		 *
+		 *                          client-side    server-side    restore
+		 *                          disconnect     disconnect     messages
+		 * Internet Explorer 4+         X               X             X
+		 * Netscape Navigator 4.x                       X
+		 * Netscape 6.x/Mozilla                         X             X
+		 * Opera 5+                                     X
+		 */
+		function reconnect()
+		{
+			if (!parent.exiting)
+			{
+				parent.exiting = 1;
+				parent.restoreWindow = openWindow('message&message=info_disconnect&image=error&id=',480,200);
+				if (document.body && document.body.innerHTML)
+				{
+					if (!parent.restore)
+						parent.restore="";
+
+					var text = document.body.innerHTML;
+					if (text.indexOf('Wladimir Palant -->'))
+						text=text.substr(text.indexOf('Wladimir Palant -->')+19);
+					if (text.indexOf('Sascha Heldt -->'))
+						text=text.substr(text.indexOf('Sascha Heldt -->')+16);
+
+					parent.restore+=text;
+				}
+				
+				saveLog();
+
+				if (document.location.href)
+					document.location.href=document.location.href;
+				else
+					document.location.reload();
+			}
+		}
+
+		document.onreadystatechange=function ()
+		{
+			if (document.readyState=="complete")
+				reconnect();
+		}
+	</script>
+</head>
+<body onload="reconnect()">
+{NEED|$current_room}
+Hallo {GET|$current_user.nick}, Willkommen im {GET|$settings.chatname}!<br>
+{IF|$current_room.topic}Thema in diesem Raum: {GET|$current_room.topic}<br>{ENDIF}
+<br>
+{IF|$current_room.moderated}
+	<i>Dieser Raum ist moderiert, deswegen d&uuml;rfen nur Moderatoren und VIPs normal sprechen. Bei allen anderen m&uuml;ssen die Texte erst durch einen Moderator freigegeben werden, bevor sie erscheinen.</i><br><br>
+{ENDIF}
+{IF|$offlinemsgs_exist}
+	Sie haben w&auml;hrend Ihrer Abwesenheit einige Nachrichten bekommen. Um diese zu lesen, klicken Sie <a href="javascript:void(0)" onclick="openWindow('offlinemsgs',600,400);return false;">hier</a>.<br>
+{ENDIF}
+<script language="JavaScript">
+	if (parent.restore)
+	{
+		var html = '';
+		var lines = parent.restore.split("\n");
+		for (var i=0;i<lines.length;i++)
+		{
+			lines[i]=lines[i].replace(/<script>(.+)<\/script>/i,'');
+			html += lines[i]+'\n';
+		}
+		document.writeln(html);
+	}
+	
+	if (parent.restoreWindow && !parent.restoreWindow.closed)
+		parent.restoreWindow.close();
+		
+	resetScrollPos();
+</script> 

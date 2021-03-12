@@ -1,26 +1,30 @@
-GTChat Version 0.93 License
+Lizenzbedingungen auf Deutsch weiter unten
 
-Copyright (c) 2001 by Wladimir Palant.  All rights reserved.
+===========================================
 
-Redistribution and use on non-commercial webpages are permitted
+GTChat Version 0.95 License
+Freeware version
+
+Copyright (c) 2001-2002 by Wladimir Palant.  All rights reserved.
+Copyright (c) 2006 by Sascha Heldt.  All rights reserved.
+
+Redistribution and use are permitted
 provided that the following conditions are met:
 
-1. The software may be only distributed in it's original form
-   without changes of any kind. The distribution must be free
-   from any charge.
+1. No changes of the core program (that means chat.pl and the
+   files in the Sources directory) are permitted. The only
+   exception is the perl path in the first line of chat.pl.
 
-2. No changes of the program code except for JavaScript are
-   permitted.
+2. At all chat entrances the following message must be visible
+   in a way that it can be read without scrolling down:
 
-3. The login and registration pages must contain the following
-   HTML code:
-	  <div align=center id="headertext">
-		 GTChat 0.93 &copy; 2001 by <a href="http://www.gtchat.de/" id="stdlink" target="_blank">Wladimir Palant</a>
-	  </div>
-   as included in predefined templates.
+		 GTChat 0.95 (c) 2006 by Sascha Heldt
 
-If for some purpose you want to have any of these conditions left
-out, contact the author on <http://www.gtchat.de>.
+   The best way to achieve this is to include the predefined
+   tag {COPYRIGHT} into the templates.
+
+If for some purpose you want to have any of these conditions changed,
+contact the author on <https://www.gt-chat.de>.
 
 THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
 WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -33,3 +37,39 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+
+===========================================
+
+Lizenzbedingungen für GTChat Version 0.95
+Freeware-Version
+
+Copyright (c) 2001-2002 by Wladimir Palant.  All rights reserved.
+Copyright (c) 2006 by Sascha Heldt.  All rights reserved.
+
+Benutzung und Weitergabe
+sind erlaubt, falls folgende Bedingungen eingehalten werden:
+
+1. Keine Änderungen des Kernprogramms (also von chat.pl und der Dateien
+   im Verzeichnis Sources) sind gestattet. Die einzige Ausnahme ist
+   die Einstellung des Perl-Pfades in der ersten Zeile von chat.pl.
+
+2. Alle Chat-Eingänge müssen den Copyright-Text des Autors enthalten,
+   und zwar deutlich sichtbar ohne daß man scrollen muß:
+
+		 GTChat 0.95 (c) 2006 by Sascha Heldt
+
+   Am besten erreicht man das, indem man in die Templates die vordefinierte
+   Marke {COPYRIGHT} einfügt.
+
+Falls Sie aus irgendeinem Grund andere Bedingungen haben wollen, wenden
+Sie sich an den Autor auf <https://www.gt-chat.de>.
+
+DER AUTOR IST NICHT FÜR SCHÄDEN VERANTWORTLICH, DIE DURCH DEN ANWENDER
+ODER DRITTE DURCH VERWENDUNG ODER VERBREITUNG DER SOFTWARE VERURSACHT
+WERDEN. IN KEINEM FALL IST DER AUTOR FÜR ENTGANGENEN UMSATZ ODER GEWINN
+ODER DEN VERLUST VON DATEN ODER FÜR DIREKTE, INDIREKTE, SPEZIELLE,
+LOGISCH FOLGENDE, BEILÄUFIGE ODER EINSCHLIEßENDE SCHADENSERSATZANSPRÜCHE
+VERANTWORTLICH, DIE DURCH DEN GEBRAUCH ODER DIE UNMÖGLICHKEIT DES GEBRAUCHS
+DER SOFTWARE VERURSACHT WURDEN, UNABHÄNGIG VON THEORETISCH BESTEHENDER
+MÖGLICHER HAFTUNG, SELBST WENN DER AUTOR VON DER MÖGLICHKEIT SOLCHER
+SCHÄDIGUNGEN BENACHRICHTIGT WORDEN IST.

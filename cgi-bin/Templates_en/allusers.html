@@ -1,0 +1,40 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname} - User list</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+</head>
+<body onload="autosize(window)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+<tr>
+	<th>User list</th>
+</tr>
+<tr class="row2"><td><table width="100%" cellspacing=3>
+		{FOREACH|$user|$allusers}
+			<tr><td>
+				{IF|permission(user)}<a href="{GET|$runtime.completeurl}&template=profile&username={GET_ESCAPED|$user.username}">{ENDIF}{GET|$user.nickname}{IF|permission(user)}</a>{ENDIF}<br>
+			</td></tr>
+		{ENDFOR}
+		{IF|permission(user)}
+			<tr><td>&nbsp;</td></tr>
+			<tr><td align=center>
+				<a href="{GET|$runtime.completeurl}&template=search">Find user</a>
+			</td></tr>
+		{ENDIF}
+		
+</table></td></tr>
+
+</table>
+</td></tr></table>
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Close window</a>
+</div>
+
+</body>
+</html> 

@@ -1,0 +1,10 @@
+<script>
+	parent.disableModeration = parseInt('{GET|$params.disable}');
+	if (parent.disableModeration)
+	{
+		if (parent.moderatedTexts)
+			parent.moderatedTexts = 0;
+		if (parent.moderationWnd && !parent.moderationWnd.closed)
+			parent.moderationWnd.close();
+	}
+</script> 

@@ -1,0 +1,79 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+	<script language="JavaScript" src="chat.js" type="text/javascript">
+	</script>
+	<script language="JavaScript">
+		cgi='{GET_JS|$runtime.completeurl}';
+	</script>
+</head>
+<body marginwidth=2 leftmargin=2 onload="addFocusHandlers()">
+
+{NEED|$roomlist&onlineusers}
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+<tr>
+	<th>R&auml;ume</th>
+</tr>
+<tr class="row2"><td><table cellspacing=3 width="100%">
+{FOREACH|$room|$roomlist&onlineusers}
+	<tr>
+		<td width="100%">
+			{IF|$room.name_lc ne $current_user.room}<a href="javascript:void(0)" onclick="sendText('/room {GET_JS|$room.name_lc}');return false;">{ELSE}<b>{ENDIF}
+			{GET|$room.name}{IIF|$room.name_lc ne $current_user.room|</a>|</b>}
+			{IF|$room.onlineusers_count} (<a href="javascript:void(0)" onclick="openWindow('room_users&roomname={GET_ESCAPED|$room.name_lc}',480,480);return false;">{GET|$room.onlineusers_count}</a>){ENDIF}
+		</td>
+	</tr>
+{ENDFOR}
+</table></td></tr>
+
+</table>
+</td></tr></table>
+
+<br>
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+{FOREACH|$room|$roomlist&onlineusers}
+	{IF|$room.name_lc eq $current_user.room}
+		<tr>
+			<th>Raum {GET|$room.name}<br>{GET|$room.onlineusers_count} von {GET|$onlineusers_count} Benutzern</th>
+		</tr>
+		<tr class="row2"><td><table cellspacing=3 width="100%">
+			{FOREACH|$user|$room.onlineusers}
+				<tr><td nowrap>
+					{IF|$user.name eq $current_user.name}
+						{IMAGE|at|alt="Adressierte Nachricht"}
+						{IMAGE|msg|alt="Privatnachricht"}
+					{ELSE}
+						<a href="javascript:void(0)" onclick="insertText('@{GET_JS|$user.nick} ');return false;">{IMAGE|at|alt="Adressierte Nachricht"}</a>
+						<a href="javascript:void(0)" onclick="{IF|$current_user.popup_privatemsg}writePrivateMsg('{GET_ESCAPED|$user.name}','{GET_ESCAPED|$user.nick}','');{ELSE}insertText('/msg {GET_JS|$user.nick} ');{ENDIF}return false;">{IMAGE|msg|alt="Privatnachricht"}</a>
+					{ENDIF}
+					<a href="javascript:void(0)" onclick="openWindow('profile&username={GET_ESCAPED|$user.name}',480,480);return false;">{IIF|$user.away|<i>(}{GET|$user.nick}{IIF|$user.away|)</i>}</a>
+					{IF|$user.vip}
+						(VIP)
+					{ELSE}
+						{IF|$room.owner eq $user.name}
+							(Besitzer)
+						{ELSE}
+							{IF_HAS_GROUPTAG|$user.tempgroup}
+								({GROUPTAG|$user.tempgroup})
+							{ENDIF}
+						{ENDIF}
+					{ENDIF}
+				</td></tr>
+			{ENDFOR}
+		</table></td></tr>
+	{ENDIF}
+{ENDFOR}
+
+</table>
+</td></tr></table>
+
+</body>
+</html> 

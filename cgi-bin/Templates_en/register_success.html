@@ -1,0 +1,30 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+	{IF|$input.username}
+		<meta http-equiv="refresh" content="10; URL={GET|$runtime.completeurl}&username={GET_ESCAPED|$input.username}">
+	{ELSE}
+		<meta http-equiv="refresh" content="10; URL={GET|$runtime.completeurl}&nickname={GET_ESCAPED|$input.nickname}">
+	{ENDIF}
+</head>
+<body>
+
+<table align=center border=0 cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table width="100%" border=0 cellspacing=1 cellpadding=0>
+<tr>
+	<th><b>Registration successful</b></th>
+</tr>
+<tr class="row2">
+	<td>
+		Your nickname was registered successfully. Click 
+		<a href="{GET|$runtime.completeurl}&{IF|$input.username}username={GET_ESCAPED|$input.username}{ELSE}nickname={GET_ESCAPED|$input.nickname}{ENDIF}">here</a>, to log in to the chat. In 10 seconds you will be automatically forwarded.
+	</td>
+</tr>
+</table>
+
+</td></tr></table>
+
+</body>
+</html> 

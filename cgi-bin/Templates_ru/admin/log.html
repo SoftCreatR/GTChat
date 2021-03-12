@@ -1,0 +1,84 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_log}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+</head>
+
+<body onload="parent.autosize(window)">
+
+<form name="inputForm" method="post" action="{GET|$runtime.chaturl}">
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+	<tr>
+		<th>Анализатор логов</th>
+	</tr>
+	<tr class="row2">
+		<td align=right><input type=submit class="plain" class="netscape-dummy" value="Показать"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Отменить" onclick="parent.writeMenu();return false"></td>
+	</tr>
+	{GET|$runtime.hiddenfields}
+	<input type=hidden name=action value="admin_log">
+	<tr class="row2"><td><table border=0 cellspacing=5 cellpadding=0 width="100%">
+		<tr>
+			<td width="50%">Показать лог:</td>
+			<td width="50%">
+				<select name=log style="width:100%">
+					{FOREACH|$log|$admin_messageslogs}
+						<option value="{GET|$log.num}" {IIF|$log.num==1|selected}>Лог {GET|$log.num} ({GETDATETIME|$log.from} - {IF|$log.to}{GETDATETIME|$log.to}{ELSE}сейчас{ENDIF}){IIF|$log.num==0|&nbsp;&nbsp;&nbsp;используется!}
+					{ENDFOR}
+				</select>
+			</td>
+		</tr>
+		<tr><td colspan=2>&nbsp;</td></tr>
+		<tr>
+			<td colspan=2>Показывать сообщения для комнат:</td>
+		</tr>
+		{FOREACH|$room|$roomlist}
+			<tr>
+				<td>&nbsp;&nbsp;{GET|$room.name}:</td>
+				<td>
+					<input type=checkbox name="show_room.{GET|$room.name_lc}" value=1 checked>
+				</td>
+			</tr>
+		{ENDFOR}
+		<input type=hidden name=rooms value="{FOREACH|$room|$roomlist}{GET|$room.name_lc} {ENDFOR}">
+		<tr>
+			<td>Показывать уже не существующие комнаты:</td>
+			<td>
+				<input type=checkbox name="show_nonexistent" value=1 checked>
+			</td>
+		</tr>
+		<tr>
+			<td>Показывать сообщения для всего чата:</td>
+			<td>
+				<input type=checkbox name="show_global" value=1 checked>
+			</td>
+		</tr>
+		<tr>
+			<td>Показывать сообщения для отдельных пользователей:</td>
+			<td>
+				<input type=checkbox name="show_private" value=1>
+			</td>
+		</tr>
+		<tr><td colspan=2>&nbsp;</td></tr>
+		<tr>
+			<td colspan=2>Показывать сообщения:</td>
+		</tr>
+		{FOREACH|$template|$settings.log_messages}
+			<tr>
+				<td>&nbsp;&nbsp;{GET|$template.name}:</td>
+				<td>
+					<input type=checkbox name="show_template.{GET|$template.name}" value=1 checked>
+				</td>
+			</tr>
+		{ENDFOR}
+	</table></td></tr>
+	<tr class="row2">
+		<td align=right><input type=submit class="plain" class="netscape-dummy" value="Показать"> &nbsp; <input type=button class="plain" class="netscape-dummy" value="Отменить" onclick="parent.writeMenu();return false"></td>
+	</tr>
+</table>
+</td></tr></table>
+</form>
+
+</body>
+</html> 

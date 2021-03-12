@@ -1,0 +1,41 @@
+profile_change_nick|Benutzerprofil - Nick ändern
+profile_settempgroup|Benutzerprofil - temporären Rang setzen
+profile_seeemail|Benutzerprofil - versteckte Email-Adresse sehen
+profile_seelastlogin|Benutzerprofil - Zeit des letzten Logins sehen
+profile_seeregistration|Benutzerprofil - Registrierungszeit sehen
+profile_seeip|Benutzerprofil - IP-Adresse sehen
+profile_traceroute|Benutzerprofil - Routenverfolgung für die IP-Adresse
+profile_seepullmode|Benutzerprofil - verwendeten Betriebsmodus sehen
+profile_seecommandpermissions|Benutzerprofil - Befehlsrechte sehen
+profile_seepermissions|Benutzerprofil - Zugriffsrechte sehen
+profile_modify|Fremde Benutzerprofile bearbeiten
+profile_modify_commandpermissions|Fremde Befehlsrechte bearbeiten
+profile_modify_permissions|Fremde Zugriffsrechte bearbeiten
+rooms_create|Räume - erstellen
+rooms_createprivate|Räume - private erstellen
+rooms_createpublic|Räume - öffentliche erstellen
+rooms_createpermanent|Räume - permanente erstellen
+rooms_createmoderated|Räume - moderierte erstellen
+rooms_changeowner|Räume - Besitzer ändern
+rooms_modify|Fremde Räume bearbeiten
+invite|In fremden Räumen Leute einladen
+callop|Den /callop-Befehl empfangen
+rooms_moderate|In fremden Räumen moderieren
+privaterooms|In private Räume ohne Erlaubnis reingehen
+ignore_nickchange_interval|Minimale Zeitspanne für Nick-Änderungen ignorieren
+ignore_max_users|Maximale Benutzerzahl ignorieren
+ignore_maintenance|Im Maintenance-Modus einloggen
+admin|Admin-Bereich betreten
+admin_maintenance|Admin-Bereich - Wartungmodus an- und ausschalten
+admin_plugins|Admin-Bereich - Plugins verwalten
+admin_images|Admin-Bereich - Bilder-Liste erneuern
+admin_news|Admin-Bereich - Chat-News arbeiten
+admin_general_settings|Admin-Bereich - Allgemeine Einstellungen bearbeiten
+admin_defaults|Admin-Bereich - Standardwerte bearbeiten
+admin_smileys|Admin-Bereich - Smileys arbeiten
+admin_commandpermissions|Admin-Bereich - Befehlsrechte bearbeiten
+admin_permissions|Admin-Bereich - Zugriffsrechte bearbeiten
+admin_command_aliases|Admin-Bereich - Befehlsaliases bearbeiten
+admin_color_aliases|Admin-Bereich - Farbbezeichnungen bearbeiten
+admin_log|Admin-Bereich - Chat-Logs auswerten
+admin_cleanupmembers|Admin-Bereich - Inaktive Benutzer löschen

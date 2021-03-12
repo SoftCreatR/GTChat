@@ -1,0 +1,256 @@
+<html>
+<head>
+	{NEED|$user_information}
+	{IF|$user_information.name ne $current_user.name}
+		{NEED_PERMISSION|profile_modify}
+		{IF|$current_user.tempgroup <= $user_information.group}
+			{ERROR|profile_nopermission}
+		{ENDIF}
+	{ELSE}
+		{NEED|$environment}
+	{ENDIF}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname} - Профиль пользователя {GET|$user_information.nick}</title>
+	<script language="JavaScript">
+		cgi = '{GET_JS|$runtime.completeurl}';
+
+		function setColor(text)
+		{
+			document.profileForm.color.value = text;
+		}
+
+		// Copy data from the dummy checkbox fields
+		function copyDummies(form)
+		{
+			form.privateemail.value = form.privateemail_dummy.checked ? 1 : 0;
+			form.nosmileys.value = form.nosmileys_dummy.checked ? 1 : 0;
+			form.popup_privatemsg.value = form.popup_privatemsg_dummy.checked ? 1 : 0;
+			form.show_time.value = form.show_time_dummy.checked ? 1 : 0;
+		}
+	</script>
+</head>
+
+<body onload="opener.autosize(window)">
+
+<form name="profileForm" method=POST action="{GET|$runtime.chaturl}" onsubmit="copyDummies(this)">
+{GET|$runtime.hiddenfields}
+<input type="hidden" name="action" value="modifyprofile">
+<input type="hidden" name="template" value="profile">
+<input type="hidden" name="name" value="{GET|$user_information.name}">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+<tr>
+	<th>
+		Профиль пользователя {GET|$user_information.nick}
+	</th>
+</tr>
+<tr class="row2"><td><table width="100%" cellspacing=5>
+	{IF|$user_information.group != -1 and !$environment.has_uncrypted_password}
+		<tr class="row1">
+			<td colspan=2><b>Изменение пароля</b></td>
+		</tr>
+		<tr>
+			<td colspan=2>
+				Если Вы хотите сейчас изменить пароль, введите здесь новый пароль (два раза для контроля), иначе просто оставьте эти поля пустыми:
+			</td>
+		</tr>
+		<tr>
+			<td>Пароль:</td>
+			<td><input type=password name=password size=30 style="width:100%" maxlength=10></td>
+		</tr>
+		<tr>
+			<td>Пароль (повтор):</td>
+			<td><input type=password name=password2 size=30 style="width:100%" maxlength=10></td>
+		</tr>
+	{ENDIF}
+
+	<tr class="row1">
+		<td colspan=2><b>Обязательная информация</b></td>
+	</tr>
+
+	<tr>
+		<td width="30%">Ник:</td>
+		<td width="70%">
+			{IF|$environment.is_username or !$environment.has_uncrypted_password}
+				{IF|permission(profile_change_nick)}
+					<input type=text name=nick size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.nick[0]}" value="{GET|$user_information.nick}">
+				{ELSE}
+					<input type=hidden name=nick value="{GET|$user_information.nick}">{GET|$user_information.nick}
+				{ENDIF}
+			{ELSE}
+				<input type=hidden name=nick value="{GET|$environment.name}">{GET|$environment.name}
+			{ENDIF}
+		</td>
+	</tr>
+	<tr>
+		<td>E-mail:</td>
+		<td>
+			<input type=text name=email size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.email[0]}" value="{GET|$user_information.email}"><br>
+			<input type=hidden name=privateemail><input type=checkbox name="privateemail_dummy" value="1" {IIF|$user_information.privateemail|checked}><span class="smalltext">показывать только админам</span>
+		</td>
+	</tr>
+	<tr>
+		<td>Ранг:</td>
+		<td>
+			{IF|$user_information.group != -1 and $current_user.group > $user_information.group}
+				<select name=group>
+				{FOR|$group|-2|10}
+					{IF_HAS_GROUPNAME|$group}
+						{IF|$group<$current_user.group and $group!=-1}
+							<option value="{GET|$group}" {IIF|$group==$user_information.group|selected}>{GROUPNAME|$group}
+						{ENDIF}
+					{ENDIF}
+				{ENDFOR}
+				</select>
+			{ELSE}
+				<input type=hidden name=group value="{GET|$user_information.group}">{GROUPNAME|$user_information.group}
+			{ENDIF}
+		</td>
+	</tr>
+	{IF|$user_information.online and permission(profile_settempgroup) and $current_user.group > $user_information.tempgroup}
+		<tr>
+			<td>Временно:</td>
+			<td>
+				<select name=tempgroup>
+				{FOR|$group|-1|10}
+					{IF_HAS_GROUPNAME|$group}
+						{IF|$group!=-1 or $user_information.group==-1}
+							{IF|$group<$current_user.group}
+								<option value="{GET|$group}" {IIF|$group==$user_information.tempgroup|selected}>{GROUPNAME|$group}
+							{ENDIF}
+						{ENDIF}
+					{ENDIF}
+				{ENDFOR}
+				</select>
+			</td>
+		</tr>
+	{ELSE}
+		{IF|$user_information.online and $user_information.group!=$user_information.tempgroup}
+			<tr>
+				<td>Временно:</td>
+				<td>
+					<input type=hidden name=tempgroup value="{GET|$user_information.tempgroup}">{GROUPNAME|$user_information.tempgroup}
+				</td>
+			</tr>
+		{ENDIF}
+	{ENDIF}
+	<tr>
+		<td>Цвет:</td>
+		<td>
+			<input type=text name=color size=10 style="width:100%" maxlength=10 value="{GET|$user_information.color}"><br>
+			<span class="smalltext"><a href="javascript:void(0)" onclick="opener.setColor=setColor;opener.openWindow('palette',300,250);return false;">выбрать цвет</a></span>
+		</td>
+	</tr>
+
+	<tr class="row1">
+		<td colspan=2><b>Дополнительная информация</b></td>
+	</tr>
+
+	<tr>
+		<td width="30%">Домашняя&nbsp;страничка (название):</td>
+		<td width="70%"><input type=text name=homepagetitle size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.homepagetitle[0]}" value="{GET|$user_information.homepagetitle}"></td>
+	</tr>
+	<tr>
+		<td>Домашняя&nbsp;страничка (адрес):</td>
+		<td><input type=text name=homepage size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.homepage[0]}" value="{GET|$user_information.homepage}"></td>
+	</tr>
+
+	<tr>
+		<td>Пол:</td>
+		<td>
+			<select name=gender style="width:100%">
+				<option value=0>(без комментариев)
+				<option value=1 {IIF|$user_information.gender==1|selected}>мужской
+				<option value=2 {IIF|$user_information.gender==2|selected}>женский
+			</select>
+		</td>
+	</tr>
+
+	<tr>
+		<td>Дата&nbsp;рождения:</td>
+		<td>
+			{READSTDDATE|$date|$user_information.birth_date}
+			<input type=text name="birth_day" size=4 maxlength=3 value="{IF|$date.day}{GET|$date.day}{ELSE}день{ENDIF}" onFocus="if (value=='день') value=''" onBlur="if (value=='') value='день'">
+			<select name="birth_month">
+				<option value=0>месяц
+				<option value=1 {IIF|$date.month==1|selected}>январь
+				<option value=2 {IIF|$date.month==2|selected}>февраль
+				<option value=3 {IIF|$date.month==3|selected}>март
+				<option value=4 {IIF|$date.month==4|selected}>апрель
+				<option value=5 {IIF|$date.month==5|selected}>май
+				<option value=6 {IIF|$date.month==6|selected}>июнь
+				<option value=7 {IIF|$date.month==7|selected}>июль
+				<option value=8 {IIF|$date.month==8|selected}>август
+				<option value=9 {IIF|$date.month==9|selected}>сентябрь
+				<option value=10 {IIF|$date.month==10|selected}>октябрь
+				<option value=11 {IIF|$date.month==11|selected}>ноябрь
+				<option value=12 {IIF|$date.month==12|selected}>декабрь
+			</select>
+			<input type=text name="birth_year" size=4 maxlength=4  value="{IF|$date.year}{GET|$date.year}{ELSE}год{ENDIF}" onFocus="if (value=='год') value=''" onBlur="if (value=='') value='год'">
+		</td>
+	</tr>
+
+   <tr class="row1">
+		<td colspan=2><b>Установки чата</b></td>
+	</tr>
+
+	<tr>
+		<td>Скин:</td>
+		<td>
+			<select name=style style="width:100%">
+				{FOREACH|$style|$settings.styles}
+					<option value="{GET|$style[0]}" {IIF|$style[0] eq $runtime.style|selected}>{GET|$style[1]}
+				{ENDFOR}
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td width="30%">
+			Разница во времени:<br>
+			<span class="smalltext">Часы +/- к времени чата</span>
+		</td>
+		<td width="70%">
+			<input type=input name=timeoffset size=6 maxlength=3 value="{GET|$user_information.timeoffset}"><br>
+			<span class="smalltext">Текущее время на чат-сервере: {GETTIME}</span>
+		</td>
+	</tr>
+	<tr>
+		<td>Отключить смайлики:</td>
+		<td><input type=hidden name=nosmileys><input type=checkbox name="nosmileys_dummy" value="1" {IIF|$user_information.nosmileys|checked}></td>
+	</tr>
+	<tr>
+		<td>Показывать приватные сообщения в собственном окне:</td>
+		<td><input type=hidden name="popup_privatemsg"><input type=checkbox name="popup_privatemsg_dummy" value="1" {IIF|$user_information.popup_privatemsg|checked}></td>
+	</tr>
+	<tr>
+		<td>Показывать время:</td>
+		<td><input type=hidden name="show_time"><input type=checkbox name="show_time_dummy" value="1" {IIF|$user_information.show_time|checked}></td>
+	</tr>
+
+	<tr>
+		<td colspan=2>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td colspan=2 align=center>
+			<input type=submit value="Записать">
+			&nbsp;
+			<input type=button value="Отменить" onclick="document.location.href='{GET_JS|$runtime.completeurl}&template=profile&username={GET_ESCAPED|$user_information.name}';return false">
+		</td>
+	</tr>
+
+</table></td></tr>
+
+</table>
+</td></tr></table>
+</form>
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Закрыть окно</a>
+</div>
+
+</body>
+</html>

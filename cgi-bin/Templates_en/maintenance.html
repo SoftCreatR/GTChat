@@ -1,0 +1,64 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname} - Maintenance mode</title>
+</head>
+
+<body>
+
+{NEED|$environment}
+<form method=POST action="{GET|$runtime.chaturl}" target="_top">
+{GET|$runtime.hiddenfields}
+<input type=hidden name=action value=login>
+
+<table border=0 width="80%" align=center cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+<tr>
+	<th>Maintenance mode</th>
+</tr>
+<tr class="row2"><td><table cellspacing=5>
+<tr>
+	<td align=right>{IMAGE|error}</td>
+	<td>The chat is currently in maintenance mode. Please try again later.</td>
+</tr>
+<tr>
+	<td colspan=2>&nbsp;</td>
+</tr>
+<tr>
+	<td><b>{IIF|$environment.is_username|User&nbsp;name|Nickname}:</b><br><span class="smalltext">(only&nbsp;admins)</span><input type="hidden" name="is_username" value="{GET|$environment.is_username}"></td>
+	<td width="100%">
+		{IF|$environment.has_password}
+			{GET|$environment.name}<input type=hidden name=name value="{GET|$environment.name}">
+		{ELSE}
+			<input type=text name=name size=20 style="width:100%" maxlength="{IF|$environment.is_username}{GET|$settings.check_profile_fields_length.name[0]}{ELSE}{GET|$settings.check_profile_fields_length.nick[0]}{ENDIF}" value="{GET|$environment.name}">
+		{ENDIF}
+	<td>
+</tr>
+{IF|!$environment.has_password}
+	<tr>
+		<td><b>Password:</b></td>
+		<td><input type=password name=password size=20 style="width:100%"></td>
+	</tr>
+{ENDIF}
+<tr>
+	<td>&nbsp;</td>
+	<td><input type=checkbox name=pull value="1" {IIF|$environment.pull|checked}> Safe mode</td>
+</tr>
+<tr>
+	<td colspan=2 align=center><input type=submit value="Login"></td>
+</tr>
+</table></td></tr>
+
+</table>
+</td></tr></table>
+
+</form>
+
+<div align=center class="headertext">
+	{COPYRIGHT}
+</div>
+
+</body>
+</html> 

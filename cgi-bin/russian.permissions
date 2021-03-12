@@ -1,0 +1,41 @@
+profile_change_nick|Профиль - менять ник
+profile_settempgroup|Профиль - устанавливать временный ранг
+profile_seeemail|Профиль - видеть спрятанный адрес email
+profile_seelastlogin|Профиль - видеть время последнего входа
+profile_seeregistration|Профиль - видеть время регистрации
+profile_seeip|Профиль - видеть IP адрес
+profile_traceroute|Профиль - отслеживать маршрут к IP адресу
+profile_seepullmode|Профиль - видеть используемый модус чата
+profile_seecommandpermissions|Профиль - видеть права на использование команд
+profile_seepermissions|Профиль - видеть права доступа
+profile_modify|Менять чужие профили
+profile_modify_commandpermissions|Менять чужие права на использование команд
+profile_modify_permissions|Менять чужие права доступа
+rooms_create|Комнаты - создавать
+rooms_createprivate|Комнаты - создавать частные
+rooms_createpublic|Комнаты - создавать общие
+rooms_createpermanent|Комнаты - создавать постоянные
+rooms_createmoderated|Комнаты - создавать модерированные
+rooms_changeowner|Комнаты - менять владельца
+rooms_modify|Менять чужие комнаты
+invite|Приглашать людей в чужие комнаты
+callop|Принимать команду /callop
+rooms_moderate|Модерировать в чужих комнатах
+privaterooms|Входить в частные комнаты без разрешения
+ignore_nickchange_interval|Игнорировать минимальное время между двумя изменениями ника
+ignore_max_users|Игнорировать максимальное количество пользователей
+ignore_maintenance|Входить в чат при включённом отладочном режиме
+admin|Доступ к администрационному меню
+admin_maintenance|Администрационное меню - включать и выключать отладочный режим
+admin_plugins|Администрационное меню - управлять плугинами
+admin_images|Администрационное меню - обновлять список картинок
+admin_news|Администрационное меню - менять новости чата
+admin_general_settings|Администрационное меню - менять общие установки
+admin_defaults|Администрационное меню - менять значения по умолчанию
+admin_smileys|Администрационное меню - менять смайлики
+admin_commandpermissions|Администрационное меню - менять права на использование команд
+admin_permissions|Администрационное меню - менять права доступа
+admin_command_aliases|Администрационное меню - менять алиасы команд
+admin_color_aliases|Администрационное меню - менять названия цветов
+admin_log|Администрационное меню - просматривать логи чата
+admin_cleanupmembers|Администрационное меню - удалять не используемые пользовательские аккаунты

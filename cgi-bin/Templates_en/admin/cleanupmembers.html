@@ -1,0 +1,85 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_cleanupmembers}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<script language="JavaScript">
+		var openWindow;
+		if (parent.opener && !parent.opener.closed && parent.opener.openWindow)
+			openWindow = parent.opener.openWindow;
+		else
+			openWindow = function(){};
+	</script>
+</head>
+
+<body onload="parent.autosize(window)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>&nbsp;</th>
+		<th>Nickname</th>
+		<th>Days since last login</th>
+		<th>Date of the last login</th>
+		<th>Date of the registration</th>
+	</tr>
+
+	<form name="inputForm" method=POST action="{GET|$runtime.chaturl}" onsubmit="if (this.action.value != 'admin_changemembercleanuplimit') return confirm(this.action.value == 'admin_cleanupdeletemembers' ? 'Do you really want to delete all marked user accounts?' : 'Do you really want to send all marked uses a warning e-mail?')">
+	{GET|$runtime.hiddenfields}
+	<input type=hidden name=action value="admin_warnmembers">
+	<tr class=row2>
+		<td colspan=5 align=right>
+			<input type=submit class="plain" class="netscape-dummy" value="Warn users" onclick="form.action.value='admin_cleanupwarnmembers'">
+			&nbsp;
+			<input type=submit class="plain" class="netscape-dummy" value="Delete accounts" onclick="form.action.value='admin_cleanupdeletemembers'">
+			&nbsp;
+			<input type=button class="plain" class="netscape-dummy" value="Cancel" onclick="parent.writeMenu();return false">
+		</td>
+	</tr>
+
+	<tr class=row2>
+		<td colspan=5>
+			Uncheck the users you don't want to warn/delete. Note that you shouldn't send mails to users unless their e-mail addresses are checked on account registration.
+		</td>
+	</tr>
+
+	<tr class=row2>
+		<td colspan=5>
+			<table border=0 width="100%">
+			<tr>
+				<td>Show only users absent more than (days)::</td>
+				<td align=right><input type=text name=cleanuplimit value="{IF|$settings.membercleanup_limit > 0}{GET|$settings.membercleanup_limit}{ELSE}200{ENDIF}" size="5" maxlength="5" onchange="form.action.value = 'admin_changemembercleanuplimit';form.submit()"></td>
+			</tr>
+			<tr>
+				<td>Send an e-mail message to the user when deleting account:</td>
+				<td align=right><input type=checkbox name=mailondelete value=1></td>
+			</tr>
+			</table>
+		</td>
+	</tr>
+	{FOREACH|$user|$admin_inactiveaccounts}
+		<tr class=row2>
+			<td><input type=checkbox name="user_{GET|$user.name_hex}" value=1 checked></td>
+			<td><a href="javascript:void(0)" onclick="openWindow('profile&username={GET_ESCAPED|$user.name}',480,480);return false;">{GET|$user.nick}</a></td>
+			<td>{GET|$user.inactive_days}</td>
+			<td>{GETDATE|$user.lastlogin}</td>
+			<td>{GETDATE|$user.registration}</td>
+		</tr>
+	{ENDFOR}
+
+	<tr class=row2>
+		<td colspan=5 align=right>
+			<input type=submit class="plain" class="netscape-dummy" value="Warn users" onclick="form.action.value='admin_cleanupwarnmembers'">
+			&nbsp;
+			<input type=submit class="plain" class="netscape-dummy" value="Delete accounts" onclick="form.action.value='admin_cleanupdeletemembers'">
+			&nbsp;
+			<input type=button class="plain" class="netscape-dummy" value="Cancel" onclick="parent.writeMenu();return false">
+		</td>
+	</tr>
+	</form>
+</table>
+</td></tr></table>
+
+</body>
+</html> 

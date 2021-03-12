@@ -1,0 +1,190 @@
+return {
+	admin => [
+		{
+			type => 'submenu',
+			title => 'Инсталяция/апдейт чата',
+			dest => 'installation',
+		},
+		{
+			type => 'submenu',
+			title => 'Языковые параметры',
+			dest => 'language',
+		},
+		{
+			type => 'submenu',
+			title => 'Внешний вид',
+			dest => 'layout',
+		},
+		{
+			type => 'submenu',
+			title => 'Безопасность',
+			dest => 'security',
+		},
+		{
+			type => 'submenu',
+			title => 'Установки',
+			dest => 'settings',
+		},
+		{
+			type => 'submenu',
+			title => 'Другое',
+			dest => 'general',
+		},
+	],
+	installation => [
+		{
+			type => 'item',
+			title => 'Включить/выключить отладочный режим',
+			dest => 'maintenance',
+			permission => 'admin_maintenance',
+		},
+		{
+			type => 'item',
+			title => 'Провести апдейт чата',
+			dest => 'update',
+			permission => 'admin_update',
+		},
+		{
+			type => 'item',
+			title => 'Управление плугинами',
+			dest => 'plugins',
+			permission => 'admin_plugins',
+		},
+		{
+			type => 'item',
+			title => 'Лицензионная информация',
+			dest => 'license',
+			permission => 'admin_license',
+		},
+	],
+	language => [
+		{
+			type => 'item',
+			title => 'Сообщения чата',
+			dest => 'messages',
+			permission => 'admin_messages',
+		},
+		{
+			type => 'item',
+			title => 'Названия групп пользователей',
+			dest => 'groupnames',
+			permission => 'admin_groupnames',
+		},
+		{
+			type => 'item',
+			title => 'Форматы представления даты и времени',
+			dest => 'timeformats',
+			permission => 'admin_timeformats',
+		},
+		{
+			type => 'item',
+			title => 'Описания команд',
+			dest => 'command_descriptions',
+			permission => 'admin_command_descriptions',
+		},
+		{
+			type => 'item',
+			title => 'Описания прав доступа',
+			dest => 'permission_descriptions',
+			permission => 'admin_permission_descriptions',
+		},
+	],
+	layout => [
+		{
+			type => 'item',
+			title => 'Список картинок',
+			dest => 'images',
+			permission => 'admin_images',
+		},
+		{
+			type => 'item',
+			title => 'Цветовая схема',
+			dest => 'colors',
+			permission => 'admin_colors',
+		},
+		{
+			type => 'item',
+			title => 'Шаблоны',
+			dest => 'templates',
+			permission => 'admin_templates',
+		},
+	],
+	security => [
+		{
+			type => 'item',
+			title => 'Права на использование команд',
+			dest => 'commandpermissions',
+			permission => 'admin_commandpermissions',
+		},
+		{
+			type => 'item',
+			title => 'Права доступа',
+			dest => 'permissions',
+			permission => 'admin_permissions',
+		},
+		{
+			type => 'item',
+			title => 'Список банов',
+			dest => 'banlist',
+			permission => 'admin_banlist',
+		},
+	],
+	settings => [
+		{
+			type => 'item',
+			title => 'Общие установки',
+			dest => 'general_settings',
+			permission => 'admin_general_settings',
+		},
+		{
+			type => 'item',
+			title => 'Стандартные значения',
+			dest => 'defaults',
+			permission => 'admin_defaults',
+		},
+		{
+			type => 'item',
+			title => 'Алиасы команд',
+			dest => 'command_aliases',
+			permission => 'admin_command_aliases',
+		},
+		{
+			type => 'item',
+			title => 'Названия цветов',
+			dest => 'color_aliases',
+			permission => 'admin_color_aliases',
+		},
+		{
+			type => 'item',
+			title => 'Смайлики',
+			dest => 'smileys',
+			permission => 'admin_smileys',
+		},
+	],
+	general => [
+		{
+			type => 'item',
+			title => 'Новости чата',
+			dest => 'news',
+			permission => 'admin_news',
+		},
+		{
+			type => 'item',
+			title => 'Анализатор логов',
+			dest => 'log',
+			permission => 'admin_log',
+		},
+		{
+			type => 'item',
+			title => 'Статистика трафика',
+			dest => 'traffic',
+			permission => 'admin_traffic',
+		},
+		{
+			type => 'item',
+			title => 'Удаление не используемых пользовательских аккаунтов',
+			dest => 'cleanupmembers',
+			permission => 'admin_cleanupmembers',
+		},
+	],
+};

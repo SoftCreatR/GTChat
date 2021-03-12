@@ -1,0 +1,11 @@
+{SET|$to|$user.email}{SET|$subject|Warning: Your chat account will be deleted soon}
+Hello {GET|$user.nick},
+
+you did't use your chat account for quite
+a while. It will be deleted soon unless you use it again.
+If you still need your account, just click the on
+this link to log in:
+
+{GET|$settings.urls.chaturl}?nickname={GET_ESCAPED|$user.nick}
+
+

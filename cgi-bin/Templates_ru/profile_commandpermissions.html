@@ -1,0 +1,58 @@
+<html>
+<head>
+	{NEED_PERMISSION|profile_seecommandpermissions}
+	{NEED|$user_information}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname} - Права на команды для {GET|$user_information.nick}</title>
+</head>
+
+<body onload="opener.autosize(window)">
+
+<a href="{GET|$runtime.completeurl}&template=profile&username={GET_ESCAPED|$user_information.name}">Общее</a>
+{IF|permission(profile_seecommandpermissions)}
+	| <b>Права на команды</b>
+{ENDIF}
+{IF|permission(profile_seepermissions)}
+	| <a href="{GET|$runtime.completeurl}&template=profile_permissions&username={GET_ESCAPED|$user_information.name}">Права доступа</a>
+{ENDIF}
+<br>{IMAGE|blank|height=4}<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+<tr>
+	<th>
+		Права на команды для {GET|$user_information.nick}
+	</th>
+</tr>
+<tr class="row2"><td><table width="100%">
+	{FOREACH|$permission|$commandpermissions}
+		<tr>
+			<td>{GET|$permission.description}</td>
+			<td>{IIF|$permission.haspermission|разрешено|запрещено}
+		</tr>
+	{ENDFOR}
+
+	{IF|permission(profile_modify) and permission(profile_modify_permissions) and $current_user.tempgroup>$user_information.group}
+		<tr>
+			<td colspan=2>&nbsp;</td>
+		</tr>
+
+		<form>
+		<tr>
+			<td colspan=2 align=center>
+				<input type=button value="Изменить" onclick="document.location.href='{GET_JS|$runtime.completeurl}&template=editprofile_commandpermissions&username={GET_ESCAPED|$user_information.name}';return false">
+			</td>
+		</tr>
+		</form>
+	{ENDIF}
+</table></td></tr>
+
+</table>
+</td></tr></table>
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Закрыть окно</a>
+</div>
+
+</body>
+</html>

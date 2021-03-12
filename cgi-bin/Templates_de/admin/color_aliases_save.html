@@ -1,0 +1,40 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_color_aliases}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+</head>
+
+<body onload="if (parent.aliases) document.sendForm.submit()">
+
+<form name="sendForm" method="post" action="{GET|$runtime.chaturl}">
+{GET|$runtime.hiddenfields}
+<input type=hidden name=action value="admin_color_aliases">
+
+<script>
+	if (parent.aliases)
+	{
+		var num=0;
+		for (var i=0;i<parent.aliases.length;i++)
+		{
+			var item = parent.aliases[i];
+			item.command = item.command.replace(/^\s+|\s+$/g,"");
+			if (!item.command.match(/^\#/))
+				item.command = '#'.item.command;
+			if (item.command.match(/^#[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F]$/))
+			{
+				for (var j=0;j<item.languages.length;j++,num++)
+				{
+					document.write('<input type=hidden name=alias'+num+' value="'+item.alias+'">');
+					document.write('<input type=hidden name=command'+num+' value="'+item.command+'">');
+					document.write('<input type=hidden name=language'+num+' value="'+item.languages[j]+'">');
+				}
+			}
+		}
+	}
+</script>
+
+</form>
+
+</body>
+</html> 

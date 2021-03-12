@@ -1,0 +1,49 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+	<script language="JavaScript">
+		function send()
+		{
+			var text=document.inputForm.text.value;
+			document.inputForm.text.value = "";
+			text = text.replace(/^\s+/,'');
+			if (parent.opener && parent.opener.sendText && text!="")
+				parent.opener.sendText('/msg '+parent.nick+' '+text);
+
+			if (document.inputForm.text.setActive)
+				document.inputForm.text.setActive();
+			else
+				document.inputForm.text.focus();
+		}
+		
+		function init()
+		{
+			if (document.inputForm.text.setActive)
+				document.inputForm.text.setActive();
+			else
+				document.inputForm.text.focus();
+		}
+	</script>
+</head>
+<body marginheight=0 marginwidth=0 leftmargin=0 topmargin=0 onload="init()">
+<table border=0 width=100%>
+<tr>
+	<form name="inputForm" onSubmit="send();return false;" action="javascript:void(0)">
+	<td width="100%">
+		<input type=text name=text value="" size=30 maxlength=255 autocomplete=off style="width:100%">
+	</td>
+	<td>
+		<INPUT type=submit value="Send">
+	</td>
+	</form>
+</tr>
+</table>
+
+<div class="headertext" align="center">
+	<a href="javascript:parent.close()" class="stdlink">Close window</a>
+</div>
+
+</body>
+</html> 

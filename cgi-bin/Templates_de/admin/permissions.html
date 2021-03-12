@@ -1,0 +1,97 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_permissions}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+
+	<script language="JavaScript">
+		var old_permissions = new Array();
+		{FOREACH|$permission|$permissions}
+			old_permissions['permission.{GET_JS|$permission.name}'] = '{GET_JS|$permission.group}';
+		{ENDFOR}
+
+		function cancel(unload)
+		{
+			if (window.cancelled)
+				return;
+		
+			var elements = document.inputForm.elements;
+			var changed = false;
+			for (var i=0;!changed && i<elements.length;i++)
+			{
+				if (elements[i].name.match(/^permission\./))
+					changed = (elements[i].options[elements[i].selectedIndex].value != old_permissions[elements[i].name]);
+			}
+			
+			if (changed)
+			{
+				var msg = 'Wollen Sie wirklich alle Änderungen verwerfen?';
+				if (unload)
+					return msg;
+				else if (!confirm(msg))
+					return;
+			}
+
+			window.cancelled = 1;
+				
+			parent.writeMenu();
+		}
+	</script>
+</head>
+
+<body onload="parent.autosize(window)" onbeforeunload="return cancel(1)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>Zugriffsrecht</th>
+		<th>Ab Benutzergruppe</th>
+	</tr>
+
+	<form name="inputForm" method=POST action="{GET|$runtime.chaturl}" onsubmit="window.cancelled = 1">
+	{GET|$runtime.hiddenfields}
+	<input type=hidden name=action value="admin_permissions">
+	<tr class=row2>
+		<td colspan=2 align=right>
+			<input type=submit class="plain" class="netscape-dummy" value="Speichern">
+			&nbsp;
+			<input type=button class="plain" class="netscape-dummy" value="Abbrechen" onclick="cancel();return false">
+		</td>
+	</tr>
+
+	<tr class=row2>
+		<td colspan=2>
+			Die globalen Zugriffsrechte bestimmen, ab welcher Benutzergruppe ein bestimmtes Recht vorhanden ist. Sie k&ouml;nnen jedoch f&uuml;r jeden Benutzer mit den individuellen Zugriffsrechten &uuml;berschrieben werden.
+		</td>
+	</tr>
+
+	{FOREACH|$permission|$permissions}
+		<tr class=row2>
+			<td>{GET|$permission.description}:</td>
+			<td>
+				<select name="permission.{GET|$permission.name}" style="width:100%">
+					{FOR|$group|-1|10}
+						{IF_HAS_GROUPNAME|$group}
+							<option value="{GET|$group}" {IIF|$permission.group==$group| selected}>{GROUPNAME|$group}
+						{ENDIF}
+					{ENDFOR}
+					<option value="256" {IIF|$permission.group==256| selected}>(keine)
+				</select>
+			</td>
+		</tr>
+	{ENDFOR}
+
+	<tr class=row2>
+		<td colspan=2 align=right>
+			<input type=submit class="plain" class="netscape-dummy" value="Speichern">
+			&nbsp;
+			<input type=button class="plain" class="netscape-dummy" value="Abbrechen" onclick="cancel();return false">
+		</td>
+	</tr>
+	</form>
+</table>
+</td></tr></table>
+
+</body>
+</html> 

@@ -1,0 +1,36 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_maintenance}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+</head>
+
+<body onload="parent.autosize(window)">
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=3>
+
+	<tr>
+		<th>{IIF|$settings.maintenance|Wartungsmodus ausschalten|Wartungsmodus aktivieren}</th>
+	</tr>
+	<tr class="row2">
+		<td><table border=0 cellspacing=5 cellpadding=0 width="100%">
+		<form method="post" action="{GET|$runtime.chaturl}">
+		{GET|$runtime.hiddenfields}
+		<input type=hidden name=action value="admin_maintenance">
+		<input type=hidden name=maintenance value={IIF|$settings.maintenance|0|1}>
+		<tr>
+			<td>{IIF|$settings.maintenance|Der Wartungsmodus ist im Moment aktiviert, es k&ouml;nnen sich nur Benutzer einloggen, die eine entsprechende Berechtigung haben (standardm&auml;ssig nur der Chat-Master). Wollen Sie den Wartungsmodus jetzt ausschalten?|Der Wartungsmodus ist aus. Wenn Sie ihn anschalten, werden alle Benutzer ausgeloggt, die keine Berechtigung haben, den Chat im Wartungsmodus zu betreten. Anschlie&szlig;end k&ouml;nnen Sie alle notwendigen &Auml;nderungen am Chat durchf&uuml;hren. Wollen Sie den Wartungsmodus jetzt aktivieren?}</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td align=center><input type=submit class="plain" class="netscape-dummy" value="{IIF|$settings.maintenance|Wartungsmodus deaktivieren|Wartungsmodus aktivieren}">&nbsp;<input type=button class="plain" class="netscape-dummy" value="Abbrechen" onclick="parent.writeMenu();return false"></td>
+		</tr>
+		</form>
+		</table></td>
+	</tr>
+</table>
+</td></tr></table>
+
+</body>
+</html> 

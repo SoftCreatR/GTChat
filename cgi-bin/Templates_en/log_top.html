@@ -1,0 +1,53 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname} - Messages log for the current session</title>
+</head>
+
+<body>
+<!-- download_start -->
+<script language="JavaScript">
+	function removeDownload(string)
+	{
+		if (string.indexOf("<!-- download"+"_start -->")>=0 && string.indexOf("<!-- messages"+"_start -->")>=0)
+			return string.substring(0,string.indexOf("<!-- download_start -->"))+string.substring(string.indexOf("<!-- messages"+"_start -->"));
+		else
+			return string;
+	}
+
+	function download(form)
+	{
+		if (document.execCommand && window.invisible && invisible.document)
+		{
+			try
+			{
+				invisible.document.open('text/html','replace');
+				invisible.document.write(removeDownload(window.htmlcode));
+				invisible.document.close();
+				invisible.document.execCommand('SaveAs',true,'log.html');
+				return false;
+			}
+			catch (e)
+			{
+			}
+		}
+
+		form.content.value=removeDownload(window.htmlcode);
+		var regexp=/([\u0100-\uFFFF])/;
+		while (form.content.value.match(regexp))
+			form.content.value=form.content.value.replace(regexp,'&#'+RegExp.$1.charCodeAt(0)+';');
+		return true;
+	}
+</script>
+<div align=center>
+	<form method=POST action="{GET|$runtime.chaturl}" onsubmit="return download(this)">
+		{GET|$runtime.hiddenfields}
+		<input type=hidden name=template value=download>
+		<input type=hidden name=filename value="log.html">
+		<input type=hidden name=content>
+		<input type=submit value="Download">
+	</form>
+</div>
+<iframe name=invisible style="display:none"></iframe>
+<!-- messages_start -->

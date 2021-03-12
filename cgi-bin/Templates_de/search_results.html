@@ -1,0 +1,73 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>
+		{GET|$settings.chatname} - Suchergebnisse
+	</title>
+</head>
+
+<body onload="opener.autosize(window)">
+
+<form method=POST action="{GET|$runtime.chaturl}">
+{GET|$runtime.hiddenfields}
+<input type=hidden name=action value=search>
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+<tr>
+	<th>Suchergebnisse</th>
+</tr>
+<tr class="row2"><td><table width="100%" cellspacing=5>
+	<tr>
+		<td>Nickname:</td>
+		<td width="100%">
+			<input type=text name=mask size=30 style="width:100%" maxlength=255 value="{GET|$search_mask}">
+		</td>
+		<td><input type=submit value="Benutzer suchen"></td>
+	</tr>
+
+	<tr>
+		<td colspan=3>&nbsp;</td>
+	</tr>
+	
+{IF|$search_results_count}
+	{FOREACH|$result|$search_results}
+		<tr>
+			<td>&nbsp;</td>
+			<td colspan=2>
+				<a href="{GET|$runtime.completeurl}&template=profile&username={GET_ESCAPED|$result.name}">{GET|$result.result}</a><br>
+			</td>
+		</tr>
+	{ENDFOR}
+{ELSE}
+	<tr>
+		<td>&nbsp;</td>
+		<td colspan=2>Ihre Suche f&uuml;hrte leider zu keinem Ergebnis.</td>
+	</tr>
+{ENDIF}
+
+	<tr>
+		<td colspan=3>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td colspan=3 align=center>
+			<a href="{GET|$runtime.completeurl}&template=allusers">Alle Benutzer auflisten</a>
+		</td>
+	</tr>
+
+</table></td></tr>
+
+</table>
+</td></tr></table>
+</form>
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
+</div>
+
+</body>
+</html> 

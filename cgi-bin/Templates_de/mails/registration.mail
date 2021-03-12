@@ -1,0 +1,11 @@
+{SET|$to|$user.email}{SET|$subject|Ihre Chat-Registrierung}
+Hallo {GET|$user.nick},
+
+Sie haben einen Chat-Account registriert. Beim ersten Login müssen
+Sie folgenden Authentifizierungscode statt des Paßworts eingeben:
+
+	{GET|$user.code}
+
+Danach geben Sie immer regulär das Paßwort ein, das Sie sich
+gewählt haben, der Authentifizierungscode gilt nicht mehr.
+Viel Spaß in unserem Chat!

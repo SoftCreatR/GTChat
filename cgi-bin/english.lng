@@ -1,0 +1,275 @@
+return {
+	charset => 'windows-1252',
+
+	timeformat => '%02i:%02i:%02i',            # Time format mask (see sprintf)
+	timevalues => [2,1,0],                     # Values to be inserted into the time mask (0: seconds, 1: minutes, 2:hours, 3:day, 4:month, 5:year)
+	dateformat => '%02i/%02i/%i',              # Date format mask (see sprintf)
+	datevalues => [4,3,5],                     # Values to be inserted into the date mask (0: seconds, 1: minutes, 2:hours, 3:day, 4:month, 5:year)
+	datetimeformat => '%02i/%02i/%i %02i:%02i:%02i',  # Combined date and time format mask (see sprintf)
+	datetimevalues => [4,3,5,2,1,0],           # Values to be inserted into the combined mask (0: seconds, 1: minutes, 2:hours, 3:day, 4:month, 5:year)
+	
+	group_names => ['Banned','Guest','Registered User','SuperUser','','','','Administrator','','','','','Chat Master'],
+	group_tags => ['','Guest','','Admin','','','','Admin','','','','','Admin'],
+	
+	messages => {
+		################################
+		######## Version 0.91 ##########
+		################################
+		
+		######## messages on coming into the room/chat ##########
+		in_chat =>  '>>> %%nick%% comes into %%chatname%%.
+>>> %%nick%% crawls into %%chatname%%.
+>>> %%nick%% sneaks into %%chatname%%.
+>>> %%nick%% staggers into %%chatname%%.
+>>> %%nick%% roams into %%chatname%%.
+>>> %%nick%% falls into %%chatname%%.
+>>> %%nick%% jumps into %%chatname%%.
+>>> <ZONG!> %%nick%% beams into %%chatname%%.
+>>> <BANG!> %%nick%% kicks in the door and enters %%chatname%%.
+>>> <KNOCK> %%nick%% knocks on the door and enters %%chatname%%.',
+
+		in_room =>  '>>> %%nick%% comes into room %%roomname%%.
+>>> %%nick%% crawls into room %%roomname%%.
+>>> %%nick%% sneaks into room %%roomname%%.
+>>> %%nick%% staggers into room %%roomname%%.
+>>> %%nick%% roams into room %%roomname%%.
+>>> %%nick%% falls into room %%roomname%%.
+>>> %%nick%% jumps into room %%roomname%%.
+>>> <ZONG!> %%nick%% beams into room %%roomname%%.
+>>> <BANG!> %%nick%% kicks in the door and enters room %%roomname%%.
+>>> <KNOCK> %%nick%% knocks on the door and enters room %%roomname%%.',
+	
+		######## messages on going out of the room/chat ##########
+		out_chat => '<<< %%nick%% staggers out of %%chatname%%.
+<<< %%nick%% leaves %%chatname%%.
+<<< %%nick%% roams out of %%chatname%%.
+<<< %%nick%% crawls out of %%chatname%%.
+<<< %%nick%% staggers out of %%chatname%%.
+<<< %%nick%% falls out of %%chatname%%.
+<<< %%nick%% crawls out of %%chatname%%.
+<<< %%nick%% rushes out of %%chatname%%.
+<<< %%nick%% jumps out of %%chatname%%.
+<<< %%nick%% bursts into tears and leaves %%chatname%%.
+<<< <ZONG!> %%nick%% beams out of %%chatname%%.',
+
+		out_room => '<<< %%nick%% staggers out of room %%roomname%%.
+<<< %%nick%% leaves room %%roomname%%.
+<<< %%nick%% roams out of room %%roomname%%.
+<<< %%nick%% crawls out of room %%roomname%%.
+<<< %%nick%% staggers out of room %%roomname%%.
+<<< %%nick%% falls out of room %%roomname%%.
+<<< %%nick%% crawls out of room %%roomname%%.
+<<< %%nick%% rushes out of room %%roomname%%.
+<<< %%nick%% jumps out of room %%roomname%%.
+<<< %%nick%% bursts into tears and leaves room %%roomname%%.
+<<< <ZONG!> %%nick%% beams out of room %%roomname%%.',
+	
+		######## error messages ##########
+		error_couldnotopen => 'Can not open file %%file%%. Please contact the chat administrator.',
+		
+		error_nopermission => 'You have no permission to enter this area.',
+		error_profile_nopermission => 'You have no permission to edit this profile.',
+		error_deleteuser_nopermission => 'You have no permission to delete this user.',
+		error_roomlist_nopermission => 'You have no permission to edit this room.',
+		error_invite_nopermission => 'Only the owner or the administrators can invite others.',
+		
+		error_search_nothingtodo => 'You have entered an empty search text that matches every nickname.',
+		error_nopasswordgiven => 'Please enter a password.',
+		error_noemailgiven => 'Please enter an email address.',
+		error_noroomnamegiven => 'Please enter a room name.',
+		
+		error_passwordsnotequal => 'The passwords are not identical.',
+		error_wrongpassword => 'Invalid password.',
+		error_illegalbirthdate => 'Invalid birth date.',
+		
+		error_usernameexists => 'User name %%name%% is already taken. Please select a different name.',
+		error_nicknameexists => 'Nickname %%nick%% is already taken. Please select a different name.',
+		error_roomnameexists => 'Room name %%name%% is already taken. Please select a different name.',
+
+		error_unknownusername => 'User name %%name%% not found.',
+		error_unknownroom => 'Room %%roomname%% not found.',
+		error_unknowncolor => 'Unknown color %%color%%.',
+		error_unknownowner => 'Please select a different owner. A user with the nickname %%nick%% does not exist.',
+		error_ambiguousowner => 'The name could not be completed; there are several possible matches. Please enter more characters.',
+		
+		error_deleteuser_chatmaster => 'Unable to delete chat master.',
+		
+		error_mailprogramerror => 'Error executing the mail program.',
+		
+		error_maintenance => 'The chat is currently in maintenance mode. Please try again later.',
+		
+		error_unknowncommand => 'Unknown command %%command%%.',
+		error_gagged => 'You have no permission to talk right now. Please wait another %%seconds%% seconds.',
+		error_ambiguousname => 'The name %%nick%% can not be completed. There are several possible matches.',
+		error_msgtooneself => 'Talking to yourself again?',
+		error_samenickname => 'That is already your name!',
+		error_ignoreoneself => 'Have some self respect. You can not ignore yourself!',
+		error_alreadyignored => 'You are already ignoring the user %%nick%%.',
+		error_notignored => 'You are ignoring the user %%nick%%.',
+		error_invite_publicroom => 'This is a public room. An invitation is not neccessary.',
+		error_alreadyinvited => 'The user %%nick%% is already invited.',
+		error_notinvited => 'The user %%nick%% is not invited.',
+		
+		error_notinroom => 'The user %%nick%% is not in this room.',
+		error_notonline => 'The user %%nick%% is not online.',
+		error_notfound => 'The user %%nick%% does not exist.',
+		
+		error_msg_namenotgiven => 'Who is supposed to be the recipient?',
+		error_unignore_namenotgiven => 'Nice idea, but who do you mean?',
+		error_uninvite_namenotgiven => 'Nice idea, but who do you mean?',
+		
+		######## info messages ##########
+		info_currentcolor => 'Your current color is %%color%%.',
+		info_nickname => 'Your nickname is %%nick%%.',
+		info_room => 'You are in room %%roomname%%.',
+		
+		info_ignore => 'You are ignoring the following users: %%list%%',
+		info_ignore_none => 'You are not currently ignoring any users.',
+		info_ignored => 'The user %%nick%% is now ignoring you.',
+		info_unignored => 'The user %%nick%% is no longer ignoring you.',
+		info_ignoresuccess => 'You will no longer see posts from %%nick%%.',
+		info_unignoresuccess => 'You will now see posts from %%nick%% again.',
+		
+		info_invite => 'The following users are invited: %%list%%.',
+		info_invite_none => 'No one is invited to this room.',
+		info_invited => '%%nick%% has invited you to room %%roomname%%.',
+		info_uninvited => '%%nick%% has un-invited you from room %%roomname%%.',
+		info_invitesuccess => 'The user %%nick%% has been invited.',
+		info_uninvitesuccess => 'The user %%nick%% has been removed from the invite list.',
+		
+		################################
+		######## Version 0.92 ##########
+		################################
+	
+		info_awayon => '%%nick%% is away now',
+		info_awayoff => '%%nick%% is back',
+		
+		################################
+		######## Version 0.93 ##########
+		################################
+
+		error_max_username_len => 'The user name is too long.',
+		error_max_nickname_len => 'The nickname is too long.',
+		error_max_email_len => 'The email address is too long.',
+		error_max_roomname_len => 'The room name is too long.',
+		error_max_topic_len => 'The theme is too long.',
+
+		################################
+		######## Version 0.95 ##########
+		################################
+
+		error_wrongversion => 'This program requires Perl 5.005 or higher!',
+		error_unknownmethodcall => 'Unknown chat method %%method%% called. One of the plugins may be invalid or from a different version of the chat.',
+		error_staticcall => 'The method %%method%% can not be called static.',
+		error_couldnotcreate => 'Unable to create file %%file%%. Most likely the access rights for this folder have been set incorrectly, prohibiting write access.',
+
+		error_action_unknown => 'Requested action \'%%action%%\' is unknown. The needed plugin may not be installed.',
+		error_actionhandler_notfound => 'No service routine for action \'%%action%%\' found in file %%file%%. This plugin may be invalid or incorrectly installed.',
+
+		error_endblock_missing => 'Error in template %%template%%, line %%line%%: No closing {%%endtag%%} tag found for the block opening tag {%%tag%%}.',
+		error_taghandler_notfound => 'No service routine for the template mark {%%tag%%} found in file %%file%%. This plugin may be invalid or incorrectly installed.',
+		error_tag_unknown => 'Error in template %%template%%, line %%line%%: Unknown template mark {%%tag%%}. This could be due to a program error, or the needed plugin is not properly installed.',
+		error_tag_notenoughparameters => 'Error in template %%template%%, line %%line%%: Not enough parameters for the tag {%%tag%%}.',
+		error_tag_for_invalidranges => 'Error in template %%template%%, line %%line%%: The upper limit of the {FOR} tag must be larger than the lower limit.',
+
+		error_commandhandler_notfound => 'No service routine for the command %%command%% found in file %%file%%. This plugin may be invalid or incorrectly installed.',
+
+		error_illegalname => 'User name and nickname must be specified, and must contain valid characters.',
+		error_illegalroomname => 'The room name must be specified, and must contain valid characters.',
+		error_illegalemail => 'Invalid email address.',
+		error_useauthenticationcode => 'for your first login you need to use your authentication code instead of a password.',
+
+		error_ipbanned => 'This internet address has been blocked. If you feel that this is an error please contact the webmaster.',
+		error_usernamebanned => 'This account has been blocked. If you feel that this is an error please contact the webmaster.',
+
+		error_usernotfound => 'The user name %%name%% does not exist. You need to register your user name first.',
+
+		error_max_homepage_len => 'The web site URL is too long.',
+		error_max_homepagetitle_len => 'The web site name is too long.',
+
+		error_max_chat_users => 'This chat is limited to %%maxcount%% users. Unfortunately this number has been reached. Please try back later.',
+		error_max_room_users => 'This room is limited to %%maxcount%% users. Unfortunately this number has been reached. Please try back later.',
+
+		error_second_login => 'You were logged out because someone (possibly you yorself) has logged in with the same login.',
+		error_nonexistent_room => 'The room in which you were does no longer exist. Therefore you were logged out.',
+		error_timeout => 'You were logged out because your system did not respond any more. This indicates a broken connection.',
+		error_autokick => 'You were logged out because you were inactive for too long.',
+		error_deleted => 'You were logged out because your account has been deleted.',
+
+		error_couldnotcreatepipe => 'Error creating a pipe. Please contact the webmaster to change the settings or use the safe mode.',
+
+		error_reminder_noemailgiven => 'Unable to send authentication code. No valid email address for account %%name%% on file.',
+
+		error_smtp_couldnotfind => 'Unable to locate the SMTP server to send out email.',
+		error_smtp_couldnotsend => 'The mail could not be sent due to an error with the SMTP server.',
+
+		error_command_nopermission => 'You are not authorized to use this command.',
+
+		error_deleteroom_default => 'The default room can not be deleted.',
+
+		error_unknownname => 'User %%nick%% not found.',
+
+		info_awayon_reason => '%%nick%% is gone now: %%reason%%',
+
+		info_disconnect => 'Your connection to the chat server has been lost. GTChat will try to re-establish the connection.',
+
+		error_nickalreadychanged => 'You can only change your nickname every %%interval%% minutes.',
+		
+		info_pushed => '%%admin%% picks up a hook and drags %%nick%% into room %%roomname%%.',
+		info_kicked => '%%admin%% remembers his days as a soccer pro and kicks %%nick%% out of the chat.',
+		info_gagged => '%%admin%% gets mad and stuffs %%nick%%\'s mouth with chewing gum. The latter needs %%minutes%% minutes now to clear his mouth...',
+		info_ungagged => '%%admin%% has mercy and frees %%nick%% of the chewing gum. %%nick%% can speak again now.',
+		
+		error_push_namenotgiven => 'Fine, and who do you pick for that?',
+		error_push_alreadythere => 'No need to push him - he is already there!',
+		error_kick_namenotgiven => 'Fine, and who do you pick for that?',
+		error_gag_namenotgiven => 'Fine, and who do you pick for that?',
+		error_ungag_namenotgiven => 'Fine, and who do you pick for that?',
+		error_notgagged => '%%nick%% is not gagged at the moment. No need to free him.',
+		
+		error_push_admin => '%%nick%% is an admin! You don\'t really mean to push him, do you?',
+		error_kick_admin => '%%nick%% is an admin! You don\'t really mean to kick him, do you?',
+		error_gag_admin => '%%nick%% is an admin! You don\'t really mean to gag him, do you?',
+		error_ungag_admin => '%%nick%% is an admin! Do you really think he needs your help?',
+		
+		error_kicked => 'You were kicked by an admin. Shame on you!',
+		error_gagged => 'You need another %%seconds%% seconds to free your mouth of the chewing gum...',
+
+		error_illegal_license => 'You registration code is not valid for this server name, please get a new one.',
+
+		error_logout => 'You didn\'t log out before leaving the chat, that\'s why automatic logout is performed.',
+
+		error_push_nopermission => 'Don\'t touch anybody who could be stronger than you!',
+		error_kick_nopermission => 'Don\'t touch anybody who could be stronger than you!',
+		error_gag_nopermission => 'Don\'t touch anybody who could be stronger than you!',
+		error_ungag_nopermission => 'Don\'t touch anybody who could be stronger than you!',
+
+		error_nickchange_nopermission => 'You have no permission to change the nickname.',
+
+		error_custom => '%%error%%',
+
+		error_maintenance_activated => 'You were logged out because the maintenance mode was activated.',
+
+		error_moderated_nopermission => 'You have no permission to use this command in a moderated room.',
+		error_moderated_msg_nopermission => 'You dialog partner is in a moderated room, you cannot send him a message now.',
+		
+		info_moderated => 'You are in a moderated room. Therefore your text was sent to the moderators for reviewing.',
+
+		error_vip_nonmoderatedroom => 'This room is not moderated, there is no need to appoint VIPs.',
+		error_alreadyvip => 'The user %%nick%% is already a VIP.',
+		error_notvip => 'The user %%nick%% is not a VIP.',
+		error_removevip_namenotgiven => 'Fine, and who do you pick for that?',
+		
+		info_vip => 'VIPs in this room: %%list%%.',
+		info_vip_none => 'You haven\'t appointed any VIPs in this room yet.',
+		info_vipadded => '%%nick%% appointed you a VIP in the room %%roomname%%.',
+		info_vipremoved => '%%nick%% annihilated your VIP status in room %%roomname%%.',
+		info_addvipsuccess => 'The user %%nick%% has been appointed a VIP.',
+		info_removevipsuccess => 'The user %%nick%% is no longer a VIP.',
+		
+		info_disablemoderation_success => 'The moderation interface is disabled now. It will be active again on your next login, you can use the /enablemoderation command as well.',
+		info_enablemoderation_success => 'The moderation interface is activated now. You can disable it by using the /disablemoderation command.',
+
+		error_couldnotopendir => 'Can not open directory %%dir%%. Please contact the chat administrator.',
+	},
+};

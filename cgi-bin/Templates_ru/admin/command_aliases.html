@@ -1,0 +1,203 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_command_aliases}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<script>
+		var aliases_top = '{DOFILTER|escape_js}{INCLUDE|admin/command_aliases_top}{ENDDO}';
+		var aliases_bottom = '{DOFILTER|escape_js}{INCLUDE|admin/command_aliases_bottom}{ENDDO}';
+		var aliases_item = '{DOFILTER|escape_js}{INCLUDE|admin/command_aliases_item}{ENDDO}';
+
+		var baseurl = '{GET_JS|$settings.urls.imagesurl}';
+
+		function toHTML(str)
+		{
+			var replacements = new Array();
+			replacements['&'] = '&amp;';
+			replacements['"'] = '&quot;';
+			replacements['<'] = '&lt;';
+			replacements['>'] = '&gt;';
+
+			// escape relevant HTML symbols
+			// must do it this way, Opera doesn't know RegExp
+			var pos;
+			var ret = "";
+			str = str.replace(/\n/g,'');
+			str = str.replace(/\r/g,'');
+			while ((pos = str.search(/([&"<>])/)) != -1)
+			{
+				ret += str.substr(0, pos) + replacements[str.substr(pos,1)];
+				str = str.substring(pos+1, str.length);
+			}
+			ret += str;
+			return ret;
+		}
+
+		function AliasesItem(alias, command, languages)
+		{
+			this.alias = alias.replace(/\s/g,'');
+			this.command = command;
+			this.languages = languages;
+		}
+
+		function writeAliases()
+		{
+			var scrollPos = 0;
+			if (content.document && content.document.body && content.document.body.scrollTop)
+				scrollPos = content.document.body.scrollTop;
+			if (content.document && content.document.pageYOffset)
+				scrollPos = content.document.pageYOffset;
+
+			content.document.open('text/html','replace');
+			content.document.write(aliases_top.replace(/\%\%cols\%\%/g,languages.length+2));
+			for (var i=0;i<aliases.length;i++)
+			{
+				var item = aliases_item;
+
+				item = item.replace(/\%\%alias\%\%/g,aliases[i].alias);
+				item = item.replace(/\%\%command\%\%/g,aliases[i].command);
+				
+				var langopts = "";
+				for (var j=0;j<languages.length;j++)
+				{
+					var found = 0;
+					for (var k=0;k<aliases[i].languages.length;k++)
+						if (languages[j]==aliases[i].languages[k])
+							found = 1;
+					langopts += "<td align=center><input type=checkbox name=\"alias"+i+".language"+j+"\" value=1"+(found?" checked":"")+"></td>";
+				}
+				item = item.replace(/\%\%languages\%\%/g,langopts);
+				item = item.replace(/\%\%num\%\%/g,i);
+
+				content.document.write(item);
+			}
+			content.document.write(aliases_bottom.replace(/\%\%cols\%\%/g,languages.length+2));
+			content.document.close();
+			
+			if (scrollPos)
+				content.scrollTo(0,scrollPos);
+
+			parent.autosize(content);
+		}
+		
+		function storeChanges()
+		{
+			if (window.content && content.document && content.document.inputForm)
+			{
+				for (var i=0;i<aliases.length;i++)
+				{
+					aliases[i].command = toHTML(content.document.inputForm.elements['alias'+i].value);
+					aliases[i].languages = new Array();
+					for (var j=0;j<languages.length;j++)
+						if (content.document.inputForm.elements['alias'+i+'.language'+j].checked)
+							aliases[i].languages[aliases[i].languages.length] = languages[j];
+				}
+			}
+		}
+
+		function addEntry(alias)
+		{
+			alias = toHTML(alias.replace(/\s/g,''));
+			if (!alias.match(/^\//))
+				alias = '/'+alias;
+			for (var i=0;i<aliases.length;i++)
+			{
+				if (aliases[i].alias == alias)
+				{
+					alert('Такой алиас уже существует.');
+					return;
+				}
+			}
+
+			storeChanges();
+
+			aliases[aliases.length] = new AliasesItem(alias,'',[]);
+
+			writeAliases();
+
+			content.scrollTo(0,50000);
+		}
+
+		function removeEntry(num)
+		{
+			if (num < 0 || num >= aliases.length)
+				return;
+
+			if (!confirm('Вы действительно хотите удалить этот алиас?'))
+				return;
+
+			storeChanges();
+
+			aliases = aliases.slice(0, num).concat(aliases.slice(num+1, aliases.length));
+
+			writeAliases();
+		}
+		
+		function save()
+		{
+			storeChanges();
+
+			window.cancelled = 1;
+			dummy.location.replace('{GET_JS|$runtime.completeurl}&template=admin.command_aliases_save');
+		}
+
+		function cancel(unload)
+		{
+			if (window.cancelled)
+				return;
+
+			storeChanges();
+
+			var changed = (aliases.length != old_aliases.length);
+			for (var i=0;i<aliases.length && !changed;i++)
+			{
+				if (aliases[i].alias != old_aliases[i].alias || aliases[i].command != old_aliases[i].command || aliases[i].languages.length != old_aliases[i].languages.length)
+					changed = true;
+				else
+				{
+					for (var j=0;j<aliases[i].languages.length;j++)
+					{
+						if (aliases[i].languages[j] != old_aliases[i].languages[j])
+						{
+							changed = true;
+							break;
+						}
+					}
+				}
+			}
+
+			if (changed)
+			{
+				var msg = 'Вы действительно хотите отменить все изменения?';
+				if (unload)
+					return msg;
+				else if (!confirm(msg))
+					return;
+			}
+
+			window.cancelled = 1;
+
+			parent.writeMenu();
+		}
+
+		var languages = ['',
+		{FOREACH|$language|$settings.languages}
+			'{GET_JS|$language}'{NOTLAST},
+		{ENDFOR}
+		]
+
+		var aliases = [
+		{FOREACH|$alias|$admin_aliases}
+			new AliasesItem(toHTML('/{GET_JS|$alias.name}'),toHTML('/{GET_JS|$alias.value.command}'),[{FOREACH|$language|$alias.value.languages}'{GET_JS|$language}'{NOTLAST},{ENDFOR}]){NOTLAST},
+		{ENDFOR}
+		];
+
+		var old_aliases = new Array();
+		for (var i=0;i<aliases.length;i++)
+			old_aliases[i] = new AliasesItem(aliases[i].alias,aliases[i].command,aliases[i].languages.slice(0,aliases[i].languages.length));
+	</script>
+</head>
+<frameset rows="*,0" frameborder=0 border=0 framespacing=0 onload="writeAliases()" onbeforeunload="return cancel(1)">
+	<frame name=content src="about:blank" scrolling=auto noresize>
+	<frame name=dummy src="dummy.html" scrolling=no noresize>
+</frameset>
+</html> 

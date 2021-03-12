@@ -1,0 +1,15 @@
+{UPDATE_ONLINEINFO}
+{UPDATE|$current_room}
+<script>
+	if (parent.moderatedTexts)
+		parent.moderatedTexts = 0;
+	if (parent.moderationWnd && !parent.moderationWnd.closed)
+		parent.moderationWnd.close();
+</script>
+<br>
+Hello {GET|$current_user.nick}, welcome to room {GET|$current_room.name}!<br>
+{IF|$current_room.topic}Topic in this room: {GET|$current_room.topic}<br>{ENDIF}
+<br>
+{IF|$current_room.moderated}
+	<i>This room is moderated, therefore only moderators and VIPs may speak as usual. All other texts are sent to the moderators for reviewing before they are displayed.</i><br><br>
+{ENDIF}

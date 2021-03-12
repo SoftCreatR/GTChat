@@ -1,0 +1,11 @@
+{SET|$to|$user.email}{SET|$subject|Automatische Paßwortwiederherstellung}
+Hallo {GET|$user.nick},
+
+Sie haben für Ihren Chat-Account eine Paßwortwiederherstellung
+angefordert. Sie können folgenden Code einmalig statt dem
+Paßwort verwenden, um sich einzuloggen:
+
+	{GET|$user.code}
+
+Ändern Sie sofort nach dem Einloggen Ihr Paßwort, der Code gilt
+nur einmal!

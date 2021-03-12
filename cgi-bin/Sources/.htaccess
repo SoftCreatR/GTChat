@@ -3,8 +3,5 @@ AuthGroupFile /dev/null
 AuthName DenyViaWeb
 AuthType Basic
 
-
-<Limit GET>
 order allow,deny
 deny from all
-</Limit>

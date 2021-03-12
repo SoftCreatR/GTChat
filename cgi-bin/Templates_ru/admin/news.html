@@ -1,0 +1,168 @@
+<html>
+<head>
+	{NEED_PERMISSION|admin_news}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<script>
+		var news_top = '{DOFILTER|escape_js}{INCLUDE|admin/news_top}{ENDDO}';
+		var news_bottom = '{DOFILTER|escape_js}{INCLUDE|admin/news_bottom}{ENDDO}';
+		var news_item = '{DOFILTER|escape_js}{INCLUDE|admin/news_item}{ENDDO}';
+		var news_edit = '{DOFILTER|escape_js}{INCLUDE|admin/news_edit}{ENDDO}';
+
+		var current_user = '{GET_JS|$current_user.nick}';
+		var edited;
+
+		function NewsItem(message, author, date, datestring)
+		{
+			this.message = message;
+			this.author = author;
+			this.date = parseInt(date) || 0;
+			this.datestring = datestring;
+		}
+
+		function DateSort(a, b)
+		{
+			return a.date-b.date;
+		}
+		function writeNews()
+		{
+			var scrollPos = 0;
+			if (content.document && content.document.body && content.document.body.scrollTop)
+				scrollPos = content.document.body.scrollTop;
+			if (content.document && content.document.pageYOffset)
+				scrollPos = content.document.pageYOffset;
+
+			content.document.open('text/html','replace');
+			content.document.write(news_top);
+			for (var i=0;i<news.length;i++)
+			{
+				var item = news_item;
+				item = item.replace(/\%\%date\%\%/g,news[i].date ? news[i].datestring : '<i>новое</i>');
+				item = item.replace(/\%\%message\%\%/g,news[i].message);
+				item = item.replace(/\%\%author\%\%/g,news[i].author);
+				item = item.replace(/\%\%num\%\%/g,i);
+				content.document.write(item);
+			}
+			content.document.write(news_bottom);
+			content.document.close();
+			if (scrollPos)
+				content.scrollTo(0,scrollPos);
+			parent.autosize(content);
+		}
+
+		function editEntry(num)
+		{
+			if (num < 0 || num >= news.length)
+				num = -1;
+			window.edited = num;
+			var html = news_edit;
+			html = html.replace(/\%\%date\%\%/g,num>=0 && news[num].date ? news[num].datestring : '<i>новое</i>');
+			html = html.replace(/\%\%message\%\%/g,num>=0 ? news[num].message.replace(/<br>/gi,'\n') : '');
+			html = html.replace(/\%\%author\%\%/g,num>=0 ? news[num].author : current_user);
+			content.document.open('text/html','replace');
+			content.document.write(html);
+			content.document.close();
+			parent.autosize(content);
+		}
+
+		function saveEntry(message)
+		{
+			if (message.match(/\S/))
+			{
+				var replacements = new Array();
+				replacements['&'] = '&amp;';
+				replacements['#'] = '&#35;';
+				replacements[';'] = '&#59;';
+				replacements['|'] = '&#124;';
+				replacements['"'] = '&quot;';
+				replacements['<'] = '&lt;';
+				replacements['>'] = '&gt;';
+				var converted = "";
+				message = message.replace(/\r/,'');
+
+				// escape relevant HTML symbols
+				// must do it this way, Opera doesn't know RegExp
+				var pos;
+				while ((pos = message.search(/([&#;|"<>])/)) != -1)
+				{
+					converted += message.substr(0, pos) + replacements[message.substr(pos,1)];
+					message = message.substring(pos+1, message.length);
+				}
+				message = converted + message;
+				message = message.replace(/\n/g, '<br>');    // cannot replace \n together with other symbols - Opera
+
+				if (edited < 0 || edited >= news.length)
+					news[news.length] = new NewsItem(message, current_user);
+				else
+					news[edited].message = message;
+			}
+			writeNews();
+		}
+
+		function removeEntry(num)
+		{
+			if (num < 0 || num >= news.length)
+				return;
+
+			if (!confirm('¬ы действительно хотите удалить эту новость?'))
+				return;
+
+			news = news.slice(0, num).concat(news.slice(num+1, news.length));
+
+			writeNews();
+		}
+
+		function save()
+		{
+			window.cancelled = 1;
+			dummy.location.replace('{GET_JS|$runtime.completeurl}&template=admin.news_save');
+		}
+
+		function cancel(unload)
+		{
+			if (window.cancelled)
+				return;
+
+			var changed = (old_news.length != news.length);
+			if (!changed)
+			{
+				for (i=0;i<news.length;i++)
+				{
+					if (news[i].message != old_news[i].message)
+					{
+						changed = true;
+						break;
+					}
+				}
+			}
+
+			if (changed)
+			{
+				var msg = '¬ы действительно хотите отменить все изменени€?';
+				if (unload)
+					return msg;
+				else if (!confirm(msg))
+					return;
+			}
+
+			window.cancelled = 1;
+
+			parent.writeMenu();
+		}
+
+		var news = [
+		{FOREACH|$message|$news.messages}
+			new NewsItem('{GET_JS|$message.message}','{GET_JS|$message.author}','{GET_JS|$message.date}','{GETDATE|$message.date}'){NOTLAST},
+		{ENDFOR}
+		];
+		news.sort(DateSort);
+
+		var old_news = new Array();
+		for (var i=0;i<news.length;i++)
+			old_news[i] = new NewsItem(news[i].message);
+	</script>
+</head>
+<frameset rows="*,0" frameborder=0 border=0 framespacing=0 onload="writeNews()" onbeforeunload="return cancel(1)">
+	<frame name=content src="about:blank" scrolling=auto noresize>
+	<frame name=dummy src="dummy.html" scrolling=no noresize>
+</frameset>
+</html>

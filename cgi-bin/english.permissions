@@ -1,0 +1,41 @@
+profile_change_nick|User profile - change nick
+profile_settempgroup|User profile - set temporary status
+profile_seeemail|User profile - see hidden email addresses
+profile_seelastlogin|User profile - see last login time
+profile_seeregistration|User profile - see registration time
+profile_seeip|User profile - see IP address
+profile_traceroute|User profile - route tracing for IP address
+profile_seepullmode|User profile - see used chat mode
+profile_seecommandpermissions|User profile - see commands permissions
+profile_seepermissions|User profile - see general permissions
+profile_modify|Modify profiles of other users
+profile_modify_commandpermissions|Modify individual commands permissions of other users
+profile_modify_permissions|Modify individual permissions of other users
+rooms_create|Rooms - create
+rooms_createprivate|Rooms - create private
+rooms_createpublic|Rooms - create public
+rooms_createpermanent|Rooms - create permanent
+rooms_createmoderated|Rooms - create moderated
+rooms_changeowner|Rooms - change owner
+rooms_modify|Modify rooms of other users
+invite|Invite people in rooms of other users
+callop|Receive the /callop command
+rooms_moderate|Moderate in rooms of other users
+privaterooms|Go to private rooms without permission
+ignore_nickchange_interval|Ignore minimum interval between nick changes
+ignore_max_users|Ignore maximum user number
+ignore_maintenance|Log in while maintenance mode is active
+admin|Enter admin area
+admin_maintenance|Admin area - switch maintenance mode on and off
+admin_plugins|Admin area - manage plugins
+admin_images|Admin area - refresh images list
+admin_news|Admin area - edit chat news
+admin_general_settings|Admin area - edit general settings
+admin_defaults|Admin area - edit defaults
+admin_smileys|Admin area - edit smileys
+admin_commandpermissions|Admin area - edit commands permissions
+admin_permissions|Admin area - edit general permissions
+admin_command_aliases|Admin area - edit command aliases
+admin_color_aliases|Admin area - edit color names
+admin_log|Admin area - view chat logs
+admin_cleanupmembers|Admin area - remove unused user accounts

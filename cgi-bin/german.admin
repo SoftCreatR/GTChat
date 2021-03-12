@@ -1,0 +1,190 @@
+return {
+	admin => [
+		{
+			type => 'submenu',
+			title => 'Installation/Update',
+			dest => 'installation',
+		},
+		{
+			type => 'submenu',
+			title => 'Sprache',
+			dest => 'language',
+		},
+		{
+			type => 'submenu',
+			title => 'Layout',
+			dest => 'layout',
+		},
+		{
+			type => 'submenu',
+			title => 'Sicherheit',
+			dest => 'security',
+		},
+		{
+			type => 'submenu',
+			title => 'Einstellungen',
+			dest => 'settings',
+		},
+		{
+			type => 'submenu',
+			title => 'Sonstiges',
+			dest => 'general',
+		},
+	],
+	installation => [
+		{
+			type => 'item',
+			title => 'Wartungsmodus an-/ausschalten',
+			dest => 'maintenance',
+			permission => 'admin_maintenance',
+		},
+		{
+			type => 'item',
+			title => 'Programmupdate',
+			dest => 'update',
+			permission => 'admin_update',
+		},
+		{
+			type => 'item',
+			title => 'Plugin-Verwaltung',
+			dest => 'plugins',
+			permission => 'admin_plugins',
+		},
+		{
+			type => 'item',
+			title => 'Lizenzinformationen',
+			dest => 'license',
+			permission => 'admin_license',
+		},
+	],
+	language => [
+		{
+			type => 'item',
+			title => 'Chat-Meldungen',
+			dest => 'messages',
+			permission => 'admin_messages',
+		},
+		{
+			type => 'item',
+			title => 'Gruppenbezeichnungen',
+			dest => 'groupnames',
+			permission => 'admin_groupnames',
+		},
+		{
+			type => 'item',
+			title => 'Zeitformate',
+			dest => 'timeformats',
+			permission => 'admin_timeformats',
+		},
+		{
+			type => 'item',
+			title => 'Befehlsbeschreibungen',
+			dest => 'command_descriptions',
+			permission => 'admin_command_descriptions',
+		},
+		{
+			type => 'item',
+			title => 'Beschreibungen der Zugriffsrechte',
+			dest => 'permission_descriptions',
+			permission => 'admin_permission_descriptions',
+		},
+	],
+	layout => [
+		{
+			type => 'item',
+			title => 'Bilder',
+			dest => 'images',
+			permission => 'admin_images',
+		},
+		{
+			type => 'item',
+			title => 'Farben',
+			dest => 'colors',
+			permission => 'admin_colors',
+		},
+		{
+			type => 'item',
+			title => 'Templates',
+			dest => 'templates',
+			permission => 'admin_templates',
+		},
+	],
+	security => [
+		{
+			type => 'item',
+			title => 'Befehlsrechte',
+			dest => 'commandpermissions',
+			permission => 'admin_commandpermissions',
+		},
+		{
+			type => 'item',
+			title => 'Zugriffsrechte',
+			dest => 'permissions',
+			permission => 'admin_permissions',
+		},
+		{
+			type => 'item',
+			title => 'Sperren',
+			dest => 'banlist',
+			permission => 'admin_banlist',
+		},
+	],
+	settings => [
+		{
+			type => 'item',
+			title => 'Allgemeines',
+			dest => 'general_settings',
+			permission => 'admin_general_settings',
+		},
+		{
+			type => 'item',
+			title => 'Standardwerte',
+			dest => 'defaults',
+			permission => 'admin_defaults',
+		},
+		{
+			type => 'item',
+			title => 'Befehlsaliases',
+			dest => 'command_aliases',
+			permission => 'admin_command_aliases',
+		},
+		{
+			type => 'item',
+			title => 'Farbbezeichnungen',
+			dest => 'color_aliases',
+			permission => 'admin_color_aliases',
+		},
+		{
+			type => 'item',
+			title => 'Smileys',
+			dest => 'smileys',
+			permission => 'admin_smileys',
+		},
+	],
+	general => [
+		{
+			type => 'item',
+			title => 'Chat-News',
+			dest => 'news',
+			permission => 'admin_news',
+		},
+		{
+			type => 'item',
+			title => 'Log-Viewer',
+			dest => 'log',
+			permission => 'admin_log',
+		},
+		{
+			type => 'item',
+			title => 'Traffic-Log',
+			dest => 'traffic',
+			permission => 'admin_traffic',
+		},
+		{
+			type => 'item',
+			title => 'Inaktive Benutzer l&ouml;schen',
+			dest => 'cleanupmembers',
+			permission => 'admin_cleanupmembers',
+		},
+	],
+};

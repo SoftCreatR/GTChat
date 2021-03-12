@@ -1,0 +1,53 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname} - Raumliste</title>
+	<script language="JavaScript">
+		function send(text)
+		{
+			if (window.opener && !opener.closed && opener.sendText)
+				opener.sendText(text,1);
+		}
+	</script>
+</head>
+<body onload="opener.autosize(window)">
+
+{NEED|$roomlist}
+<table border=0 width=100% cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width=100% cellspacing=1 cellpadding=0>
+
+<tr>
+	<th>Bezeichnung</th>
+	<th>Status</th>
+	<th>Thema</th>
+</tr>
+{FOREACH|$room|$roomlist}
+	<tr class="row2">
+		<td>
+			<a href="#room" onclick="send('/room {GET_JS|$room.name}');return false;" title="Springe zum Raum">{GET|$room.name}</a>
+			{IF|permission(rooms_modify) or $room.owner eq $current_user.name}
+				<span class="smalltext">(<a href="{GET|$runtime.completeurl}&template=editroom&roomname={GET_ESCAPED|$room.name}">Bearbeiten</a>)</span>
+			{ENDIF}
+		</td>
+		<td>{IIF|$room.closed|privat|&ouml;ffentlich}{IIF|!$room.permanent|, tempor&auml;r}</td>
+		<td>{GET|$room.topic}&nbsp;</td>
+	</tr>
+{ENDFOR}
+{IF|permission(rooms_create)}
+	<tr class="row2">
+		<td colspan=3>
+			<a href="{GET|$runtime.completeurl}&template=editroom&createnew=1">Neuen Raum erstellen</a>
+		</td>
+	</tr>
+{ENDIF}
+</table>
+</td></tr></table>
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
+</div>
+
+</body>
+</html> 

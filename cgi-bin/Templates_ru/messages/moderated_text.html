@@ -1,0 +1,17 @@
+{NEED|$current_room}
+{IF|$current_room.owner eq $current_user.name or permission(rooms_moderate)}
+<script>
+	if (!parent.disableModeration)
+		addModeratedText(
+				'{GET_JS|$params.id}',
+				'{GET_JS|$params.name}',
+				'{GET_JS|$params.nick}',
+				'{GET_JS|$params.color}',
+				'{GET_JS|$params.text}',
+				[
+					{FOREACH|$nick|$params.*}
+						'{GET_JS|$nick}'{NOTLAST},
+					{ENDFOR}
+				]);
+</script>
+{ENDIF}

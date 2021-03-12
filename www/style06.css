@@ -1,0 +1,76 @@
+A
+{
+	color: #FFFFFF;
+}
+A:active
+{
+	color: #0060FF;
+}
+A:hover
+{
+	color: #0060FF;
+}
+
+TD,.normaltext
+{
+	font-family: Verdana, Arial, Helvetica;
+	font-size: 10pt;
+	color: #FFFFFF;
+}
+.smalltext
+{
+	font-size: 8pt;
+}
+
+TH
+{
+	font-family: Verdana, Arial, Helvetica;
+	font-size: 10pt;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #76201E;
+}
+
+TABLE.outer
+{
+	background-color: #FFFFFF;
+}
+
+TR.row1
+{
+	background-color: #002660;
+}
+TR.row2
+{
+	background-color: #034426;
+}
+
+BODY
+{
+	font-family: Verdana, Arial, Helvetica;
+	font-size: 10pt;
+	color: #FFFFFF;
+	background-color: #333333;
+}
+.bigtext
+{
+	font-size: 120%;
+}
+.headertext
+{
+	font-family: Verdana, Arial, Helvetica;
+	font-size: 10pt;
+	color: #FFFFFF;
+}
+.bigheadertext
+{
+	font-family: Verdana, Arial, Helvetica;
+	font-size: 14pt;
+	color: #FFFFFF;
+}
+
+input.plain
+{
+	background-color: #D0D0D0;
+	border: 1px solid #606060;
+}

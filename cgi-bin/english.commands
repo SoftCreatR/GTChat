@@ -1,0 +1,158 @@
+return {
+	__order => ['','admin','broadcast','callop','me','away','img','msg','imgmsg','quit','clear','refresh','room','nick','color','ignore','unignore','invite','uninvite','kick','gag','ungag','push','profile','editprofile','roomlist','editroom','addvip','removevip','disablemoderation','enablemoderation'],
+	__hide => ['alive','moderated_text'],
+	'' => {
+		params => '[@Nick1] [@Nick2] Text',
+		description => 'Sends a message to all users in this room. If one or more nicknames are prepended before the text with the @ character, "(to Nick1, Nick2)" is added.',
+	},
+	'broadcast' =>
+	{
+		params => 'Text',
+		description => 'Sends a message to all users in the chat, including users in other rooms.',
+	},
+	'callop' =>
+	{
+		params => 'Text',
+		description => 'Sends a message to all admins in the chat, including the ones in other rooms.',
+	},
+	'me' => 
+	{
+		params => 'Text',
+		description => 'Echos the text as action, e.g. "/me is leaving now" from user SampleUser results in the output "<SampleUser is leaving now>".',
+	},
+	'away' =>
+	{
+		params => 'Reason',
+		description => 'Notifies all users in the current room that you are away from your computer for a while. Optionally a reason ca be added. The name is then displayed in italics and in brackets in the user list. The user profile shows the reason, if specified. As soon as you start typing again you are shown as being back.',
+	},
+	'img' =>
+	{
+		params => 'Image URL',
+		description => 'Sends an image to all users in the current room.',
+	},
+	'msg' =>
+	{
+		params => 'Nick Text',
+		description => 'Sends a private message to a user in any room. If the user is not currently in the chat an offline message is left for that user.',
+	},
+	'imgmsg' =>
+	{
+		params => 'Nick Image URL',
+		description => 'Sends an image as private message to a user. If the user is not currently in the chat an offline message is left for that user.',
+	},
+	'quit' =>
+	{
+		params => '',
+		description => 'Leave the chat.',
+	},
+	'clear' =>
+	{
+		params => '',
+		description => 'Clears the chat messages. This can be useful if in a long chat session the chat is slowed down by too many logged messages.',
+	},
+	'refresh' =>
+	{
+		params => '',
+		description => 'Refresh the user list (this should normally be done automatically).',
+	},
+	'room' =>
+	{
+		params => 'Room name',
+		description => 'Switches to another room.',
+	},
+	'nick' =>
+	{
+		params => 'Nickname',
+		description => 'Switches to a new nickname, if it is still available.',
+	},
+	'color' =>
+	{
+		params => 'Color',
+		description => 'Changes the color that is used to send messages. Allowed are color names such as "red", "green" etc. or RGB values, such as "A0B8CD" (see color palette in user profile)',
+	},
+	'ignore' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Adds nicknames to the ignore list. The users are notified, and you will not see their messages any more. This list is cleared when you log in again. /ignore without a nickname shows your current ignore list.',
+	},
+	'unignore' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Removes nicknames from your ignore list.',
+	},
+	'invite' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Only for owners of a room, or for admins: Invites users to a private room. The invitation is permanent, and persists even after the user logs in again. If no nickname is given the list of currently invited users is shown.',
+	},
+	'uninvite' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Only for owners of a room, or for admins: Removes a user from the list of invited users for a private room. If the user is currently in the private room he is kicked out.',
+	},
+	'kick' =>
+	{
+		params => 'Nick',
+		description => 'Kicks a user out of the chat.',
+	},
+	'gag' =>
+	{
+		params => 'Nick Time',
+		description => 'Gags a user for the specified number of minutes (5 minutes is the default). The gagged user can not post for the specified number of minutes.',
+	},
+	'ungag' =>
+	{
+		params => 'Nick',
+		description => 'Allows a gagged user to post again.',
+	},
+	'push' =>
+	{
+		params => 'Nick Room',
+		description => 'Moves a user into another room. If no room is specified the default room is used.',
+	},
+	'profile' =>
+	{
+		params => 'Nick',
+		description => 'Opens the profile window for the specified user or the own profile if not specified.',
+	},
+	'editprofile' =>
+	{
+		params => 'Nick',
+		description => 'Opens the profile edit window for the specified user or the own settings if not specified.',
+	},
+	'roomlist' =>
+	{
+		params => '',
+		description => 'Opens the room list.',
+	},
+	'editroom' =>
+	{
+		params => 'Room',
+		description => 'Edits the specified room (or the current room if not specified).',
+	},
+	'admin' =>
+	{
+		params => '[@Nick1] [@Nick2] Text',
+		description => 'Exactly the same as usual text but bigger to attract attention.',
+	},
+	'addvip' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Only for moderators: appoint some users VIPs (only for the current room).',
+	},
+	'removevip' =>
+	{
+		params => 'Nick1 Nick2 ...',
+		description => 'Only for moderators: annihilate the VIP status of some users (only for the current room).',
+	},
+	'disablemoderation' =>
+	{
+		params => '',
+		description => 'Disable moderation interface. Even if you have moderation rights for the current room, the moderation window will not appear anymore. The moderation interface is activated automatically on the next login.',
+	},
+	'enablemoderation' =>
+	{
+		params => '',
+		description => 'Activate the moderation interface again after it was disabled by /disablemoderation. This is performed automatically on every login.',
+	},
+};

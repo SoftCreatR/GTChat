@@ -1,0 +1,10 @@
+{SET|$to|$user.email}{SET|$subject|Automatic password reminder}
+Hello {GET|$user.nick},
+
+You have requested a password reminder for your chat account.
+You can use the following authentication code once to log in:
+
+	{GET|$user.code}
+
+Please change your password immediately after you are logged
+in. The code is only valid for one login!

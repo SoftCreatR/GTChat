@@ -1,0 +1,35 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	{NEED|$offlinemsgs}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname} - Offline-Nachrichten f&uuml;r {GET|$current_user.nick}</title>
+</head>
+
+<body onload="opener.autosize(window)">
+
+{IF|$offlinemsgs_exist}
+	Bitte beachten Sie: die Offline-Nachrichten werden nach dem Lesen automatisch gel&ouml;scht und k&ouml;nnen nicht mehr abgerufen werden!<br>
+	Hier sind Ihre Offline-Nachrichten:<br><br>
+
+	<table border=0 width="100%">
+
+	{FOREACH|$msg|$offlinemsgs}
+		<tr>
+			{GET|$msg}
+		</tr>
+	{ENDFOR}
+
+	</table>
+	<br><br>
+{ELSE}
+	Es sind keine Offline-Nachrichten f&uuml;r Sie eingetroffen.<br><br><br>
+{ENDIF}
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
+</div>
+
+</body>
+</html> 

@@ -1,0 +1,20 @@
+<tr class=row2>
+	<td>
+		<table border=0 cellspacing=0 cellpadding=0 width="100%"><tr>
+			<td align=left rowspan=2>%%smiley%%</td>
+			<td align=right>
+				<table border=0 cellspacing=0 cellpadding=0><tr>
+					<td rowspan=2>
+						<a href="javascript:void(0)" onclick="parent.setTimeout('removeEntry(%%num%%)',0);return false">{IMAGE|remove|alt="Smiley l&ouml;schen"}</a>&nbsp;&nbsp;&nbsp;
+					</td>
+					<td><a href="javascript:void(0)" onclick="parent.setTimeout('moveUp(%%num%%)',0);return false"">{IMAGE|up|alt="Nach oben verschieben"}</a></td>
+				</tr><tr>
+					<td><a href="javascript:void(0)" onclick="parent.setTimeout('moveDown(%%num%%)',0);return false">{IMAGE|down|alt="Nach unten verschieben"}</a></td>
+				</tr></table>
+			</td>
+		</tr></table>
+	</td>
+	<td valign=top><input type=text name="shortcuts%%num%%" value="%%shortcuts%%" style="width:100%"></td>
+	<td valign=top align=center><input type=checkbox name="visible%%num%%" value="1" %%visible%%></td>
+	<td valign=top><img src="%%imageurl%%" %%size%% border=0></td>
+</tr>

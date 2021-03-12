@@ -1,0 +1,203 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	{NEED|$user_information}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname} - Profil von {GET|$user_information.nick}</title>
+	<script language="JavaScript">
+		function send(text)
+		{
+			if (window.opener && !opener.closed && opener.sendText)
+				opener.sendText(text,1);
+		}
+
+		function sendMessage()
+		{
+			var text = document.inputForm.text.value;
+			document.inputForm.text.value = '';
+			send('/msg {GET_JS|$user_information.nick} ' + text)
+		}
+	</script>
+</head>
+
+<body onload="opener.autosize(window)">
+
+<b>Allgemeines</b>
+{IF|permission(profile_seecommandpermissions)}
+	| <a href="{GET|$runtime.completeurl}&template=profile_commandpermissions&username={GET_ESCAPED|$user_information.name}">Befehlsrechte</a>
+{ENDIF}
+{IF|permission(profile_seepermissions)}
+	| <a href="{GET|$runtime.completeurl}&template=profile_permissions&username={GET_ESCAPED|$user_information.name}">Zugriffsrechte</a>
+{ENDIF}
+<br>{IMAGE|blank|height=4}<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+<tr>
+	<th>
+		Profil von {GET|$user_information.nick}
+		{IF|$user_information.online}
+			(Online{IF|$user_information.away}, gerade abwesend{ENDIF})
+		{ELSE}
+			(Offline)
+		{ENDIF}
+	</th>
+</tr>
+<tr class="row2"><td><table width="100%">
+	{IF|$user_information.away and $user_information.away ne 1}
+		<tr>
+			<td><b>Abwesenheitsgrund:</b></td>
+			<td>{GET|$user_information.away}</td>
+		</tr>
+	{ENDIF}
+	<tr>
+		<td><b>Nickname:</b></td>
+		<td>{GET|$user_information.nick}</td>
+	</tr>
+	<tr>
+		<td><b>Status:</b></td>
+		<td>{GROUPNAME|$user_information.group}</td>
+	</tr>
+	{IF|$user_information.online and $user_information.tempgroup!=$user_information.group}
+		<tr>
+			<td><b>Vor&uuml;bergehend:</b></td>
+			<td>{GROUPNAME|$user_information.tempgroup}</td>
+		</tr>
+	{ENDIF}
+	<tr>
+		<td><b>Farbe:</b></td>
+		<td><font color="{GET|$user_information.color}">{GET|$user_information.color}</font></td>
+	</tr>
+	{IF|$user_information.email}
+		{IF|!$user_information.privateemail or permission(profile_seeemail)}
+			<tr>
+				<td><b>E-Mail:</b></td>
+				<td><a href="mailto:{GET|$user_information.email}">{GET|$user_information.email}</a></td>
+			</tr>
+		{ENDIF}
+	{ENDIF}
+	{IF|$user_information.gender}
+		<tr>
+			<td><b>Geschlecht:</b></td>
+			<td>{IIF|$user_information.gender==1|m&auml;nnlich|weiblich}</td>
+		</tr>
+	{ENDIF}
+	{IF|$user_information.birth_date}
+		<tr>
+			<td><b>Geburtsdatum:</b></td>
+			<td>{GETSTDDATE|$user_information.birth_date}</td>
+		</tr>
+	{ENDIF}
+	{IF|$user_information.homepage}
+		<tr>
+			<td><b>Website:</b></td>
+			<td><a href="{GET|$settings.urls.chaturl}?template=dereferer&language={GET|$runtime.language}&url={GET_ESCAPED|$user_information.homepage}" target="_blank" title="Homepage &ouml;ffnen">{IF|$user_information.homepagetitle}{GET|$user_information.homepagetitle}{ELSE}{GET|$user_information.homepage}{ENDIF}</a></td>
+		</tr>
+	{ENDIF}
+	{IF|permission(profile_seeregistration)}
+		<tr>
+			<td><b>Registrierung:</b></td>
+			<td>{GETDATETIME|$user_information.registration}</td>
+		</tr>
+	{ENDIF}
+	{IF|permission(profile_seelastlogin)}
+		<tr>
+			<td><b>Letzter Login:</b></td>
+			<td>{GETDATETIME|$user_information.lastlogin}</td>
+		</tr>
+	{ENDIF}
+
+	{IF|$user_information.online}
+		<tr>
+			<td><b>Raum:</b></td>
+			<td><a href="#room" onclick="send('/room {GET_JS|$user_information.room}');return false;" title="Springe zum Raum">{GET|$user_information.room}</a></td>
+		</tr>
+		{IF|permission(profile_seepullmode)}
+			<tr>
+				<td><b>Sicherer Modus:</b></td>
+				<td>{IIF|$user_information.pull|ja|nein}</td>
+			</tr>
+		{ENDIF}
+	{ENDIF}
+
+	{IF|permission(profile_seeip)}
+		<tr>
+			<td><b>Browser:</b></td>
+			<td>{GET|$user_information.browser}</td>
+		</tr>
+		<tr>
+			<td><b>IP:</b></td>
+			<td>{IF|permission(profile_traceroute)}<a href="{GET|$runtime.completeurl}&action=traceroute&name={GET_ESCAPED|$user_information.name}">{ENDIF}{GET|$user_information.ip}{IF|permission(profile_traceroute)}</a>{ENDIF} {IF|$user_information.host}({GET|$user_information.host}){ENDIF}</td>
+		</tr>
+		{IF|$user_information.forwardedfor}
+			<tr>
+				<td><b>Client-IP:</b></td>
+				<td>{GET|$user_information.forwardedfor}</td>
+			</tr>
+		{ENDIF}
+	{ENDIF}
+
+	{IF|$user_information.name ne $current_user.name}
+		<form name="inputForm" action="javascript:void(0)" onsubmit="sendMessage();return false;">
+		<tr>
+			<td><b>Privatnachricht senden:</b></td>
+			<td>
+				<input type=text name=text size=13 maxlength=255>
+				<input type=submit value="Abschicken">
+			</td>
+		</tr>
+		</form>
+	{ENDIF}
+
+	{IF|permission(profile_modify) and $current_user.tempgroup>$user_information.group or $user_information.name eq $current_user.name}
+		<tr>
+			<td colspan=2>&nbsp;</td>
+		</tr>
+
+		<form>
+		<tr>
+			<td colspan=2 align=center>
+				<input type=button value="Bearbeiten" onclick="document.location.href='{GET_JS|$runtime.completeurl}&template=editprofile&username={GET_ESCAPED|$user_information.name}';return false">
+				{IF|$user_information.group < 10}
+					&nbsp;
+					<input type=button value="Benutzer l&ouml;schen" onClick="if (confirm('Sind Sie sicher, da&szlig; Sie diesen Account l&ouml;schen wollen? Beachten Sie, da&szlig; diese Operation nicht r&uuml;ckg&auml;ngig gemacht werden kann!')) document.location.href='{GET_JS|$runtime.completeurl}&action=deleteuser&username={GET_ESCAPED|$user_information.name}';return false">
+				{ENDIF}
+			</td>
+		</tr>
+		</form>
+	{ENDIF}
+</table></td></tr>
+</table>
+</td></tr></table>
+
+<br>
+
+{IF|$user_information.online and $user_information.tempgroup<=0}
+	{IF|permission(command.gag) or permission(command.kick)}
+		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+		<table border=0 width="100%" cellspacing=1 cellpadding=0>
+		<tr>
+			<th colspan=2>Admin-Funktionen</a></th>
+		</tr>
+		<tr class="row2"><td><table width="100%">
+			{IF|permission(command.gag)}
+				<tr>
+					<td align=center><a href="#gag" onclick="send('/gag {GET_JS|$user_information.nick}');return false;" title="/gag">Knebeln</a></td>
+				</tr>
+			{ENDIF}
+			{IF|permission(command.kick)}
+				<tr>
+					<td align=center><a href="#kick" onclick="send('/kick {GET_JS|$user_information.nick}');return false;" title="/kick">Kicken</a></td>
+				</tr>
+			{ENDIF}
+		</table></td></tr>
+		</table>
+		</td></tr></table>
+	{ENDIF}
+{ENDIF}
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
+</div>
+
+</body>
+</html>

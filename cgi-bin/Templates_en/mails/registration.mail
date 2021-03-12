@@ -1,0 +1,12 @@
+{SET|$to|$user.email}{SET|$subject|Your chat registration}
+Hello {GET|$user.nick},
+
+Thank you for registering a chat account. For your first login
+please use the following authentication code instead of the
+password:
+
+	{GET|$user.code}
+
+For subsequent logins use your selected password. The
+authentication code is only valid for one login.
+Enjoy our chat!

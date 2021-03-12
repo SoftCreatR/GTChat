@@ -1,0 +1,11 @@
+{SET|$to|$user.email}{SET|$subject|Ihr Chat-Account wurde gelöscht}
+Hallo {GET|$user.nick},
+
+Sie haben Ihren Chat-Account lange nicht benutzt,
+deswegen wurde es gelöscht. Falls Sie unseren Chat
+weiterhin benutzen wollen, klicken Sie auf die folgende
+Adresse, um sich neu zu registrieren:
+
+{GET|$settings.urls.chaturl}?template=register
+
+

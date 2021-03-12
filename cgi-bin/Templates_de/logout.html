@@ -1,0 +1,20 @@
+<html>
+<head>
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>{GET|$settings.chatname}</title>
+</head>
+<body>
+<script language="JavaScript">
+	{IF|$logout_reason}
+		alert('{GET_JS|$logout_reason}')
+	{ENDIF}
+	parent.exiting = 1;
+	{IF|$settings.urls.logouturl}
+		parent.location.replace('{GET_JS|$settings.urls.logouturl}');
+	{ELSE}
+		parent.location.replace('{GET_JS|$runtime.completeurl}');
+	{ENDIF}
+</script>
+</body>
+</html> 

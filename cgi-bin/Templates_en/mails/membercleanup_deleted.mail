@@ -1,0 +1,11 @@
+{SET|$to|$user.email}{SET|$subject|You chat account has been deleted}
+Hello {GET|$user.nick},
+
+you didn't use your chat account for quite
+a while, therefore it has been deleted. If you still want
+to use our chat, please register again. Use the following
+link:
+
+{GET|$settings.urls.chaturl}?template=register
+
+

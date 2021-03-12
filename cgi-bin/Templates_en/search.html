@@ -1,0 +1,67 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	<base href="{GET|$settings.urls.htmlurl}">
+	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<title>
+		{GET|$settings.chatname} - Find user
+	</title>
+</head>
+
+<body onload="opener.autosize(window)">
+
+<form method=POST action="{GET|$runtime.chaturl}">
+{GET|$runtime.hiddenfields}
+<input type=hidden name=action value=search>
+
+<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+<table border=0 width="100%" cellspacing=1 cellpadding=0>
+
+<tr>
+	<th>Find user</th>
+</tr>
+<tr class="row2"><td><table width="100%" cellspacing=5>
+	<tr>
+		<td colspan=2>
+			Enter the nickname to search. You can use the * character as a wildcard for any match (e.g. &quot;pau*&quot; for &quot;paul&quot;, &quot;paula&quot; etc.) and the ? character for one unknown character (e.g. &quot;d?n&quot; for &quot;don&quot;, &quot;dan&quot; etc.).
+		</td>
+	</tr>
+
+	<tr>
+		<td colspan=2>&nbsp;</td>
+	</tr>
+
+	<tr>
+		<td>Nickname:</td>
+		<td width="100%">
+			<input type=text name=mask size=30 style="width:100%" maxlength=255>
+		</td>
+	</tr>
+
+	<tr>
+		<td colspan=2>&nbsp;</td>
+	</tr>
+	
+	<tr>
+		<td colspan=2 align=center>
+			<input type=submit value="Find user">
+		</td>
+	</tr>
+
+	<tr>
+		<td colspan=2 align=center>
+			<a href="{GET|$runtime.completeurl}&template=allusers">List all users</a>
+		</td>
+	</tr>
+</table></td></tr>
+
+</table>
+</td></tr></table>
+</form>
+
+<div class="headertext" align="center">
+	<a href="javascript:window.close()" class="stdlink">Close window</a>
+</div>
+
+</body>
+</html> 

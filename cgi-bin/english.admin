@@ -1,0 +1,190 @@
+return {
+	admin => [
+		{
+			type => 'submenu',
+			title => 'Installation/update',
+			dest => 'installation',
+		},
+		{
+			type => 'submenu',
+			title => 'Language',
+			dest => 'language',
+		},
+		{
+			type => 'submenu',
+			title => 'Layout',
+			dest => 'layout',
+		},
+		{
+			type => 'submenu',
+			title => 'Security',
+			dest => 'security',
+		},
+		{
+			type => 'submenu',
+			title => 'Settings',
+			dest => 'settings',
+		},
+		{
+			type => 'submenu',
+			title => 'Other',
+			dest => 'general',
+		},
+	],
+	installation => [
+		{
+			type => 'item',
+			title => 'Activate/deactivate maintenance mode',
+			dest => 'maintenance',
+			permission => 'admin_maintenance',
+		},
+		{
+			type => 'item',
+			title => 'Update program',
+			dest => 'update',
+			permission => 'admin_update',
+		},
+		{
+			type => 'item',
+			title => 'Plugin management',
+			dest => 'plugins',
+			permission => 'admin_plugins',
+		},
+		{
+			type => 'item',
+			title => 'License information',
+			dest => 'license',
+			permission => 'admin_license',
+		},
+	],
+	language => [
+		{
+			type => 'item',
+			title => 'Chat messages',
+			dest => 'messages',
+			permission => 'admin_messages',
+		},
+		{
+			type => 'item',
+			title => 'User group names',
+			dest => 'groupnames',
+			permission => 'admin_groupnames',
+		},
+		{
+			type => 'item',
+			title => 'Time formats',
+			dest => 'timeformats',
+			permission => 'admin_timeformats',
+		},
+		{
+			type => 'item',
+			title => 'Command descriptions',
+			dest => 'command_descriptions',
+			permission => 'admin_command_descriptions',
+		},
+		{
+			type => 'item',
+			title => 'Descriptions of the permissions',
+			dest => 'permission_descriptions',
+			permission => 'admin_permission_descriptions',
+		},
+	],
+	layout => [
+		{
+			type => 'item',
+			title => 'Images list',
+			dest => 'images',
+			permission => 'admin_images',
+		},
+		{
+			type => 'item',
+			title => 'Colors',
+			dest => 'colors',
+			permission => 'admin_colors',
+		},
+		{
+			type => 'item',
+			title => 'Templates',
+			dest => 'templates',
+			permission => 'admin_templates',
+		},
+	],
+	security => [
+		{
+			type => 'item',
+			title => 'Command permissions',
+			dest => 'commandpermissions',
+			permission => 'admin_commandpermissions',
+		},
+		{
+			type => 'item',
+			title => 'General permissions',
+			dest => 'permissions',
+			permission => 'admin_permissions',
+		},
+		{
+			type => 'item',
+			title => 'Ban list',
+			dest => 'banlist',
+			permission => 'admin_banlist',
+		},
+	],
+	settings => [
+		{
+			type => 'item',
+			title => 'General',
+			dest => 'general_settings',
+			permission => 'admin_general_settings',
+		},
+		{
+			type => 'item',
+			title => 'Defaults',
+			dest => 'defaults',
+			permission => 'admin_defaults',
+		},
+		{
+			type => 'item',
+			title => 'Command aliases',
+			dest => 'command_aliases',
+			permission => 'admin_command_aliases',
+		},
+		{
+			type => 'item',
+			title => 'Color names',
+			dest => 'color_aliases',
+			permission => 'admin_color_aliases',
+		},
+		{
+			type => 'item',
+			title => 'Smileys',
+			dest => 'smileys',
+			permission => 'admin_smileys',
+		},
+	],
+	general => [
+		{
+			type => 'item',
+			title => 'Chat news',
+			dest => 'news',
+			permission => 'admin_news',
+		},
+		{
+			type => 'item',
+			title => 'Log viewer',
+			dest => 'log',
+			permission => 'admin_log',
+		},
+		{
+			type => 'item',
+			title => 'Traffic log',
+			dest => 'traffic',
+			permission => 'admin_traffic',
+		},
+		{
+			type => 'item',
+			title => 'Remove unused user accounts',
+			dest => 'cleanupmembers',
+			permission => 'admin_cleanupmembers',
+		},
+	],
+};
