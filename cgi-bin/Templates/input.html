@@ -1,0 +1,34 @@
+<html>
+<head>
+<base href="{HTMLURL}">
+<link rel="stylesheet" href="style.css">
+<title>{CHATNAME}</title>
+<SCRIPT LANGUAGE="JavaScript" src="chat.js" type="text/javascript">
+</SCRIPT>
+<SCRIPT LANGUAGE="JavaScript">
+	cgi="{CGI}";
+</SCRIPT>
+</head>
+<body id="body" marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>
+<table border=0 width=100%>
+<tr>
+	<form name="inputForm" onSubmit="doSend();return false;" action="javascript:///">
+	<td>
+		<table border=0><tr>
+		<td width=100%>
+			<input type=text name=text value="" size=50 maxlength=255 style="width:100%">
+		</td>
+		<td>
+			<INPUT type=submit value="Senden">
+		</td>
+		</tr></table>
+{SMILEYS}
+	</td>
+	</form>
+	<form name="sendForm" method="POST" action="{CGI}&action=send" target="dummy">
+		<input type=hidden name=text value="">
+	</form>
+</tr>
+</table>
+</body>
+</html> 

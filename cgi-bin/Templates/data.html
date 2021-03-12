@@ -1,0 +1,80 @@
+<html>
+<HEAD>
+<title>{CHATNAME}</title>
+<base href="{HTMLURL}">
+<link rel="stylesheet" href="style.css">
+<SCRIPT LANGUAGE="JavaScript" src="chat.js" type="text/javascript">
+</SCRIPT>
+<script language="JavaScript">
+	function onUnload()
+	{
+		if (document.form.mustLogout.value==1)
+		{
+			wnd=window.open("","logout","resizable=no,bars=no,width=1,height=1");
+			wnd.document.writeln("<html><body>\
+				<form name=form method=\"POST\" action=\"{CGI}&action=send\">\
+					<input type=hidden name=text value=\"/quit\">\
+					<input type=hidden name=close value=1>\
+				</form>\
+				<script>document.form.submit()</"+"script>\
+				</body></html>");
+		}
+		return true;
+	}
+</script>
+</head>
+<body id="body" onUnload="onUnload()">
+<form name="form">
+	<input type=hidden name="lastactive" value=0>
+	<input type=hidden name="lasttimes" value="">
+	<input type=hidden name="numwarnings" value=0>
+	<input type=hidden name="lastwarning" value=0>
+	<input type=hidden name="scroll" value=1>
+	<input type=hidden name="canSend" value=1>
+	<input type=hidden name="timeout" value=-1>
+	<input type=hidden name="warntext" value="Nur die Ruhe! Wenn du weiter wie wild auf die Tastatur klopfst, fliegst du raus!">
+	<input type=hidden name=buffer value="">
+	<input type=hidden name="mustLogout" value=1>
+</form>
+
+<div id="dtext"></div>      <!-- Testing DHTML capability -->
+
+<script language="JavaScript">
+	cgi="{CGI}";
+
+	document.form.lastactive.value=(new Date()).getTime();
+
+	if ({PULLMODE}==0 || !document.all || !document.all.dtext)
+		updateMessages(0);
+	else
+		updateMessages(1);
+		
+	updateInput();
+	updateOptions();
+	updateUserList();
+	updateRoomList2();
+
+	function sendAlive()
+	{
+		if (autokick > 0)
+		{
+			now = new Date();
+			if (now.getTime()-document.form.lastactive.value>autokick)
+			{
+				sendText("/quit");
+				alert("Sie waren zu lange inaktiv und wurden deswegen aus dem Chat gekickt.");
+				return;
+			}
+		}
+		sendText("/alive");
+	}
+
+	if ({PULLMODE}==0)
+		window.setInterval("sendAlive()",aliveinterval);
+	else
+		window.setInterval("sendAlive()",refreshdelay);
+
+	window.setInterval("doScroll()",scrolldelay);
+</script>
+</body>
+</html> 

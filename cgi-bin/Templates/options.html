@@ -1,0 +1,37 @@
+<html>
+<head>
+<base href="{HTMLURL}">
+<link rel="stylesheet" href="style.css">
+<title>{CHATNAME}</title>
+<SCRIPT LANGUAGE="JavaScript" src="chat.js" type="text/javascript">
+</SCRIPT>
+<SCRIPT LANGUAGE="JavaScript">
+	cgi="{CGI}";
+</SCRIPT>
+</head>
+<body id="body" marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>
+<table border=0 width=100%>
+<tr>
+	<form name="form" action="javascript:///">
+	<td>
+		<table border=0><tr>
+		<td nowrap>
+			<a href="javascript:editProfile('')" id="stdlink">Profil</a> &nbsp;
+			<a href="javascript:showUsers()" id="stdlink">Benutzerliste</a> &nbsp;
+			<a href="javascript:viewRooms()" id="stdlink">Raumliste</a> &nbsp;
+{ADMINSTART}
+			<a href="javascript:viewAdmin()" id="stdlink">Admin</a> &nbsp;
+{ADMINEND}
+			<a href="javascript:sendText('/quit')" id="stdlink">Logout</a> &nbsp; &nbsp; &nbsp;
+			<a href="commands.html" target="help" id="stdlink">Hilfe</a>
+		</td>
+		<td align=right width=100% id="headertext">
+			<input type=checkbox name=scroll onClick="parent.data.document.form.scroll.value=(checked?1:0)" checked>Automatisch zur letzten Nachricht springen
+		</td>
+		</tr></table>
+	</td>
+	</form>
+</tr>
+</table>
+</body>
+</html> 

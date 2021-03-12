@@ -1,0 +1,12 @@
+$htmlurl = "http://ihr.server.de/gtchat";  # absolute URL of your chat's HTML pages (without trailing '/')
+$cgiurl = "http://ihr.server.de/cgi-bin/gtchat";  # absolute URL of scripts directory (without trailing '/')
+$imagesurl = "images";                     # URL of your images directory
+
+$chatdir = '.'; 
+$sourcedir = "$chatdir/Sources";           # Directory with chat source files
+$vardir = "$chatdir/Variables";            # Directory with variable files
+$templdir = "$chatdir/Templates";          # Directory with HTML template files
+$memberdir = "$chatdir/Members";           # Directory with member data
+$roomdir = "$chatdir/Rooms";               # Directory with room data
+
+1;

@@ -1,0 +1,166 @@
+###############################################
+#  You should not change this file manually.  #
+#  Use instead the General Settings option    #
+#  in the Admin functions menu.               #
+###############################################
+
+$language = "german";                      # Language of your chat (determines the name of the language file)
+
+$maintenance = 0;                          # Set to 1 to enable Maintenance mode
+$chatname = "Private Chat";                # The name of your chat
+$alive_test_rate = 120;                    # Time in seconds between testing if the connection is still alive (server push mode)
+$alive_test_rate_pull = 20;                # Time in seconds between testing if the connection is still alive (client pull mode)
+$log_clean_rate = 7200;                    # Log cleaning interval, set 0 to disable logging
+$log_length = 10800;                       # Time in seconds to leave messages in log
+$log_private_msgs = 0;                     # Set 1 if you want to have private messages in you log as well
+$time_distance = 0;                        # Time offset in hours
+$enable_news = 1;                          # Set 0 if you do not want Chat News
+$enable_traffic_stat = 0;                  # Set 0 if you do not want traffic statistics to be counted
+$enable_smileys = 1;                       # Set 0 if you do not want smileys in your chat
+$allow_guestlogin = 1;                     # Set 0 if you do not want unregistered users to come in your chat
+$cookie_name = "chat_userdata";            # Name of the cookie used by the chat
+$use_usernames = 1;                        # Set 0 if you want to have only nick names
+$use_server_auth = 0;                      # Set 1 if the user should be authenticated by .htaccess
+$pull_mode_only = 0;                       # Set 1 if your server doesn't allow server push
+$display_userlist_shortcuts = 1;           # Set 0 if you do not want shortcuts for /msg and nick: to be shown in the list of users in the room
+$max_users = 0;                            # The maximum number of users to be in the chat (0 = unlimited)
+$roomlist_cols = 0;                        # The maximum number of columns in the room selection frame (0 = unlimited)
+
+$max_username_len = 15;                    # Maximum length for usernames
+$max_nickname_len = 15;                    # Maximum length for nicknames
+$max_password_len = 10;                    # Maximum length for passwords
+$max_websitetitle_len = 50;                # Maximum length for homepage titles
+$max_websiteurl_len = 50;                  # Maximum length for homepage urls
+$max_email_len = 50;                       # Maximum length for emails
+$max_roomname_len = 15;                    # Maximum length for room names
+
+$webmaster_email = 'webmaster@ihr.server.de';    # Put your mail address here
+$mailprog = "/usr/sbin/sendmail";          # Location of sendmail on your server
+$externalmknod = 0;                        # Set to 1 if your perl doesn't have the necessary files for internal mknod, set $mknodprog or $mkfifoprog then
+$mknodprog = "mknod";                      # Location of mknod on your server
+$mkfifoprog = "mkfifo";                    # Location of mkfifo on your server
+
+$pwseed = "ya";                            # Password crypting seed
+
+$defaultcolor = "#404040";                 # Default color, every user gets on his first login
+@palette = ("#000000","#606060","#909090","#880000","#FF0000","#FF8888","#004400","#00BB00","#44FF44","#0000AA","#4444FF","#AAAAFF","#FFA000","#606000","#A0A000","#FF00FF","#A000A0");
+
+$defaultroom = "Lobby";
+
+######## Smiley definitions ##########
+$smileys_defs = "smiley1|:-)) :o))|smiley|:) :-) :o)|wink|;) ;-) ;o)|cheesy|:D|grin|;D|angry|):(|sad|:-( :( :o(|cool|8)|huh|???|smiley2|:-o|smiley3|:-P :oP|smiley4|:-I :oI|smiley5|:-] :o]|smiley6|:-[ :o[|smiley7|:crazy|smiley8|:dream|smiley9|:shy|smiley10|:tasty|smiley11|:pukey|shocked|:o";
+
+######## command aliases #################
+$alias{'/farbe'} = "/color";
+$alias{'/col'} = "/color";
+$alias{'/exit'} = "/quit";
+$alias{'/raus'} = "/quit";
+$alias{'/logout'} = "/quit";
+$alias{'/bye'} = "/quit";
+$alias{'/join'} = "/room";
+$alias{'/raum'} = "/room";
+$alias{'/channel'} = "/room";
+$alias{'/go'} = "/room";
+$alias{'/talk'} = "/msg";
+$alias{'/tell'} = "/msg";
+$alias{'/t'} = "/msg";
+$alias{'/txt'} = "/me";
+$alias{'/smileysoff'} = "/smileys off";
+$alias{'/smileyson'} = "/smileys on";
+$alias{'/weg'} = "/away";
+$alias{'/schubs'} = "/push";
+$alias{'/knebel'} = "/gag";
+$alias{'/atall'} = "/broadcast";
+$alias{'/analle'} = '/broadcast';
+$alias{'/einlad'} = "/invite";
+$alias{'/auslad'} = "/uninvite";
+
+######## color aliases #################
+$color{'white'} = "white";
+$color{'black'} = "black";
+$color{'red'} = "red";
+$color{'yellow'} = "yellow";
+$color{'pink'} = "pink";
+$color{'green'} = "green";
+$color{'orange'} = "orange";
+$color{'purple'} = "purple";
+$color{'blue'} = "blue";
+$color{'beige'} = "beige";
+$color{'brown'} = "brown";
+
+$color{'weiß'} = "white";
+$color{'schwarz'} = "black";
+$color{'rot'} = "red";
+$color{'gelb'} = "yellow";
+$color{'grün'} = "green";
+$color{'purpur'} = "purple";
+$color{'blau'} = "blue";
+$color{'braun'} = "brown";
+
+######## Image sizes ##########
+$image{'angry'} = "16,16";
+$image{'cheesy'} = "16,16";
+$image{'cool'} = "21,15";
+$image{'grin'} = "16,16";
+$image{'huh'} = "15,22";
+$image{'sad'} = "16,16";
+$image{'shocked'} = "15,15";
+$image{'smiley'} = "16,16";
+$image{'smiley1'} = "15,15";
+$image{'smiley10'} = "15,15";
+$image{'smiley11'} = "15,15";
+$image{'smiley2'} = "15,15";
+$image{'smiley3'} = "15,15";
+$image{'smiley4'} = "21,16";
+$image{'smiley5'} = "25,15";
+$image{'smiley6'} = "22,19";
+$image{'smiley7'} = "16,16";
+$image{'smiley8'} = "15,15";
+$image{'smiley9'} = "15,15";
+$image{'wink'} = "16,16";
+$image{'question'} = "13,14";
+$image{'msg'} = "18,13";
+$image{'at'} = "15,14";
+
+######## Permissions ##########
+$permission{admin} = "1";
+$permission{admin_banlist} = "1";
+$permission{admin_traffic} = "1";
+$permission{admin_news} = "1";
+$permission{admin_settings} = "3";
+$permission{admin_permissions} = "3";
+$permission{admin_smileys} = "3";
+$permission{admin_aliases0} = "3";
+$permission{admin_aliases1} = "3";
+$permission{admin_messages} = "3";
+$permission{admin_texts} = "3";
+$permission{admin_list0} = "3";
+$permission{admin_list1} = "3";
+$permission{admin_list2} = "3";
+$permission{admin_maintenance} = "3";
+
+$permission{img} = "1";
+$permission{kick} = "1";
+$permission{gag} = "1";
+$permission{push} = "1";
+$permission{broadcast} = "1";
+$permission{privaterooms} = "1";
+$permission{invite} = "1";
+
+$permission{profile_seeemail} = "1";
+$permission{profile_seelastlogin} = "1";
+$permission{profile_seeip} = "1";
+$permission{profile_seepullmode} = "1";
+$permission{profile_modify} = "1";
+
+$permission{rooms_create} = "-1";
+$permission{rooms_createprivate} = "-1";
+$permission{rooms_createpermanent} = "1";
+$permission{rooms_changeowner} = "1";
+$permission{rooms_modify} = "1";
+$permission{rooms_createmoderated} = "1";
+$permission{rooms_moderate} = "1";
+
+$permission{ignore_max_users} = "1";
+
+1;

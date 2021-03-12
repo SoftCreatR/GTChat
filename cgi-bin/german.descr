@@ -1,0 +1,49 @@
+################################
+######## Version 0.92 ##########
+################################
+
+$descr{in_chat} = 'Diese Meldung kommt immer, wenn jemand den Chat betritt. Die erste Marke %s wird durch den Namen des Reinkommenden ersetzt, die zweite durch den Chat-Namen';
+$descr{in_room} = 'Diese Meldung kommt immer, wenn jemand den Raum betritt. Die erste Marke %s wird durch den Namen des Reinkommenden ersetzt, die zweite durch den Raumnamen';
+$descr{out_chat} = 'Diese Meldung kommt immer, wenn jemand den Chat verläßt. Die erste Marke %s wird durch den Namen des Rausgehenden ersetzt, die zweite durch den Chat-Namen';
+$descr{out_room} = 'Diese Meldung kommt immer, wenn jemand den Raum verläßt. Die erste Marke %s wird durch den Namen des Rausgehenden ersetzt, die zweite durch den Raumnamen';
+
+$descr{reminder_mail_body} = 'Das ist der Text der Mail, die vom Paßwort-Reminder verschickt wird. Das erste %s wird durch den Nicknamen, das zweite durch den Benutzernamen ersetzt. An der Stelle des dritten wird das neue Paßwort eingefügt.';
+
+$descr{settings_chatname} = 'Bezeichnung Ihres Chats. Sie wird bei einigen Chat-Meldungen verwendet und außerdem bei vielen Templates als Überschrift angezeigt.';
+$descr{settings_enable_news} = 'Falls angekreuzt, sind die Chat-News aktiviert. Der Text, der angezeigt werden soll, kann unter Admin / Chat-News bearbeiten eingestellt werden.';
+$descr{settings_enable_traffic_stat} = 'Falls aktiviert, wird die Größe aller dynamisch erzeugten Seiten gezählt. Die Statistik nach Tagen geordnet kann unter Admin / Traffic-Statistik eingesehen werden, dort kann man auch die Datei leeren. Sie sollten die Traffic-Statistik nicht aktivieren, falls Sie Zugriff auf die Server-Logs haben, in diesem Fall ist es unnötiger Ressourcenverbrauch!';
+$descr{settings_enable_smileys} = 'Wenn aktiviert, werden Smileys im Chat in Bilder umgewandelt (muß beim Benutzer ebenfalls aktiviert sein). Wenn deaktiviert, wird auch keine Smiley-Auswahl angezeigt.';
+$descr{settings_allow_guestlogin} = 'Falls angekreuzt, dürfen nicht registrierte Benutzer in den Chat kommen, indem sie kein Paßwort angeben. Falls auch kein Name angegeben wird, erhält der Benutzer einen zufälligen Namen. Die Benutzerdaten werden sofort nach dem Logout gelöscht.';
+$descr{settings_use_usernames} = 'Falls deaktiviert, werden nirgendwo Benutzernamen verwendet, auch der Login geschieht mit dem Nickname.';
+$descr{settings_use_server_auth} = 'Kann man ankreuzen, falls sich der Chat in einem mit htaccess geschützen Bereich auf dem Server befindet. Dann wird der Benutzername von der Authentifizierung auf dem Server übernommen.';
+$descr{settings_pull_mode_only} = 'Sie sollten das nur dann aktivieren, wenn der Server aus irgendeinem Grund Server Push nicht zuläßt. Die Nachteile sind erhöhter Ressourcenverbrauch und für den Benutzer größere Verzögerungen.';
+$descr{settings_webmaster_email} = 'Diese Mail-Adresse wird z.B. für Einsprüche angezeigt, falls ein Benutzer gesperrt wurde.';
+$descr{settings_mailprog} = 'Sie sollten diese Variable ändern, falls sich sendmail auf Ihrem Server in einem anderen Verzeichnis befindet.';
+$descr{settings_defaultcolor} = 'Die Farbe, die jeder Benutzer beim ersten Login zugewiesen bekommt.';
+$descr{settings_defaultroom} = 'Der Standardraum, der verwendet wird, falls der angegebene Raum aus irgendwelchen Gründen nicht mehr existiert. Dieser Raum muß permanent und öffentlich sein, er kann im Chat auch nicht gelöscht werden.';
+$descr{settings_alive_test_rate} = 'Zeit in Sekunden, nach der im normalen Modus überprüft werden soll, ob der Benutzer seit der letzten Überprüfung etwas geschickt hat. Bei einer aktiven Verbindung werden mindestens die regelmäßigen /alive-Befehle geschickt (beachte dazu den Parameter aliveinterval in chat.js).';
+$descr{settings_alive_test_rate_pull} = 'Zeit in Sekunden, nach der im sicheren Modus überprüft werden soll, ob der Benutzer seit der letzten Überprüfung etwas geschickt hat. Bei einer aktiven Verbindung werden mindestens die regelmäßigen /alive-Befehle geschickt (beachte dazu den Parameter refreshdelay in chat.js).';
+$descr{settings_log_clean_rate} = 'Abstand (in Sekunden), in dem das Chat-Log geleert werden soll. Dabei werden alle Einträge, die älter als $log_length sind, entfernt. Der Wert Null schaltet das Logging ab. Bitte beachten: das Log wird nur geleert, wenn mindestens in Benutzer im Chat ist.';
+$descr{settings_log_length} = 'Bei der regelmäßigen Leerung des Logs werden alle Einträge entfernt, deren Alter größer als diese Zeit (in Sekunden) ist. Wenn also z.B. der Abstand zwischen den Reinigungen 2 und das maximale Alter 3 Stunden betragen, sind die ältesten Einträge von 3 (kurz nach der Leerung) bis 5 (kurz vor der nächsten Leerung) Stunden alt.';
+$descr{settings_time_distance} = 'Die zeitliche Differenz in Stunden zwischen der Zeitzone des Servers und der Benutzer (kann auch negativ sein). Dieser Wert wird zu der Zeit addiert, die der Server liefert.';
+$descr{settings_max_login_time} = 'Zeit (in Sekunden), die ein Login-Eintrag in login.txt aufbewahrt wird. Diese Zeit hat der Benutzer, um die Chat-Frames und dann das Textframe des Chats zu laden, womit der Login-Vorgang abgeschlossen wird.';
+$descr{settings_cookie_name} = 'Namen des Cookies, der vom Chat verwendet wird. Kann geändert werden, falls Namenskonflikte mit anderen Programmen bestehen.';
+
+################################
+######## Version 0.93 ##########
+################################
+
+$descr{settings_externalmknod} = 'Sollte nur dann angekreuzt werden, falls der interne mknod-Aufruf nicht funktioniert (Perl-Fehlermeldung, daß entwerder syscall.ph oder stat.ph nicht gefunden wurde). Dann wird entweder das angegebene mknod-Programm oder mkfifo-Programm verwendet, je nachdem welches gefunden wird.';
+$descr{settings_mknodprog} = 'Diese Variable ist nur wichtig, falls das externe mknod-Programm verwendet werden soll. Normalerweise reicht mknod hier aus, der exakte Pfad ist nicht notwendig.';
+$descr{settings_mkfifoprog} = 'Diese Variable ist nur wichtig, falls das externe mkfifo-Programm verwendet werden soll. Normalerweise reicht mkfifo hier aus, der exakte Pfad ist nicht notwendig.';
+$descr{settings_display_userlist_shortcuts} = 'Falls angekreuzt, werden in der Liste der Benutzer im Raum Links angezeigt, die die Texte /msg nick bzw. @nick automatisch in das Eingabefeld einfügen.';
+$descr{settings_pwseed} = 'Gibt den Seed (2 Buchstaben) für die Verschlüsselung von Paßwörtern an. Standardwert ist ya für die Kompatibilität mit YaBB.';
+$descr{settings_log_private_msgs} = 'Falls angekreuzt, werden auch die Privatnachrichten der Benutzer (/msg-Befehl) im Log gespeichert.';
+
+$descr{settings_max_users} = 'Falls von Null verschieden, darf sich nur diese Anzahl von Benutzern gleichzeitig im Chat aufhalten. Administratoren können den Chat trotzdem jederzeit betreten (zumindest mit den Standardeinstellungen der Zugriffsrechte).';
+$descr{settings_roomlist_cols} = 'Bestimmt, falls von Null verschieden, die maximale Zahl der Spalten in der Auswahlliste für Räume. Falls die Zahl der Räume größer ist, wird in mehreren Zeilen dargestellt.';
+
+$descr{settings_SYS_mknod} = 'Der Chat versucht, den Wert dieser Variable automatisch beim ersten Start aus der Datei syscall.h zu ermitteln (typischerweise 14). Falls dies mißlingt, wird die Verwendugn eines externes mknod-Programms aktiviert.';
+$descr{settings_S_IFIFO} = 'Der Chat versucht, den Wert dieser Variable automatisch beim ersten Start aus der Datei stat.h zu ermitteln (typischerweise 4096). Falls dies mißlingt, wird die Verwendugn eines externes mknod-Programms aktiviert.';
+
+1;

@@ -1,0 +1,55 @@
+<html>
+<head>
+<base href="{HTMLURL}">
+<link rel="stylesheet" href="style.css">
+<title>{CHATNAME}</title>
+<SCRIPT LANGUAGE="JavaScript" src="chat.js" type="text/javascript">
+</SCRIPT>
+<SCRIPT LANGUAGE="JavaScript">
+	cgi="{CGI}";
+</SCRIPT>
+</head>
+<body id="body" marginwidth=36 leftmargin=36>
+<div align="center">
+	<br>
+	<img src="/images/hier_vielleicht_ihr_Logo_einfuegen.gif" border=0>
+	<br>
+</div>
+
+<div id="headertext">
+	<br>
+	<br>
+{NEWS}
+	<br>
+</div>
+
+<table border=0 width=100% cellspacing=0 id="lines"><tr><td>  <!-- Netscape compatibility -->
+
+<table border=0 width=100% cellspacing=1>
+<tr>
+	<th>Neuen Chat-Account erstellen</th>
+</tr>
+<tr id="table2"><td><table>
+	<tr>
+		<td colspan=2>F&uuml;r den Fall, da&szlig; Sie Ihr Pa&szlig;wort vergessen, ist es wichtig, da&szlig; die Mail-Adresse und das Geburtsdatum korrekt angegeben wurden. Das letztere wird <b>nur</b> zur Pa&szlig;wortwiederherstellung verwendet! Es wird wie auch das Pa&szlig;wort verschl&uuml;sselt gespeichert und kann deswegen von niemandem (auch nicht von den Admins) eingesehen werden.</td>
+	</tr>
+	<tr>
+		<td colspan=2><a href="javascript:showAllUsers()">Hier</a> findet man die Liste bereits existierender Nicknames. Sie k&ouml;nnen kein Nickname nehmen, das bereits verwendet wird.</td>
+	</tr>
+	<tr>
+		<td colspan=2>&nbsp;</td>
+	</tr>
+	<form method=POST action="{CGI}&action=register2">
+{ROWS}
+	</form>
+</table></td></tr>
+</table>
+
+</td></tr></table>  <!-- Netscape compatibility -->
+
+<div align=center id="headertext">
+	GTChat 0.93 &copy; 2001 by <a href="http://www.gtchat.de/" id="stdlink" target="_blank">Wladimir Palant</a>
+</div>
+
+</body>
+</html>

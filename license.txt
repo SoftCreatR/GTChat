@@ -1,0 +1,35 @@
+GTChat Version 0.92 License
+
+Copyright (c) 2001 by Wladimir Palant.  All rights reserved.
+
+Redistribution and use on non-commercial webpages are permitted
+provided that the following conditions are met:
+
+1. The software may be only distributed in it's original form
+   without changes of any kind. The distribution must be free
+   from any charge.
+
+2. No changes of the program code except for JavaScript are
+   permitted.
+
+3. The login and registration pages must contain the following
+   HTML code:
+	  <div align=center id="headertext">
+		 GTChat 0.92 &copy; 2001 by <a href="http://www.gtchat.de/" id="stdlink" target="_blank">Wladimir Palant</a>
+	  </div>
+   as included in predefined templates.
+
+If for some purpose you want to have any of these conditions left
+out, contact the author on <http://www.gtchat.de>.
+
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
