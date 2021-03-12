@@ -1,0 +1,544 @@
+<html>
+<head>
+<title>GTChat 0.93 Copyright &copy; 2001 by Wladimir Palant</title>
+<style type="text/css">
+<!--
+A
+{
+	font-family: Verdana, Arial, Helvetica;
+	text-decoration: none;
+	color: #003080;
+	font-weight: bold;
+}
+A:active
+{
+	color: #0060FF;
+}
+A:hover
+{
+	color: #0060FF;
+	text-decoration: underline;
+}
+TD
+{
+	font-family: Verdana, Arial, Helvetica;
+	font-size: 10pt;
+	color: #000000;
+}
+#body
+{
+	background-color: #E0E0E0;
+	font-size: 10pt;
+	color: #000000;
+	font-family: Verdana, Arial, Helvetica;
+}
+#table2
+{
+	background-color: #F0F0E8;
+}
+#lines
+{
+	background-color: #000000
+}
+#bigheadertext
+{
+	font-size: 14pt;
+}
+//-->
+</style>
+</head>
+<body id="body" marginwidth=36 leftmargin=36>
+
+This document should help you install/update GTChat.<br><br>
+
+You can find up to date information on <a href="http://www.gtchat.de">http://www.gtchat.de</a>.<br><br>
+
+<table border=0 width=100% cellspacing=0 id="lines"><tr><td>  <!-- Netscape compatibility -->
+
+<table border=0 width=100% cellspacing=1>
+<tr id="table2">
+	<td><table>
+		<tr><td><a href="#overview">Overview</a></td></tr>
+		<tr><td><a href="#requirements">System requirements</a></td></tr>
+		<tr><td><a href="#installation">First installation</a></td></tr>
+		<tr><td><a href="#update">Updating older versions</a></td></tr>
+		<tr><td><a href="#forwarding">Changing forwarding address</a></td></tr>
+		<tr><td><a href="#colors">Changing colors and fonts</a></td></tr>
+		<tr><td><a href="#templates">Modifying templates</a></td></tr>
+		<tr><td><a href="#javascript">JavaScript options</a></td></tr>
+	</table></td>
+</tr>
+</table>
+
+</td></tr></table>  <!-- Netscape compatibility -->
+<br><br>
+
+<a name="overview"></a>
+<table border=0 width=100%><tr><td>
+<div id=bigheadertext>Overview</div><br>
+
+What is GTChat?<br>
+GTChat is a fast and comfortable webchat application. Due to use of
+server push technology and working without a database like mySQL it
+uses only little server resources, which of course won't affect the
+performance. Some users have problems with server push because
+of their proxy servers. For those users there is also a client pull
+mode.<br><br>
+
+
+What does GTChat cost?<br>
+GTChat is freeware, it may be used for free on non-commercial
+websites. However changing the program code (besides JavaScript)
+is <b>not</b> permitted. For more read license.txt.<br><br>
+
+
+How can I install GTChat?<br>
+If you can read this file you've probably already decompressed the
+program files. Next steps you have to do:
+<ul>
+	<li>replace the files by those of the according Language Pack if
+		you want to have any other language than German</li>
+	<li>upload the files to the server</li>
+	<li>execute the configuration program install.pl</li>
+	<li>adjust the forwarding address in index.html</li>
+	<li>adjust the templates login.html and register.html to fit your
+		website</li>
+	<li>login with username/password admin, change the password
+		immediately in your profile, change the settings,
+		create rooms und set chat news</li>
+</ul>
+
+Some of those are explained more detailed in the following.
+Furthermore you will find instructions for changing the layout
+of the chat in this file. You should use an editor which is able
+to work with UNIX-style line breaks (which means not Notepad).<br><br>
+</td></tr></table>
+
+
+<a name="requirements"></a>
+<table border=0 width=100%><tr><td>
+<div id=bigheadertext>System requirements</div><br>
+
+Requirements on the server's side:
+<ul>
+	<li>UNIX or UNIX-like operating system</li>
+	<li>Perl 5.005 or higher</li>
+	<li>Only server push mode: No time limit for Perl processes (if the server kills the process because of a timeout, the user must login again)</li>
+	<li>Only server push mode: A possibility to create named pipes (for example using the program mknod or mkfifo, a call to the system function mknod possible as well)</li>
+	<li>Approximately 2 MB memory for every user (as long you do not overload the server)</li>
+</ul>
+
+Requirements on the client's side:
+
+<ul>
+	<li>Internet Explorer 4.x or higher, Netscape Communicator 4.x or higher.</li>
+	<li>JavaScript activated</li>
+	<li>Only server push mode: Forwarding of the data by the proxy server without delay. Especially the default AOL proxy servers do not behave this way.</li>
+	<li>Only server push mode: No time limit for connections. Proxy servers of Mannesmann Arcor are configured to cancel all connections after 5 Minutes for example, using client pull mode is advisable.</li>
+</ul>
+</td></tr></table>
+
+
+<a name="installation"></a>
+<table border=0 width=100%><tr><td>
+<div id=bigheadertext>First installation</div><br>
+
+Create a subdirectory gtchat in you HTML directory. Copy
+the contents of the directory www into that directory with you
+FTP client.<br><br>
+
+Also create a subdirectory gtchat in your CGI directory and copy
+the contents of the directory cgi-bin there. Set the execution
+permissions of install.pl with your FTP client and start it
+with your browser. The program will adjust directory settings
+and file permisions. With some server configurations it is not
+possible to adjust permissions automatically, follow the instructions
+of the program then.<br><br>
+</td></tr></table>
+
+
+<a name="update"></a>
+<table border=0 width=100%><tr><td>
+<div id=bigheadertext>Updating older version</div><br>
+
+You should save your chat directory before doing an update.<br><br>
+
+Following files have to been updated:
+<ul>
+	<li>cgi-bin/Sources (the complete directory)</li>
+	<li>cgi-bin/chat.pl</li>
+	<li>cgi-bin/install.pl (make it executable)</li>
+	<li>cgi-bin/english.descr (or other language files, depending on
+		language pack)</li>
+	<li>cgi-bin/english.lng</li>
+	<li>cgi-bin/Templates (should be the whole directory, most of the
+		templates were changed since version 0.92)</li>
+	<li>www/chat.js</li>
+	<li>www/images/at.gif</li>
+	<li>www/images/msg.gif</li>
+	<li>www/images/question.gif (when updating from GTChat 0.91)</li>
+	<li>maybe www/commands.html and www/faq.html</li>
+</ul>
+
+Make install.pl executable and start it with your browser,
+the data files will be updated then.<br><br>
+</td></tr></table>
+
+
+<a name="forwarding"></a>
+<table border=0 width=100%><tr><td>
+<div id=bigheadertext>Changing forwarding address</div><br>
+
+First of all, why forwarding? I recommend to make the chat link
+show to index.html in your GTChat HTML directory. This file
+forwards the user to the chat script using JavaScript then.
+This is a check if the user has his JavaScripts activated. 
+If he doesn't he stays on index.html and gets the error message
+on the screen.<br><br>
+
+The user should be forwarded to chat.pl in the CGI directory.
+You should ajust this link in the JavaScript part and in the
+message.<br><br>
+</td></tr></table>
+
+
+<a name="colors"></a>
+<table border=0 width=100%><tr><td>
+<div id=bigheadertext>Changing colors and fonts</div><br>
+
+GTChat allows to do all the modifications in colors and fonts
+in the file style.css. Here is the list of the CSS-classes and
+their functions:
+</td></tr></table>
+
+<table border=0 cellpadding=5>
+
+<tr>
+<td valign=top>
+	A<br>
+	A:active<br>
+	A:hover
+</td>
+<td valign=top>
+	Definitions for the links inside the tables
+	(active - active link, hover - Link underneath
+	the mouse pointer). Non defined attributes will be
+	taken from the context of the link. A:visited
+	could be defined as well, but in a chat this is
+	is of no use, right?
+<td>
+</tr>
+<tr>
+<td valign=top>
+	#stdlink<br>
+	A#stdlink:active<br>
+	A#stdlink:hover
+</td>
+<td valign=top>
+	These definitions are for the links outside the
+	tables (active - active link, hover - Link
+	underneath the mouse pointer). When changing a
+	template, you should add the tag id=stdlink to
+	all links outside the tables like this:<br><br>
+			   &nbsp;&nbsp;&nbsp;&lt;a href=&quot;file.html&quot; id=stdlink&gt;<br><br>
+	If you don't need to distinct these links from
+	the normal ones, then you can erase these classes.
+	Non defined attributes will be taken from
+	context of the link. 
+</td>
+</tr>
+<tr>
+<td valign=top>
+	TD<br>
+	#normaltext
+</td>
+<td valign=top>
+	Standard settings for text inside of tables.
+	#normaltext should be the same as TD, it will be
+	used to force formatting of the text in the same way
+	if it doesn't happen automatically.
+</td>
+</tr>
+<tr>
+<td valign=top>
+	#smalltext
+</td>
+<td valign=top>
+	Smaller version of TD, for example used to display
+	the dates in the list of IP-bans. Not defined
+	attributes are taken from TD.
+</td>
+</tr>
+<tr>
+<td valign=top>
+	TH
+</td>
+<td valign=top>
+	Defines text and background color of table headers.
+</td>
+</tr>
+<tr>
+<td valign=top>
+	#table1
+</td>
+<td valign=top>
+	Defines the background color of table cells which
+	have to be accentuated like for example the room
+	names at the login-page of the chat.
+</td>
+</tr>
+<tr>
+<td valign=top>
+	#table2
+</td>
+<td valign=top>
+	Default background color for the table cells.
+</td>
+</tr>
+<tr>
+<td valign=top>
+	#lines
+</td>
+<td valign=top>
+	Border color for the tables. Pay attention, the
+	attribute that has to be set is not color
+	but background-color!
+</td>
+</tr>
+<tr>
+<td valign=top>
+	#body
+</td>
+<td valign=top>
+	Here the standard settings for fonts and colors are
+	stored. For example all the chat messages are
+	displayed in this color. The background color is
+	used for the complete chat. It works only if you
+	have id=body in all BODY tags.
+</td>
+</tr>
+<tr>
+<td valign=top>
+	#headertext
+</td>
+<td valign=top>
+	Default style for the text outside the tables. If
+	you change the templates and add text outside the
+	tables, enclose it with &lt;div id=headertext&gt; &lt/div&gt.
+</td>
+</tr>
+<tr>
+<td valign=top>
+	#bigheadertext
+</td>
+<td valign=top>
+	Bigger version of #headertext used for example in
+	the chat-help file.
+</td>
+</tr>
+</table>
+<br>
+
+
+<a name="templates"></a>
+<table border=0 width=100%><tr><td>
+<div id=bigheadertext>Modifying templates</div><br>
+
+The chat templates are plain HTML files, but they contain certain tags
+which are replaced by the chat. Four tags are universal and can
+be used in every template:
+</td></tr></table>
+
+<table border=0 cellpadding=5>
+<tr>
+<td valign=top>
+	{CHATNAME}
+</td>
+<td valign=top>
+	Will be replaced by the name of the chat defined by
+	$chatname in Settings.dat (or General Setting in the
+	Administrator funktions), usually used as a title of
+	the HTML-file.
+<td>
+</tr>
+<tr>
+<td valign=top>
+	{CGI}
+</td>
+<td valign=top>
+	Will be replaced by the URL of chat.pl, where the
+	parameter id is allready included. If other parameters
+	should added, you have to write it like this:<br><br>
+		&nbsp;&nbsp;&nbsp;{CGI}&action=allusers
+<td>
+</tr>
+<tr>
+<td valign=top>
+	{HTMLURL}
+</td>
+<td valign=top>
+	Will be replaced by $htmlurl from Directories.dat. This
+	tag is used in almost all templates to define the base
+	address like this:<br><br>
+		&nbsp;&nbsp;&nbsp;&lt;base href=&quot;{HTMLURL}&quot;&gt;<br><br>
+	Therefore you don't need to give the complete path to an
+	HTML file when using it in a template.
+<td>
+</tr>
+<tr>
+<td valign=top>
+	{PULLMODE}
+</td>
+<td valign=top>
+	Will be replaced by 1 if the user is using client pull
+	mode or by 0 if the user has chosen server push mode.
+<td>
+</tr>
+</table>
+<br>
+
+<table border=0 width=100%><tr><td>
+All other tags will only be used in certain templates.<br>
+<b>Warning</b>: Every but the universal tags <b>must</b> be written in their own
+line, without a space in front or behind the tag.<br><br>
+
+If you install the chat, you should modify the templates login.html
+and register.html (logo, welcome message and so on). If you adjust
+the frames in chat.html, you should keep the names of the frames.
+A detailed description of all templates and tags used there should
+be avalable soon, for up to date information please visit
+<a href="http://www.gtchat.de">http://www.gtchat.de</a>.<br><br>
+</td></tr></table>
+
+
+<a name="javascript"></a>
+<table border=0 width=100%><tr><td>
+<div id=bigheadertext>JavaScript options</div><br>
+
+At the start of chat.js there are following variables defined:
+</td></tr></table>
+
+<table border=0 cellpadding=5>
+<tr>
+<td valign=top nowrap>
+	roomlistdelay<br>
+	Default: 10000
+</td>
+<td valign=top>
+	Delay (in milliseconds) for the room list to
+	appear. The default templates of GTChat show
+	the chat logo in the meantime. If you don't
+	have any logo or want to use an extra frame
+	for it, set this one to 0.
+<td>
+</tr>
+<tr>
+<td valign=top nowrap>
+	scrolldelay<br>
+	Default: 150
+</td>
+<td valign=top>
+	Interval (in milliseconds) for the text frame
+	to scroll down (if not disabled by the user).
+<td>
+</tr>
+<tr>
+<td valign=top nowrap>
+	aliveinterval<br>
+	Default: 50000
+</td>
+<td valign=top>
+	Only relevant for the server push mode. Interval
+	(in milliseconds) for sending the /alive command
+	to show that the user is still in the chat. If
+	the server doesn't receive anything from the
+	user for $alive_test_rate seconds, a broken
+	connection is supposed and the user is removed
+	from the chat.
+<td>
+</tr>
+<tr>
+<td valign=top nowrap>
+	refreshdelay<br>
+	Default: 6000
+</td>
+<td valign=top>
+	Only relevant for the client pull mode. Sets
+	interval (also in milliseconds) to check for new
+	messages. If the server doesn't receive anything
+	from the user for $alive_test_rate_push seconds,
+	a broken connection is supposed and the user is
+	removed from the chat.<br><br>
+
+	<b>Remark</b>: New messages will also be retrieved when
+	the user sends some text.
+<td>
+</tr>
+<tr>
+<td valign=top nowrap>
+	logoutpage<br>
+	Default: &quot;&quot;
+</td>
+<td valign=top>
+	If set it defines the URL of the page to be
+	shown on logout instead of the login page.
+<td>
+</tr>
+<tr>
+<td valign=top nowrap>
+	autokick<br>
+	Default: 0
+</td>
+<td valign=top>
+	If not zero it defines the number of milliseconds
+	the user is allowed to be idle. After this time
+	the user is automatically kicked out of the chat.
+<td>
+</tr>
+<tr>
+<td valign=top nowrap>
+	send_blocking_timeout<br>
+	Default: 15000
+</td>
+<td valign=top>
+	To prevent the texts from being lost the chat blocks
+	sending from start to the end of the transfer (new
+	texts are written to a buffer instead of being sent).
+	Sometimes a browser error causes the send blocking
+	to remain, for this reason the blocking is always
+	released after this interval (in milliseconds).
+<td>
+</tr>
+<tr>
+<td valign=top nowrap>
+	flooding_***<br>
+	Default:<br>
+	..._maxnum: 5<br>
+	..._interval: 5000<br>
+	..._warnings: 1<br>
+	..._expireinterval: 600000
+</td>
+<td valign=top>
+	Flooding protection: everytime when a user sends
+	flooding_maxnum texts in flooding_interval
+	milliseconds, he gets a warning. After flooding_warnings
+	warnings he is thrown out of the chat. After the time
+	flooding_expireinterval (in milliseconds) the warnings
+	counter is reset to 0.
+	flooding_maxnum=0 or flooding_interval=0 deactivates
+	the flooding protection, flooding_expireinterval=0 
+	deactivates the reset of the warning counter.
+<td>
+</tr>
+</table>
+<br>
+
+<table border=0 width=100%><tr><td>
+The correct chat function is vitally dependent on the
+correct functioning of it's JavaScript part. That is why you should
+only make changes on the JavaScript if you know exactly what you are
+doing. I most likely won't support any problems caused by wrong
+modification. A detailed description of the JavaScript functions
+will available soon, for up to date information please visit
+<a href="http://www.gtchat.de">http://www.gtchat.de</a>.<br><br>
+</td></tr></table>

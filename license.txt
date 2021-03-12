@@ -1,4 +1,4 @@
-GTChat Version 0.92 License
+GTChat Version 0.93 License
 
 Copyright (c) 2001 by Wladimir Palant.  All rights reserved.
 
@@ -15,7 +15,7 @@ provided that the following conditions are met:
 3. The login and registration pages must contain the following
    HTML code:
 	  <div align=center id="headertext">
-		 GTChat 0.92 &copy; 2001 by <a href="http://www.gtchat.de/" id="stdlink" target="_blank">Wladimir Palant</a>
+		 GTChat 0.93 &copy; 2001 by <a href="http://www.gtchat.de/" id="stdlink" target="_blank">Wladimir Palant</a>
 	  </div>
    as included in predefined templates.
 
