@@ -1,42 +1,48 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{NEED_PERMISSION|user}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>Smileys</title>
-	<script language="JavaScript">
+	<script src="general.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		//<![CDATA[
 		function addText(text)
 		{
-			if (window.opener && opener.addText)
-				opener.addText(text,1);
+			if (window.opener && !opener.closed)
+				opener.addText(text);
 		}
+		//]]>
 	</script>
 </head>
-<body onload="opener.autosize(window)">
+<body onload="autosize()">
 
-<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
-<table border=0 width="100%" cellspacing=1 cellpadding=2>
-
+<table class="bordered2" width="100%" cellspacing="0">
 <tr>
-	<th width="50%">Smiley</th>
-	<th width="50%">Abk&uuml;rzung</th>
+	<th width="30%">Smiley</th>
+	<th width="70%">Abk&uuml;rzung</th>
 </tr>
 
 {FOREACH|$smiley|$settings.smileys}
 	{IF|$smiley[-1] ne /hidden/}
-		<tr class="row2">
-			<td align="center"><a href="javascript:void(0)" onclick="addText('{GET_JS|$smiley[1]}');return false;">{IMAGE|$smiley[0]}</a></td>
-			<td align="center">{GET|$smiley[1]}</td>
+		<tr>
+			<td align="center"><img src="{GET|$settings.urls.imagesurl}{GET|$smiley[0]}.gif" class="img_$smiley[0] clickable" title="{GET|$smiley[1]}" onclick="addText('{GET_JS|$smiley[1]}')"/></td>
+			<td align="center">
+				{FOR|$index|1|$smiley.last}
+					{GET|$smiley[($index)]}
+				{ENDFOR}
+			</td>
 		</tr>
 	{ENDIF}
 {ENDFOR}
 
 </table>
-</td></tr></table>
 
-<div class="headertext" align="center">
-	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
-</div>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Fenster schlie&szlig;en</a>
+</p>
 
 </body>
 </html> 

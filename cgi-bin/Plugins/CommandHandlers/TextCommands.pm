@@ -1,13 +1,13 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the chat commands /me, /broadcast, /img,  #
 #  /away and the default command (plain text).                    #
 ###################################################################
 
-package GTChat::Plugins::TextCommands::095_01;
+package GT_Chat::Plugins::TextCommands::096_01;
 use strict;
 
 return bless({
@@ -22,35 +22,13 @@ return bless({
 	},
 });
 
-sub check_gagged
-{
-	my $main = shift;
-
-	if (exists($main->{current_user}{gagtime}) && $main->{runtime}{now} < $main->{current_user}{gagtime})
-	{
-		return [$main->createErrorOutput('gagged',{seconds => $main->{current_user}{gagtime}-$main->{runtime}{now}})];
-	}
-	return undef;
-}
-
 sub text_handler
 {
 	my($self,$main,$command,$text) = @_;
 	
 	my @ret=();
 
-	if (my $error=check_gagged($main))
-	{
-		return $error;
-	}
-	
-	if ($main->{current_user}{away})
-	{
-		$main->{current_user}{away} = 0;
-		
-		my $output = $main->createInfoOutput('awayoff',{nick => $main->{current_user}{nick}});
-		push @ret, $output->restrictToUser->restrictToCurrentRoom->setChangedAttributes('away');
-	}
+	$main->{current_user}{away} = "" if $main->{current_user}{away};
 
 	my @to=();
 
@@ -109,25 +87,7 @@ sub away_handler
 
 	my @ret=();
 
-	if (my $error=check_gagged($main))
-	{
-		return $error;
-	}
-	elsif ($text eq "")
-	{
-		$main->{current_user}{away}=1;
-		
-		my $output = $main->createInfoOutput('awayon',{nick => $main->{current_user}{nick}});
-		push @ret, $output->restrictToUser->restrictToCurrentRoom->setChangedAttributes('away');
-	}
-	else
-	{
-		$text = $main->toHTML($text);
-		$main->{current_user}{away}=$text;
-
-		my $output = $main->createInfoOutput('awayon_reason!',{nick => $main->{current_user}{nick}, reason => $text});
-		push @ret, $output->restrictToUser->restrictToCurrentRoom->setChangedAttributes('away');
-	}
+	$main->{current_user}{away} = ($text eq '' ? '1' : $main->toHTML($text));
 
 	return \@ret;
 }
@@ -138,18 +98,7 @@ sub custom_handler
 	
 	my @ret=();
 
-	if (my $error=check_gagged($main))
-	{
-		return $error;
-	}
-	
-	if ($main->{current_user}{away})
-	{
-		$main->{current_user}{away} = 0;
-		
-		my $output = $main->createInfoOutput('awayoff',{nick => $main->{current_user}{nick}});
-		push @ret, $output->restrictToUser->restrictToCurrentRoom->setChangedAttributes('away');
-	}
+	$main->{current_user}{away} = '' if $main->{current_user}{away};
 
 	if ($text ne '')
 	{

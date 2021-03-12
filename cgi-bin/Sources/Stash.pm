@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::Stash;
@@ -31,14 +31,39 @@ sub getInternal
 	my $ret = shift;
 	foreach (@_)
 	{
-		return undef unless (ref($ret) eq "HASH" || ref($ret) eq __PACKAGE__);
-		if (/^(.+)\[(-?\d+)\]$/)
+		if (ref($ret) eq 'HASH' || ref($ret) eq __PACKAGE__)
 		{
-			$ret = $ret->{$1}[$2];
+			if (/^(.+)\[(-?\d+)\]$/)
+			{
+				$ret = $ret->{$1}[$2];
+			}
+			else
+			{
+				$ret = $ret->{$_};
+			}
+		}
+		elsif (ref($ret) eq 'ARRAY')
+		{
+			if (/^-?\d+$/)
+			{
+				$ret = $ret->[$_];
+			}
+			elsif ($_ eq 'length')
+			{
+				$ret = $#$ret + 1;
+			}
+			elsif ($_ eq 'last')
+			{
+				$ret = $#$ret;
+			}
+			else
+			{
+				return undef;
+			}
 		}
 		else
 		{
-			$ret = $ret->{$_};
+			return undef;
 		}
 	}
 	return $ret;
@@ -192,7 +217,7 @@ sub setHiddenFields
 	my($self,$main,$var) = @_;
 
 	my $ret = '';
-	$ret .= "<input type=hidden name=id value=$main->{runtime}{id}>" unless $main->{runtime}{cookieid};
+	$ret .= "<input type=\"hidden\" name=\"id\" value=\"$main->{runtime}{id}\"/>" unless $main->{runtime}{cookieid};
 
 	my @forwarded = ('language');
 	push @forwarded, @{$main->{settings}{forward_params}} if (exists($main->{settings}{forward_params}));
@@ -207,7 +232,7 @@ sub setHiddenFields
 		$key = $main->toHTML($key);
 		$value = $main->toHTML($value);
 
-		$ret .= "<input type=hidden name=\"$key\" value=\"$value\">";
+		$ret .= "<input type=\"hidden\" name=\"$key\" value=\"$value\"/>";
 	}
 	$main->{runtime}{hiddenfields} = $ret;
 }

@@ -1,7 +1,9 @@
 {IF|$current_user.popup_privatemsg}
-	<script>
-		writePrivateMsg('{GET_ESCAPED|$params.toname}','{GET_ESCAPED|$params.tonick}','{IF|$current_user.show_time}({GETTIME}) {ENDIF}<FONT color="{GET_JS|$params.color}"><b>{GET_JS|$current_user.nick}:</b> {IF|$params.url}<img src="{GET_JS|$params.url}">{ELSE}{DOFILTER|links|formatting|smileys}{GET_JS|$params.text}{ENDDO}{ENDIF}</font><br>');
+	<script type="text/javascript">
+		//<![CDATA[
+		parent.writePrivateMsg('{GET_ESCAPED|$params.toname}','{GET_ESCAPED|$params.tonick}','{IF|$current_user.show_time}({GETTIME}) {ENDIF}<font color="{GET_JS|$params.color}"><strong>{GET_JS|$current_user.nick}:</strong> {IF|$params.url}<img src="{GET_JS|$params.url}"/>{ELSE}{DOFILTER|links|formatting|smileys}{GET_JS|$params.text}{ENDDO}{ENDIF}</font><br/>');
+		//]]>
 	</script>
 {ELSE}
-	{IF|$current_user.show_time}({GETTIME}) {ENDIF}<font color="{GET|$params.color}"><b>{GET|$current_user.nick} (privat an <a href="javascript:void(0)" onfocus="resetFocus()" onclick="insertText('/msg {GET_JS|$params.tonick} ');return false;" style="color:{GET|$params.color}">{GET|$params.tonick}</a>):</b> {IF|$params.url}<img src="{GET|$params.url}">{ELSE}{DOFILTER|links|formatting|smileys}{GET|$params.text}{ENDDO}{ENDIF}</font><br> 
+	<div>{IF|$current_user.show_time}({GETTIME}) {ENDIF}<font color="{GET|$params.color}"><strong>{GET|$current_user.nick} (privat an <a href="javascript:void(0)" onclick="parent.insertText('/msg {GET_JS|$params.tonick} ');return false;" style="color:{GET|$params.color}">{GET|$params.tonick}</a>):</strong> {IF|$params.url}<img src="{GET|$params.url}"/>{ELSE}{DOFILTER|links|formatting|smileys}{GET|$params.text}{ENDDO}{ENDIF}</font></div>
 {ENDIF} 

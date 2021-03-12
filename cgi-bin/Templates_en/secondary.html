@@ -1,0 +1,18 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
+	<title>{GET|$settings.chatname}</title>
+</head>
+<body onfocus="parent.isFocused=true" onblur="parent.isFocused=false" onclick="parent.resetFocus()">
+	<div id="restore_rooms"{IIF|!$current_user.minimizerooms| style="display: none;"} align="right">
+		<img src="{GET|$settings.urls.imagesurl}restore.gif" class="img_restore clickable" onclick="parent.restoreRooms();"/>
+	</div>
+	<div id="rooms"{IIF|$current_user.minimizerooms| style="display: none;"}>{INCLUDE|rooms}</div>
+	<div id="restore_users" style="margin-top: 15px;{IIF|!$current_user.minimizeusers|display: none;}" align="right">
+		<img src="{GET|$settings.urls.imagesurl}restore.gif" class="img_restore clickable" onclick="parent.restoreUsers();"/>
+	</div>
+	<div id="users" style="margin-top: 15px;{IIF|$current_user.minimizeusers|display: none;}">{INCLUDE|users}</div>
+</body>
+</html> 

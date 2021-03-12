@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the chat commands /kick, /gag and /push   #
 ###################################################################
 
-package GTChat::Plugins::AdminCommands::095_01;
+package GT_Chat::Plugins::AdminCommands::096_01;
 use strict;
 
 return bless({
@@ -25,7 +25,7 @@ sub kick_handler
 	my ($nick) = split(/\s+/,$text);
 	
 	return [$main->createErrorOutput('kick_namenotgiven')] unless defined($nick);
-	
+
 	my $candidates = $main->getPossibleOnlineUsers($nick);
 	
 	return [$main->createErrorOutput('notonline',{nick => $nick})] if ($#$candidates < 0);
@@ -44,8 +44,9 @@ sub kick_handler
 						nick => $user->{nick},
 					});
 	$info->restrictToRoom($user->{room});
-	
-	return [$info];
+	$info->restrictToCurrentUser();
+
+	return $info;
 }
 
 sub gag_handler
@@ -72,6 +73,7 @@ sub gag_handler
 	my $info;
 
 	$main->loadUser($user->{name},$user);
+	$main->loadOnlineInfo($user->{name},$user);
 	if ($command eq 'gag')
 	{
 		$user->{gagtime} = $main->{runtime}{now}+$time*60;
@@ -92,12 +94,13 @@ sub gag_handler
 						nick => $user->{nick},
 					});
 	}
-	
+
 	$main->saveUser($user);
 
 	$info->restrictToRoom($user->{room});
-	
-	return [$info];
+	$info->restrictToCurrentUser();
+
+	return $info;
 }
 
 sub push_handler
@@ -124,37 +127,32 @@ sub push_handler
 	return [$main->createErrorOutput('unknownroom',{roomname => $roomname})] unless defined($room);
 	return [$main->createErrorOutput('push_alreadythere')] if $room->{name_lc} eq $user->{room};
 	
-	my $oldroom = $user->{room};
+	my $info = $main->createInfoOutput('pushed',
+					{
+						admin => $main->{current_user}{nick},
+						nick => $user->{nick},
+						roomname => $room->{name},
+					});
+
+	$info->restrictToRoom($user->{room});
+	$info->restrictToCurrentUser();
+	$main->sendOutputStrings($info);
+
 	$user->{room} = $room->{name_lc};
 	$main->saveOnlineInfo($user);
 
-	my $info1 = $main->createInfoOutput('pushed',
-					{
-						admin => $main->{current_user}{nick},
-						nick => $user->{nick},
-						roomname => $room->{name},
-					});
+	return;
+}
 
-	$info1->restrictToUser() if ($main->{current_user}{room} eq $room->{name_lc});
-	$info1->restrictToRoom($oldroom);
-	
-	my $info2 = $main->createInfoOutput('pushed',
-					{
-						admin => $main->{current_user}{nick},
-						nick => $user->{nick},
-						roomname => $room->{name},
-					});
-	$info2->restrictToUser();
-	$info2->restrictToRoom($room->{name_lc});
+sub beforeTextProcessing
+{
+	my($self,$main,$text) = @_;
 
-	my $changed = $main->createOutput(
-					{
-						template => 'changed',
-						name => $user->{name},
-						room => $user->{room},
-						oldroom => $oldroom,
-						'*' => ['room'],
-					});
-					
-	return [$info1,$info2,$changed];
+	my $command = '';
+	$command = $1 if ($$text =~ /^\s*\/(\S+)/);
+
+	if ($main->{settings}{gagged_block_commands}{$command} && exists($main->{current_user}{gagtime}) && $main->{runtime}{now} < $main->{current_user}{gagtime})
+	{
+		$main->fatal_error('gagged', {seconds => $main->{current_user}{gagtime}-$main->{runtime}{now}});
+	}
 }

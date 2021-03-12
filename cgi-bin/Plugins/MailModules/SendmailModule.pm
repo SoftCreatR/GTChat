@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This is a mailing module, that uses the sendmail program.      #
 ###################################################################
 
-package GTChat::Plugins::SendmailModule::095_02;
+package GT_Chat::Plugins::SendmailModule::096_01;
 use strict;
 
 return bless({});

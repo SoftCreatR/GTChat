@@ -1,14 +1,15 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021225                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the chat commands /quit, /room, /color,   #
-#  /nick and /alive. The last onle is sent automatically  by      #
-#  JavaScript to show that the user is still there.               #
+#  /nick, /refresh and /alive. The last one is sent automatically #
+#  by the JavaScript code in order to show that the user is still #
+#  there.                                                         #
 ###################################################################
 
-package GTChat::Plugins::MiscCommands::095_02;
+package GT_Chat::Plugins::MiscCommands::096_01;
 use strict;
 
 return bless({
@@ -18,6 +19,12 @@ return bless({
 		'room' => \&room_handler,
 		'color' => \&color_handler,
 		'nick' => \&nick_handler,
+		'refresh' => \&refresh_handler,
+		'smileys' => \&smileys_handler,
+		'time' => \&time_handler,
+		'menuminimized' => \&minimize_handler,
+		'roomsminimized' => \&minimize_handler,
+		'usersminimized' => \&minimize_handler,
 	},
 });
 
@@ -26,7 +33,7 @@ sub quit_handler
 	my($self,$main,$command,$text) = @_;
 
 	$main->kickUser($main->{current_user});
-	return undef;
+	return;
 }
 
 sub alive_handler
@@ -35,11 +42,11 @@ sub alive_handler
 	
 	if ($main->{current_user}{pull})
 	{
-		return undef;
+		return;
 	}
 	else
 	{
-		return [$main->createOutput({template => 'alive'})->restrictToCurrentUser];
+		return $main->createOutput({template => 'alive'})->restrictToCurrentUser;
 	}
 }
 
@@ -50,55 +57,29 @@ sub room_handler
 	my $roomname = (split(/\s+/,$text))[0];
 	if ($roomname eq '')
 	{
-		return [$main->createInfoOutput('room',{roomname => $main->{current_user}{room}})];
+		return $main->createInfoOutput('room',{roomname => $main->{current_user}{room}});
 	}
 	
 	my $room = $main->loadRoom($roomname);
+	if (!defined($room) && $main->hasPermission('rooms_create'))
+	{
+		$main->saveRoom({
+			name => $roomname,
+			owner => $main->{current_user}{name},
+			closed => !$main->hasPermission('rooms_createpublic'),
+			permanent => 0,
+		});
+		$room = $main->loadRoom($roomname);
+	}
+
 	if (!defined($room) || !$main->isRoomPermitted($room))
 	{
-		return [$main->createErrorOutput('unknownroom',{roomname => $roomname})];
+		return $main->createErrorOutput('unknownroom',{roomname => $roomname});
 	}
 
-	if ($room->{name_lc} ne $main->{current_user}{room})
-	{
-		my $oldroom = $main->{current_user}{room};
-		$main->{current_user}{room} = $room->{name_lc};
+	$main->{current_user}{room} = $room->{name_lc};
 
-		my $output1 = $main->createOutput(
-					{
-						template => 'room_leaved',
-						name => $main->{current_user}{name},
-						nick => $main->{current_user}{nick},
-						fromroom => $oldroom,
-						toroom => $main->{current_user}{room},
-					});
-		$output1->restrictToRoom($oldroom);
-
-		my $output2 = $main->createOutput(
-					{
-						template => 'room_entered',
-						name => $main->{current_user}{name},
-						nick => $main->{current_user}{nick},
-						fromroom => $oldroom,
-						toroom => $main->{current_user}{room},
-					});
-		$output2->restrictToRoom($main->{current_user}{room});
-		
-		my $output3 = $main->createOutput(
-					{
-						template => 'room_greeting',
-						name => $main->{current_user}{name},
-						nick => $main->{current_user}{nick},
-						fromroom => $oldroom,
-						toroom => $main->{current_user}{room},
-					});
-		$output3->restrictToUser($main->{current_user}{name});
-		$output3->setChangedAttributes('room');
-		
-		return [$output1, $output2, $output3];
-	}
-
-	return undef;
+	return;
 }
 
 sub color_handler
@@ -108,30 +89,20 @@ sub color_handler
 	my $color = (split(/\s+/,$text))[0];
 	if ($color eq '')
 	{
-		return [$main->createInfoOutput('currentcolor!',{color => "<font color=\"$main->{current_user}{color}\">$main->{current_user}{color}</font>"})];
+		return $main->createInfoOutput('currentcolor!',{color => "<font color=\"$main->{current_user}{color}\">$main->{current_user}{color}</font>"});
 	}
 	
 	if (my $newcolor = $main->toColor($color))
 	{
-		my %olduser=map {$_ => $main->{current_user}{$_}} keys %{$main->{current_user}};
-
 		$main->{current_user}{color} = $newcolor;
-		
-		$main->invokeModulesList($main->{settings}{custom_profile_checker},'checkProfile',$main->{current_user},\%olduser);
-		
+
 		$main->saveUser($main->{current_user});
 
-		my $output = $main->createOutput(
-					{
-						template => 'color_changed',
-						color => $newcolor,
-					});
-		$output->restrictToCurrentUser->setChangedAttributes('color');
-		return [$output];
+		return;
 	}
 	else
 	{
-		return [$main->createErrorOutput('unknowncolor',{color => $color})];
+		return $main->createErrorOutput('unknowncolor',{color => $color});
 	}
 }
 
@@ -141,29 +112,120 @@ sub nick_handler
 
 	my $nick = (split(/\s+/,$text))[0];
 	
-	return [$main->createInfoOutput('nickname',{nick => $main->{current_user}{nick}})] if ($nick eq '');
+	return $main->createInfoOutput('nickname',{nick => $main->{current_user}{nick}}) if ($nick eq '');
+	return $main->createErrorOutput('samenickname') if ($nick eq $main->{current_user}{nick});
 
-	return [$main->createErrorOutput('samenickname')] if ($nick eq $main->{current_user}{nick});
-
-	my $tmpname = $main->getUsername($nick);
-	return [$main->createErrorOutput('nicknameexists',{nick => $nick})] if (defined($tmpname) && $tmpname ne $main->{current_user}{name});
-
-	my %olduser=map {$_ => $main->{current_user}{$_}} keys %{$main->{current_user}};
-
+	my $oldnick = $main->{current_user}{nick};
 	$main->{current_user}{nick} = $nick;
-	
-	$main->invokeModulesList($main->{settings}{custom_profile_checker},'checkProfile',$main->{current_user},\%olduser);
 
-	$main->saveUser($main->{current_user},$olduser{nick});
-	
+	eval
+	{
+		$main->saveUser($main->{current_user});
+	};
+	if ($@)     # if saving not permitted
+	{
+		$main->{current_user}{nick} = $oldnick;
+		die $@;
+	}
+
+	return;
+}
+
+sub refresh_handler
+{
+	my($self,$main,$command,$text) = @_;
+
 	my $output = $main->createOutput(
-				{
-					template => 'nick_changed',
-					name => $main->{current_user}{name},
-					nick => $main->{current_user}{nick},
-					oldnick => $olduser{nick},
-				});
-	$output->restrictToCurrentRoom;
-	
-	return [$output->setChangedAttributes('nick')];
+			{
+				template => 'changed',
+				user => 1,
+				style => 1,
+				online => 1,
+				room => 1,
+				roomlist => 1,
+				userlist => 1,
+				menu => 1,
+			});
+	return $output->restrictToCurrentUser();
+}
+
+sub smileys_handler
+{
+	my($self,$main,$command,$text) = @_;
+
+	$text =~ s/^\s+//;
+	$text =~ s/\s.*//;
+	$text = lc($text);
+	if ($text eq 'on' || $text eq 'yes')
+	{
+		if ($main->{current_user}{nosmileys})
+		{
+			$main->{current_user}{nosmileys} = 0;
+			$main->saveUser($main->{current_user});
+		}
+	}
+	elsif ($text eq 'off' || $text eq 'no')
+	{
+		if (!$main->{current_user}{nosmileys})
+		{
+			$main->{current_user}{nosmileys} = 1;
+			$main->saveUser($main->{current_user});
+		}
+	}
+	else
+	{
+		return $main->createInfoOutput('smileys' . ($main->{current_user}{nosmileys} ? 'off' : 'on'));
+	}
+
+	return;
+}
+
+sub time_handler
+{
+	my($self,$main,$command,$text) = @_;
+
+	$text =~ s/^\s+//;
+	$text =~ s/\s.*//;
+	$text = lc($text);
+	if ($text eq 'on' || $text eq 'yes')
+	{
+		if (!$main->{current_user}{show_time})
+		{
+			$main->{current_user}{show_time} = 1;
+			$main->saveUser($main->{current_user});
+		}
+	}
+	elsif ($text eq 'off' || $text eq 'no')
+	{
+		if ($main->{current_user}{show_time})
+		{
+			$main->{current_user}{show_time} = 0;
+			$main->saveUser($main->{current_user});
+		}
+	}
+	else
+	{
+		return $main->createInfoOutput('time' . ($main->{current_user}{show_time} ? 'on' : 'off'));
+	}
+
+	return;
+}
+
+sub minimize_handler
+{
+	my($self,$main,$command,$text) = @_;
+
+	my $field = $command;
+	$field =~ s/minimized$//i;
+	$field = 'minimize'.$field;
+
+	my $value = $text ? '1' : '0';
+
+	if ($main->{current_user}{$field} != $value)
+	{
+		$main->{current_user}{$field} = $value;
+		$main->saveUser($main->{current_user});
+	}
+
+	return;
 }

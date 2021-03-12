@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::ModifyRoom;
@@ -83,80 +83,14 @@ sub modify_handler
 		$room->{permanent} = $modify ? $oldroom->{permanent} : 0 unless $main->hasPermission('rooms_createpermanent');
 	}
 
-	$main->invokeModulesList($main->{settings}{custom_room_checker},'checkRoom',$room,$oldroom);
-
-	if ($modify)
-	{
-		$main->saveRoom($room);
-	}
-	else
-	{
-		$main->addRoom($room);
-	}
-
-	my %changed = ();
-	if ($oldroom)
-	{
-		foreach (@{$main->getRoomFieldsList})
-		{
-			$changed{"rooms.$_"}=1 if ($oldroom->{$_} ne $room->{$_});
-		}
-	}
-	else
-	{
-		$changed{'rooms.created'}=1;
-	}
+	$main->saveRoom($room);
 
 	my @toDo = ();
 
-	if (keys %changed > 0)
-	{
-		push @toDo,[undef,undef,$main->toOutputString(
-			{
-				template => 'changed',
-				name => $main->{current_user}{name},
-				room => $room->{name},
-				oldroom => $oldroom->{name},
-				'*' => [keys %changed],
-			}
-		)];
-	}
-
 	if (!$room->{permanent} && $main->{current_user}{room} ne $room->{name_lc})
 	{
-		my $oldroom = $main->{current_user}{room};
 		$main->{current_user}{room} = $room->{name_lc};
-
 		$main->saveOnlineInfo($main->{current_user});
-
-		push @toDo,[undef,$oldroom,$main->toOutputString({template => 'room_leaved',
-						name => $main->{current_user}{name},
-						nick => $main->{current_user}{nick},
-						fromroom => $oldroom,
-						toroom => $room->{name_lc},
-					})],
-				   [undef,$room->{name_lc},$main->toOutputString({template => 'room_entered',
-						name => $main->{current_user}{name},
-						nick => $main->{current_user}{nick},
-						fromroom => $oldroom,
-						toroom => $room->{name_lc},
-					})],
-					[$main->{current_user}{name},undef,$main->toOutputString({template => 'room_greeting',
-						name => $main->{current_user}{name},
-						nick => $main->{current_user}{nick},
-						fromroom => $oldroom,
-						toroom => $room->{name_lc},
-					})],
-					[undef,undef,$main->toOutputString({template => 'changed',
-										   name => $main->{current_user}{name},
-										   room => $main->{current_user}{room},
-										   oldroom => $oldroom,
-										   '*' => ['room'],
-										  })
-				   ];
-
-		my $old = $main->loadRoom($oldroom);
-		$main->removeRoom($oldroom) if ($old && !$old->{permanent} && !grep {$main->translateOnlineString($_)->{room} eq $oldroom} @{$main->getOnlineUsers()});
 	}
 
 	$main->sendOutputStrings(@toDo) if $#toDo>=0;
@@ -177,48 +111,7 @@ sub delete_handler
 	my $oldowner = $main->loadUser($room->{owner}) if (exists($room->{owner}) && $room->{owner} ne "");
 	$main->fatal_error('roomlist_nopermission') if ((!$oldowner || $oldowner->{name} ne $main->{current_user}{name}) && (!$main->hasPermission('rooms_modify') || ($oldowner && $main->{current_user}{tempgroup}<=$oldowner->{group})));
 
-	my @toDo = ();
-	my $users = $main->getOnlineUsers();
-	foreach (@$users)
-	{
-		my $user = $main->translateOnlineString($_);
-		if ($user->{room} eq $room->{name_lc})
-		{
-			$user->{room} = $main->lowercase($main->{settings}{default}{room});
-			$main->saveOnlineInfo($user);
-			push @toDo,[undef,$user->{room},$main->toOutputString({template => 'room_entered',
-						name => $user->{name},
-						nick => $user->{nick},
-						fromroom => $room->{name_lc},
-						toroom => $user->{room},
-					})],
-					[$user->{name},undef,$main->toOutputString({template => 'room_greeting',
-						name => $user->{name},
-						nick => $user->{nick},
-						fromroom => $room->{name_lc},
-						toroom => $user->{room},
-					})],
-					[undef,undef,$main->toOutputString({template => 'changed',
-										   name => $user->{name},
-										   room => $user->{room},
-										   oldroom => $room->{name_lc},
-										   '*' => ['room'],
-										  })
-				   ];
-		}
-	}
-
 	$main->removeRoom($room->{name});
-
-	$main->sendOutputStrings(@toDo,[undef,undef,$main->toOutputString(
-		{
-			template => 'changed',
-			name => $main->{current_user}{name},
-			room => $room->{name},
-			oldroom => $room->{name},
-			'*' => ['rooms.deleted'],
-		}
-	)]);
 
 	$main->printTemplate('roomlist');
 }

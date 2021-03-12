@@ -1,0 +1,72 @@
+<html>
+<head>
+	{NEED_PERMISSION|user}
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
+	<script src="general.js" type="text/javascript"></script>
+	<title>{GET|$settings.chatname} - Messages log for the current session</title>
+
+	<script type="text/javascript">
+		//<![CDATA[
+		var html = '';
+
+		function init()
+		{
+			if (window.opener && !opener.closed)
+			{
+				html = opener.getLog();
+				document.getElementById('messages').innerHTML = html;
+				html = '<html><head><base href="{GET_JS|$settings.urls.htmlurl}"/><link rel="stylesheet" href="{GET|$runtime.style}.css"/></head><body>' + html + '</body></html>';
+			}
+		}
+
+		function download(form)
+		{
+			if (html == '')
+				return false;
+
+			if (typeof(document.execCommand) != 'undefined')
+			{
+				try
+				{
+					window.invisible.document.open('text/html','replace');
+					window.invisible.document.write(html);
+					window.invisible.document.close();
+					window.invisible.document.execCommand('SaveAs',true,'log.html');
+					return false;
+				}
+				catch (e)
+				{
+				}
+			}
+	
+			form.content.value = html;
+			var regexp = /([\u0100-\uFFFF])/;
+			while (form.content.value.match(regexp))
+				form.content.value = form.content.value.replace(regexp,'&#'+RegExp.$1.charCodeAt(0)+';');
+			return true;
+		}
+		//]]>
+	</script>
+</head>
+
+<body onload="init()">
+<form method="POST" action="{GET|$runtime.chaturl}?log.html" onsubmit="return download(this)">
+	<p align="center">
+		{GET|$runtime.hiddenfields}
+		<input type="hidden" name="template" value="download"/>
+		<input type="hidden" name="filename" value="log.html"/>
+		<input type="hidden" name="content"/>
+		<input type="submit" value="Download"/>
+	</p>
+</form>
+
+<div id="messages"></div>
+
+<iframe name="invisible" width="0" height="0" frameborder="no"></iframe>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Close window</a>
+</p>
+
+</body>
+</html> 

@@ -1,58 +1,53 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{NEED_PERMISSION|profile_seepermissions}
 	{NEED|$user_information}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
+	<script src="general.js" type="text/javascript"></script>
 	<title>{GET|$settings.chatname} - Permissions of {GET|$user_information.nick}</title>
 </head>
 
-<body onload="opener.autosize(window)">
+<body onload="autosize(window)">
 
-<a href="{GET|$runtime.completeurl}&template=profile&username={GET_ESCAPED|$user_information.name}">General</a>
-{IF|permission(profile_seecommandpermissions)}
-	| <a href="{GET|$runtime.completeurl}&template=profile_commandpermissions&username={GET_ESCAPED|$user_information.name}">Commands permissions</a>
-{ENDIF}
-{IF|permission(profile_seepermissions)}
-	| <b>Permissions</b>
-{ENDIF}
-<br>{IMAGE|blank|height=4}<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
-<table border=0 width="100%" cellspacing=1 cellpadding=0>
+<p>
+	<a href="{GET|$runtime.completeurl};template=profile;username={GET_ESCAPED|$user_information.name}">General</a>
+	{IF|permission(profile_seecommandpermissions)}
+		| <a href="{GET|$runtime.completeurl};template=profile_commandpermissions;username={GET_ESCAPED|$user_information.name}">Commands permissions</a>
+	{ENDIF}
+	{IF|permission(profile_seepermissions)}
+		| <strong>Permissions</strong>
+	{ENDIF}
+</p>
 
+<table class="bordered1" width="100%" cellspacing="0">
 <tr>
-	<th>
+	<th colspan="2">
 		Permissions of {GET|$user_information.nick}
 	</th>
 </tr>
-<tr class="row2"><td><table width="100%">
-	{FOREACH|$permission|$permissions}
-		<tr>
-			<td>{GET|$permission.description}:</td>
-			<td>{IIF|$permission.haspermission|permitted|forbidden}
-		</tr>
-	{ENDFOR}
+{FOREACH|$permission|$permissions}
+	<tr>
+		<td>{GET|$permission.description}:</td>
+		<td>{IIF|$permission.haspermission|permitted|forbidden}</td>
+	</tr>
+{ENDFOR}
 
-	{IF|permission(profile_modify) and permission(profile_modify_permissions) and $current_user.tempgroup>$user_information.group}
-		<tr>
-			<td colspan=2>&nbsp;</td>
-		</tr>
-
-		<form>
-		<tr>
-			<td colspan=2 align=center>
-				<input type=button value="Edit" onclick="document.location.href='{GET_JS|$runtime.completeurl}&template=editprofile_permissions&username={GET_ESCAPED|$user_information.name}';return false">
-			</td>
-		</tr>
-		</form>
-	{ENDIF}
-</table></td></tr>
-
+{IF|permission(profile_modify) and permission(profile_modify_permissions) and $current_user.tempgroup>$user_information.group}
+	<tr><td colspan="2">&nbsp;</td></tr>
+	<tr>
+		<td colspan="2" align="center">
+			<form><input type="button" value="Edit" onclick="document.location.href='{GET_JS|$runtime.completeurl};template=editprofile_permissions;username={GET_ESCAPED|$user_information.name}';return false"/></form>
+		</td>
+	</tr>
+{ENDIF}
 </table>
-</td></tr></table>
 
-<div class="headertext" align="center">
-	<a href="javascript:window.close()" class="stdlink">Close window</a>
-</div>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Close window</a>
+</p>
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin loads the file <language>.permissions and provides #
@@ -8,11 +8,11 @@
 #  permissions.                                                   #
 ###################################################################
 
-package GTChat::Plugins::Permissions::095_02;
+package GT_Chat::Plugins::Permissions::096_01;
 use strict;
 use vars qw(@ISA);
 
-@ISA = ('GTChat::Enum');
+@ISA = ('GT_Chat::Enum');
 
 bless({
 	template_var_handlers => {

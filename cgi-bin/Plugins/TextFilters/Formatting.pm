@@ -1,13 +1,13 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20020911                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin turns *text* and _text_ in the chat to formatted   #
 #  text.                                                          #
 ###################################################################
 
-package GTChat::Plugins::TextFilters::Formatting::095_02;
+package GT_Chat::Plugins::TextFilters::Formatting::096_01;
 use strict;
 
 return bless({
@@ -34,10 +34,10 @@ sub formatting_handler
 	$$text =~ s/(<a [^>]+>[^<]*<\/a>)/removeLinks(\@links,$1)/ige;  # save all links and remove them
 	
 	$$text =~ s/\*\*/&#mark0;/g;
-	$$text =~ s/\*([^\*]+)\*/<i>$1<\/i>/g;
+	$$text =~ s/\*([^\*]+)\*/<em>$1<\/em>/g;
 
 	$$text =~ s/__/&#mark1;/g;
-	$$text =~ s/_([^_]+)_/<b>$1<\/b>/g;
+	$$text =~ s/_([^_]+)_/<strong>$1<\/strong>/g;
 
 	$$text =~ s/&#mark(\d+);/$links[$1]/g;       # put the links back
 }
@@ -48,16 +48,16 @@ sub derefer
 
 	$link =~ s/\W/"%".unpack("H2",$&)/eg;
 	
-	return "$main->{settings}{urls}{chaturl}?template=dereferer&language=$main->{runtime}{language}&url=$link";
+	return "$main->{settings}{urls}{chaturl}?template=dereferer;language=$main->{runtime}{language};url=$link";
 }
 
 sub links_handler
 {
 	my($self,$main,$text) = @_;
 	
-	$$text =~ s/(^|\s)((?:https?|ftp):\/\/[^<>\*\s\n\"\]\[\(\)]+[^<>\*\s\n\"\]\[\(\),.?!:-])/"$1<a href=\"".derefer($main,$2)."\" target=\"_blank\" class=\"stdlink\" onfocus=\"if (window.resetFocus) resetFocus()\">$2<\/a>"/ige;
-	$$text =~ s/(^|\s)(www\.[^<>\*\s\n\]\[\(\)]+[^<>\*\s\n\"\]\[\(\),.?!:-])/"$1<a href=\"".derefer($main,"http:\/\/$2")."\" target=\"_blank\" class=\"stdlink\" onfocus=\"if (window.resetFocus) resetFocus()\">$2<\/a>"/ige;
-	$$text =~ s/(^|\s)([\w\-_.]+@[\w\-_.]+\.[a-z]{2,})/$1<a href=\"mailto:$2\" class=\"stdlink\" onfocus=\"if (window.resetFocus) resetFocus()\"\>$2<\/a>/ig;
+	$$text =~ s/(^|\s)((?:https?|ftp):\/\/[^<>\*\s\n\"\]\[\(\)]+[^<>\*\s\n\"\]\[\(\),.?!:-])/"$1<a href=\"".derefer($main,$2)."\" target=\"_blank\">$2<\/a>"/ige;
+	$$text =~ s/(^|\s)(www\.[^<>\*\s\n\]\[\(\)]+[^<>\*\s\n\"\]\[\(\),.?!:-])/"$1<a href=\"".derefer($main,"http:\/\/$2")."\" target=\"_blank\">$2<\/a>"/ige;
+	$$text =~ s/(^|\s)([\w\-_.]+@[\w\-_.]+\.[a-z]{2,})/$1<a href=\"mailto:$2\"\>$2<\/a>/ig;
 }
 
 sub smileys_handler
@@ -78,13 +78,8 @@ sub smileys_handler
 				{
 					$image = $_;
 		
-					my ($width,$height);
-					($width,$height) = @{$main->{settings}{images}{$image}} if defined($main->{settings}{images}{$image});
-					$width = (defined($width) ? " width=$width": "");
-					$height = (defined($height) ? " height=$height": "");
-		
-					my $alt = $main->toHTML($smiley->[1]);
-					$image = "<img src=\"$main->{settings}{urls}{imagesurl}$image.gif\" border=0$width$height alt=\"$alt\">";
+					my $title = $main->toHTML($smiley->[1]);
+					$image = $main->getImageText($image, "title=\"$title\"");
 				}
 				elsif ($_ ne '/hidden/')
 				{

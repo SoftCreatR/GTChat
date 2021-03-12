@@ -1,106 +1,70 @@
-// This array determines which frames have to be reloaded if some attribute is changed
-// 0 - don't reload
-//
-// 1 - reload frame users only if the current user was changed
-// 2 - reload frame users only if the current room was changed (or a user in the current room)
-// 4 - reload frame users on every change
-//
-// 8 - reload frame input only if the current user was changed
-// 16 - reload frame input only if the current room was changed (or a user in the current room)
-// 32 - reload frame input on every change
-//
-// The different conditions can be combined by adding.
-var reloadOnChange = new Array();
-reloadOnChange["online"] = 4;
-reloadOnChange["room"] = 4;
-reloadOnChange["away"] = 2;
-reloadOnChange["nick"] = 2;
-reloadOnChange["style"] = 9;
-reloadOnChange["popup_privatemsg"] = 1;
-reloadOnChange["tempgroup"] = 10;
-reloadOnChange["rooms.created"] = 4;
-reloadOnChange["rooms.deleted"] = 4;
-reloadOnChange["rooms.closed"] = 4;
-reloadOnChange["rooms.invited"] = 4;
-reloadOnChange["rooms.owner"] = 2;
-reloadOnChange["rooms.moderated"] = 2;
-reloadOnChange["rooms.vips"] = 2;
+var main = window;
+var isFocused = true;
 
-// Opens a chat template in a new window with given size
-// Needs the variable cgi either in the current frame or it's parent
-function openWindow(template,width,height)
-{
-	return openCenteredWindow((window.cgi || parent.cgi)+'&template='+template,template.replace(/[^a-zA-Z0-9]/g,''),width,height);
-}
+var admin_mode = false;
+var sendBuffer = '';
+var sendTime = 0;
+var textid = '';
+var lasttextid = '';
+var delayFactor = 1;
+var averageTime = 0;
 
-// Opens a new window centered on the screen
-function openCenteredWindow(url,name,width,height)
-{
-	var left = (screen.availWidth-width)/2;
-	var top = (screen.availHeight-height)/2;
-	var wnd = window.open(url,name,'resizable=yes,scrollbars=yes,width='+width+',height='+height+',left='+left+',top='+top);
-	wnd.focus();
-	parent.needFocus = 0;
-	return wnd;
-}
+var messagesWidth = '';
+var secondaryWidth = '';
+var connectionTitle = '';
 
-function postToTemplate(template,width,height,paramName,param)
+var connectionPercent = 100;
+
+var oldHeight = 0;
+var oldYOffset = 0;
+var oldScrollTop = 0;
+
+var exiting = false;
+var restore = '';
+var restoreWindow;
+var log = '';
+
+var aliases = new Array();
+var jscommands = new Array();
+
+var pressedButton = null;
+
+setNewTextId(1);
+
+function init()
 {
-	if (parent.input && parent.input.document && parent.input.document.auxForm)
+	window.messages.location.href = cgi + ';action=messages';
+	resetFocus();
+	setTimeout("if (lasttextid == '"+lasttextid+"') sendText('/alive')", aliveInterval);
+
+	// Disable image drag&drop on the toolbar
+	var toolbar = document.getElementById('toolbar');
+	if (typeof(toolbar.addEventListener) != 'undefined')    // bind Mozilla event handler
+		toolbar.addEventListener('draggesture', function(e){e.stopPropagation()}, false);
+	else                                                    // bind IE event handler
+		toolbar.ondragstart = function(){return false};
+
+	try
 	{
-		var wndName = (template+'&'+paramName+'='+param).replace(/[^a-zA-Z0-9]/g,'');
-		var wnd = openCenteredWindow('',wndName,width,height);
-
-		parent.input.document.auxForm.target = wndName;
-		parent.input.document.auxForm.template.value = template;
-		parent.input.document.auxForm.param.value = param;
-		parent.input.document.auxForm.param.name = paramName;
-		parent.input.document.auxForm.submit();
-		return wnd;
+		if (window.secondary.document.getElementById('rooms').style.display == 'none' && window.secondary.document.getElementById('users').style.display == 'none')
+			minimizeSecondary();
 	}
+	catch (e) {}
 }
 
-// Changes the size of the window to the content's size
-// IE 4+, Netscape 6+
-function autosize(frame)
+function updateRooms(html)
 {
-	if (!frame)
-		frame = window;
+	window.secondary.document.getElementById('rooms').innerHTML = html;
+}
 
-	if (!frame.autosize)
-		frame.autosize = autosize;
+function updateUsers(html)
+{
+	window.secondary.document.getElementById('users').innerHTML = html;
+}
 
-	// Disable for Netscape 4 to prevent reloading of the document
-	if (frame.document.layers)
-		return;
-
-	var current = frame.innerHeight;
-	if (!current && frame.document.body && frame.document.body.clientHeight)
-		current = frame.document.body.clientHeight;
-		
-	var needed = frame.document.height;
-	if (needed)
-		needed+=20;    // +20 to correct Netscape 6 bug
-	if (!needed && frame.document.body && frame.document.body.scrollHeight)
-		needed = frame.document.body.scrollHeight+2;
-
-	if (current && needed)
-	{
-		var changeBy = needed-current;
-
-		var wndHeight = frame.top.outerHeight;
-		if (!wndHeight && frame.top.document.body && frame.top.document.body.clientHeight)
-			wndHeight = frame.top.document.body.clientHeight+50;
-
-		if (wndHeight)
-		{
-			if (wndHeight+changeBy>screen.availHeight-40)
-				changeBy = screen.availHeight-40-wndHeight;
-				
-			frame.top.moveBy(0,-changeBy/2);
-			frame.top.resizeBy(0,changeBy);
-		}
-	}
+function updateMenu(html)
+{
+	document.getElementById('menu').innerHTML = html;
 }
 
 // Stores current caret position of a text field or textarea to be used
@@ -108,168 +72,170 @@ function autosize(frame)
 // Only necessary for IE 4+
 function storeCaret(element)
 {
-	if (document.selection && document.selection.createRange)
-		element.caretPos=document.selection.createRange().duplicate();
+	try
+	{
+		if (typeof(document.selection) != 'undefined')
+			element.caretPos = document.selection.createRange().duplicate();
+	}
+	catch (e){}
 }
 
 // Replaces the selected text of a text field or textarea
 // IE 4+ (storeCaret() needs to be called in onselect, onclick, onkeyup), Netscape 6+
 // All other browsers append the text to the existing
-function replaceSelectedText(element,text)
+function replaceSelectedText(element, text)
 {
-	if (element && element.caretPos)
-		element.caretPos.text=text;
-	else if (element && element.selectionStart+1 && element.selectionEnd+1)
-		element.value=element.value.substring(0,element.selectionStart)+text+element.value.substring(element.selectionEnd,element.value.length);
-	else if (element)
-		element.value+=text;
+	if (typeof(element) == 'undefined')
+		return;
+
+	if (typeof(element.caretPos) != 'undefined')
+		element.caretPos.text = text;
+	else if (typeof(element.selectionStart) != 'undefined')
+		element.value = element.value.substring(0, element.selectionStart) + text + element.value.substring(element.selectionEnd);
+	else
+		element.value += text;
 }
 
 // Replaces the selected text in the text input field or
 // inserts the text at the caret position if no text is selected
-function addText(text,donotfocus)
+function addText(text)
 {
-	if (!donotfocus)
-		parent.input.document.inputForm.text.focus();
-	replaceSelectedText(parent.input.document.inputForm.text, " "+text+" ");
-	storeCaret(parent.input.document.inputForm.text);
+	resetFocus();
+	replaceSelectedText(document.inputForm.text, ' '+text+' ');
+	storeCaret(document.inputForm.text);
 }
 
 // Inserts the text at the start of the text input field
 // except the case there is already a command
-function insertText(text,donotfocus)
+function insertText(text)
 {
-	if (!donotfocus)
-		parent.input.document.inputForm.text.focus();
-	if (parent.input.document.inputForm.text.value.replace(/^\s*/,"").substr(0,1)!='/')
-		parent.input.document.inputForm.text.value = text+parent.input.document.inputForm.text.value;
-	storeCaret(parent.input.document.inputForm.text);
+  if (!document.inputForm.text.value.match(/^\s*\//))
+	{
+		resetFocus();
+		document.inputForm.text.value = text + document.inputForm.text.value;
+		storeCaret(document.inputForm.text);
+	}
 }
 
 // Adds the text from the text input field to the send buffer
 // and empties the text input field
 function doSend()
 {
-	text=parent.input.document.inputForm.text.value.replace(/\x01/g,'');
-	if (parent.admin_mode && !text.match(/^\s*\//))
-		text = "/admin "+text;
-	parent.input.document.inputForm.text.value = "";
+	var text = document.inputForm.text.value.replace(/\x01/g,'');
+	if (admin_mode && !text.match(/^\s*\//))
+		text = "/admin " + text;
+	document.inputForm.text.value = "";
 
-	parent.needFocus=1;
 	sendText(text);
-	if (parent.needFocus)
-		parent.input.document.inputForm.text.focus();
 }
 
-// Adds a text to the send buffer and sends it if possible
+// Adds a text to the send buffer and sends it to the server if possible
 function sendText(text)
 {
-	text=text.replace(/^\s+|\s+$/g,"");
-
-	var list = text.split(" ");
-	if (list.length>0 && parent.aliases && parent.aliases[' '+list[0]])
+	if (typeof(text) != 'undefined')
 	{
-		list[0]=parent.aliases[' '+list[0]];
-		text = list.join(" ");
-	}
+		text = text.replace(/^\s+|\s+$/g,"");
 	
-	if (list.length>0 && parent.jscommands && parent.jscommands[' '+list[0]])
-	{
-		eval(parent.jscommands[' '+list[0]]);
-		return;
-	}
-
-	if (!parent.sendBuffer)
-		parent.sendBuffer = "";
-	parent.sendBuffer += text+'\x01'
-	
-	if (parent.input && parent.input.document && parent.input.document.sendForm && parent.input.document.sendForm.text && parent.input.document.sendForm.textid && parent.textid != parent.lasttextid)
-	{
-		parent.lasttextid = parent.textid;
-
-		parent.input.document.sendForm.text.value = parent.sendBuffer;
-		parent.sendBuffer = "";
-		parent.input.document.sendForm.textid.value = parent.textid;
-
-		var aliveInterval = parent.aliveInterval;
-		if (aliveInterval < parent.send_blocking_timeout*2)
-			aliveInterval *= parent.delayFactor;
-		parent.setTimeout("if (window.lasttextid == '"+parent.lasttextid+"' && window.input) window.input.sendText('/alive')", aliveInterval);
+		var params = text.split(' ');
+		if (params.length > 0 && typeof(aliases[' '+params[0]]) != 'undefined')
+		{
+			params[0] = aliases[' '+params[0]];
+			text = params.join(' ');
+		}
 		
+		if (params.length > 0 && typeof(jscommands[' '+params[0]]) != 'undefined')
+		{
+			eval(jscommands[' '+params[0]]);
+			return;
+		}
+	
+		sendBuffer += text+'\x01'
+	}
+
+	if (textid != lasttextid)
+	{
+		lasttextid = textid;
+
+		document.sendForm.textid.value = textid;
+		document.sendForm.text.value = sendBuffer;
+		sendBuffer = '';
+
+		var interval = aliveInterval;
+		if (interval * delayFactor < send_blocking_timeout * 2)
+			aliveInterval *= delayFactor;
+		setTimeout("if (lasttextid == '"+lasttextid+"') sendText('/alive')", aliveInterval);
+
 		submitForm();
 	}
 }
 
 function submitForm()
 {
-	if (parent.input && parent.input.document && parent.input.document.sendForm)
-	{
-		parent.sendTime = (new Date).getTime();
-		parent.input.document.sendForm.submit();
-	
-		var send_blocking_timeout = parent.send_blocking_timeout;
-		send_blocking_timeout *= parent.delayFactor;
-		parent.setTimeout("if (window.textid == '"+parent.textid+"'){ window.delayFactor *= 1.5;submitForm() }", send_blocking_timeout);
-	}
+	sendTime = new Date().getTime();
+	document.sendForm.submit();
+
+	var timeout = send_blocking_timeout;
+	timeout *= delayFactor;
+	setTimeout("if (textid == '"+textid+"'){ delayFactor *= 1.5;submitForm() }", timeout);
 }
 
 // Generates a new text id for the next text to be sent
 function setNewTextId(initial)
 {
-	var hex = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
-
 	if (!initial)
 	{
-		if (parent.averageTime)
-			parent.averageTime = parent.averageTime*0.6+0.4*((new Date).getTime() - parent.sendTime);
+		if (averageTime)
+			averageTime = averageTime*0.6 + (new Date().getTime() - sendTime)*0.4;
 		else
-			parent.averageTime = (new Date).getTime() - parent.sendTime;
-		parent.delayFactor = (parent.averageTime*2 < parent.send_blocking_timeout ? 1 : parent.averageTime*2/parent.send_blocking_timeout);
-		parent.connectionPercent = 100 - parent.averageTime*100/parent.send_blocking_timeout;
-		if (parent.delayFactor > 2)
-			parent.delayFactor = 2;
-		if (parent.connectionPercent < 0)
-			parent.connectionPercent = 0;
+			averageTime = new Date().getTime() - sendTime;
+		delayFactor = (averageTime * 2 < send_blocking_timeout ? 1 : averageTime*2/send_blocking_timeout);
+		connectionPercent = 100 - averageTime*100/send_blocking_timeout;
+		if (delayFactor > 2)
+			delayFactor = 2;
+		if (connectionPercent < 0)
+			connectionPercent = 0;
 
-		if (parent.input && parent.input.document)
+		var connectionCell = document.getElementById('connection');
+		if (connectionCell)
 		{
-			var connectionCell;
-			
-			if (parent.input.document.all)
-				connectionCell = parent.input.document.all.connection;
-			if (parent.input.document.getElementById)
-				connectionCell = parent.input.document.getElementById('connection');
-
-			if (connectionCell)
+			var green, red;
+			if (connectionPercent >= 50)
 			{
-				var green, red;
-				if (parent.connectionPercent>=50)
-				{
-					green = 'FF';
-					red = (100-parent.connectionPercent)/50*0xFF;
-					red = hex[parseInt(red/16)]+hex[parseInt(red)%16];
-				}
-				else
-				{
-					green = parent.connectionPercent/50*0xFF;
-					green = hex[parseInt(green/16)]+hex[parseInt(green)%16];
-					red = 'FF';
-				}
-				if (!connectionCell._tooltip)
-					connectionCell._tooltip = connectionCell.title;
-					
-				var percent = parseInt(parent.connectionPercent);
-				connectionCell.bgColor = '#'+red+green+'00';
-				connectionCell.title = connectionCell._tooltip+": "+percent+"%";
-				connectionCell.width = (percent>=1 ? percent : 1)+"%";
+				green = 'ff';
+				red = (100-connectionPercent)/50*0xFF;
+				red = parseInt(red).toString(16);
+				while (red.length < 2)
+					red = '0' + red;
+			}
+			else
+			{
+				red = 'ff';
+				green = connectionPercent/50*0xFF;
+				green = parseInt(green).toString(16);
+				while (green.length < 2)
+					green = '0' + green;
+			}
+			if (connectionTitle == '')
+				connectionTitle = connectionCell.title;
+				
+			var percent = parseInt(connectionPercent);
+			connectionCell.style.backgroundColor = '#'+red+green+'00';
+			connectionCell.title = connectionTitle + ": " + percent + "%";
+
+			if (typeof(document.images.connection1) != 'undefined' && typeof(document.images.connection2) != 'undefined')
+			{
+				document.images.connection1.width = (parseInt(percent/2) > 0 ? parseInt(percent/2) : 1);
+				document.images.connection2.width = 50 - document.images.connection1.width;
+				document.images.connection1.title = connectionCell.title;
+				document.images.connection2.title = connectionCell.title;
 			}
 		}
 	}
 
-	parent.textid = (new Date).getTime()+':'+Math.random();
+	textid = new Date().getTime()+':'+Math.random();
 
-	if (parent.sendBuffer)
-		sendText("");
+	if (sendBuffer != '')
+		sendText();
 }
 
 // Adds a private message code to the user's private messages window
@@ -294,164 +260,58 @@ function writePrivateMsg(user,nick,code)
 	else
 	{
 		parent.messages[' '+user] = code;
-		parent.privateWindows[' '+user] = openWindow('private_frames&username='+user+'&nickname='+nick,600,400);
+		parent.privateWindows[' '+user] = openWindow('private_frames;username='+user+';nickname='+nick,600,400);
 	}
-}
-
-// Checks if the users frame has to be reloaded after the changes
-function changed(myname,changedname,myroom,changedroom,changedoldroom,changed)
-{
-	var mask=(changedname==myname?1:0)+(changedroom==myroom?2:0)+4;
-	var reload=0;
-	for (var i=0;i<changed.length;i++)
-	{
-		var current = reloadOnChange[changed[i]];
-
-		if ((current & 7) && ((~current & 7) | mask) == 7)
-			reload |= 1;
-			
-		current = reloadOnChange[changed[i]] >> 3;
-		if ((current & 7) && ((~current & 7) | mask) == 7)
-			reload |= 2;
-	}
-	
-	if (reload & 1)
-		parent.users.location.href=(window.cgi || parent.cgi)+'&template=users';
-
-	if (reload & 2)
-		parent.input.location.href=(window.cgi || parent.cgi)+'&template=input';
 }
 
 // Manages the output of HTML code in client pull mode.
-// Proceeds the scripting parts enclosed by <script>...</script> (only one per line!)
+// Proceeds the scripting parts enclosed by <script>...</script>
 function msgOutput(msg)
 {
-	var lines=msg.split("\n");
-	var isScript=0;
-	var script="";
-	for (i=0;i<lines.length;i++)
+	var lines = msg.split("\n");
+	var isScript = 0;
+	var script = '';
+	var html = '';
+	for (var i=0; i<lines.length; i++)
 	{
-		if (!isScript && lines[i].match(/<script>/))
+		if (!isScript && lines[i].match(/<script[^>]*>/))
 		{
 			isScript = 1;
-			script = "";
+			script = '';
 		}
 		else if (isScript && lines[i].match(/<\/script>/))
 		{
-			setTimeout(script,0);
+			window.messages.setTimeout(script, 0);
 			isScript = 0;
 		}
 		else if (isScript)
 			script += lines[i]+'\n';
-		else if (!lines[i].match(/^\s*$/) && parent.messages.document)
-		{
-			if (parent.messages.document.all && parent.messages.document.all.dtext)
-				parent.messages.document.all.dtext.innerHTML += lines[i]+'\n';
-			else
-				parent.messages.document.writeln(lines[i]);
-		}
-	}
-}
-
-// Scrolls down the messages frame if the user didn't scroll up before
-// IE 4+, Netscape 4+, Opera 5+
-function doScroll()
-{
-	if (parent.messages)
-	{
-		var scrolltop;
-		var tolerance = 0;
-		if (parent.messages.document && parent.messages.document.body)
-		{
-			scrolltop = parent.messages.document.body.scrollTop;
-			if (parent.messages.document.body.clientHeight)
-			{
-				if (parent.clientHeight_)
-					tolerance = Math.abs(parent.clientHeight_-parent.messages.document.body.clientHeight);
-				parent.clientHeight_ = parent.messages.document.body.clientHeight;
-			}
-		}
-
-		var yoffset = parent.messages.pageYOffset;
-		if (parent.messages.innerHeight)
-		{
-			if (parent.innerHeight_)
-				tolerance = Math.abs(parent.innerHeight_-parent.messages.innerHeight);
-			parent.innerHeight_ = parent.messages.innerHeight;
-		}
-		
-		if (!(yoffset+tolerance < parent.yoffset || scrolltop+tolerance < parent.scrolltop))
-		{
-			parent.messages.scrollBy(0,50000);
-			parent.yoffset = yoffset;
-			parent.scrolltop = scrolltop;
-		}
-	}
-}
-
-function resetScrollPos()
-{
-	if (document.body)
-	{
-		parent.scrolltop = document.body.scrollTop;
-		parent.clientHeight_ = document.body.clientHeight;
+		else if (lines[i].replace(/<!--.*-->/).match(/\S/))
+			html += lines[i];
 	}
 
-	parent.yoffset = window.pageYOffset;
-	parent.innerHeight_ = window.innerHeight;
-}
-
-// Clears the messages frame
-function clear()
-{
-	saveLog();
-	
-	parent.restore='';
-	parent.exiting=1;
-	parent.messages.location.href=(window.cgi || parent.cgi)+'&action=messages';
-}
-
-// Saves the input of the messages frame for the log before the frame is cleared
-// IE 4+ and Netscape 6+
-function saveLog()
-{
-	if (!parent.log)
-		parent.log="";
-
-	if (parent.messages && parent.messages.document)
+	if (html != '')
 	{
-		var text = "";
-
-		if (parent.messages.document.all && parent.messages.document.all.dtext && parent.messages.document.all.dtext.innerHTML)
-			text = parent.messages.document.all.dtext.innerHTML;
-		else if (parent.messages.document && parent.messages.document.body && parent.messages.document.body.innerHTML)
-			text = parent.messages.document.body.innerHTML;
-
-		if (text.indexOf('Wladimir Palant -->'))
-			text=text.substr(text.indexOf('Wladimir Palant -->')+19);
-		if (text.indexOf('Sascha Heldt -->'))
-			text=text.substr(text.indexOf('Sascha Heldt -->')+16);
-
-		parent.log+=text;
+		try
+		{
+			var div = window.messages.document.createElement('div');
+			div.innerHTML = html;
+			window.messages.document.body.appendChild(div);
+		}
+		catch (e) {}
 	}
 }
 
 // Resets the focus to the input field
 function resetFocus()
 {
-	if (parent && parent.input && parent.input.document && parent.input.document.inputForm && parent.input.document.inputForm.text.setActive)
-		parent.input.document.inputForm.text.setActive();
-}
-
-// Adds onfocus handlers to all links and input elements that call the resetFocus() function
-// IE 4+ only
-function addFocusHandlers()
-{
-	if (document.all)
+	if (typeof(document.inputForm.text.setActive) != 'undefined')
 	{
-		for (var i=0;i<document.all.length;i++)
-			if (document.all[i].tagName=="A" || document.all[i].tagName=="INPUT")
-				document.all[i].onfocus = resetFocus;
+		document.inputForm.text.setActive();
+	}
+	else if (isFocused)
+	{
+		document.inputForm.text.focus();
 	}
 }
 
@@ -467,7 +327,7 @@ function deactivateOldStyles()
 		
 	if (list)
 	{
-		for (var i=0;i<list.length-1;i++)
+		for (var i=0; i<list.length-1; i++)
 			list[i].disabled=true;
 	}
 }
@@ -493,12 +353,12 @@ function removeModeratedText(id)
 	if (!parent.moderatedTexts)
 		return;
 
-	for (var i=0;i<parent.moderatedTexts.length;i++)
+	for (var i=0; i<parent.moderatedTexts.length; i++)
 	{
 		if (parent.moderatedTexts[i][0] == id)
 		{
 			var newArray = [];          // cannot use slice() here - IE bug
-			for (var j=0;j<parent.moderatedTexts.length;j++)
+			for (var j=0; j<parent.moderatedTexts.length; j++)
 				if (j != i)
 					newArray[newArray.length] = parent.moderatedTexts[j];
 			parent.moderatedTexts = newArray;
@@ -507,4 +367,261 @@ function removeModeratedText(id)
 			return;
 		}
 	}
+}
+
+function keyHandler(e)
+{
+	if (e.keyCode == 13 && e.ctrlKey)
+	{
+		doSend();
+		return false;
+	}
+	return true;
+}
+
+function doLogout()
+{
+	if (!window.exiting)
+	{
+		window.exiting = 1;
+		openCenteredWindow(cgi + ';action=send;text=%2Fquit;textid=' + new Date().getTime() + ':' + Math.random() + ';template=message;message=error_logout;image=error','_blank',480,150);
+	}
+}
+
+function getLog()
+{
+	var toDo = log;
+	
+	try
+	{
+		toDo += window.messages.getMessages();
+	}
+	catch (e) {}
+
+	var ret = '';
+	var lines = toDo.split("\n");
+	var isScript = 0;
+	for (var i=0; i<lines.length; i++)
+	{
+		if (!isScript && lines[i].match(/<script[^>]*>/i))
+			isScript = 1;
+		else if (isScript && lines[i].match(/<\/script>/i))
+			isScript = 0;
+		else if (!isScript)
+		{
+			lines[i] = lines[i].replace(/ onclick=\"[^\"]*\"/ig,"").replace(/ href=\"javascript:[^\"]*\"/ig," href=\"javascript:void(0)\"");
+			ret += lines[i]+'\n';
+		}
+	}
+
+	return ret;
+}
+
+function onToolbarMouseOver(e)      // img:hover doesn't work in IE
+{
+	var target = e.target || e.srcElement;
+
+	if (target.className.match(/\bbutton\b/) && !target.className.match(/\bpointed\b/))
+		target.className += ' pointed';
+}
+
+function onToolbarMouseOut(e)      // img:hover doesn't work in IE
+{
+	var target = e.target || e.srcElement;
+
+	if (target.className.match(/\bbutton\b/))
+		target.className = target.className.replace(/\s?\bpointed\b/,'');
+	if (pressedButton != null)
+	{
+		pressedButton.className = pressedButton.className.replace(/\s?\bpressed\b/,'');
+		pressedButton = null;
+	}
+}
+
+function onToolbarMouseDown(e)
+{
+	var target = e.target || e.srcElement;
+
+	if (target.className.match(/\bbutton\b/) && !target.className.match(/\bpressed\b/))
+	{
+		pressedButton = target;
+		pressedButton.className += ' pressed';
+	}
+}
+
+function onToolbarMouseUp(e)
+{
+	var target = e.target || e.srcElement;
+
+	if (target == pressedButton)
+	{
+		pressedButton.className = pressedButton.className.replace(/\s?\bpressed\b/,'');
+		pressedButton = null;
+	}
+}
+
+function getToolbarButton(className)
+{
+	var toolbar = document.getElementById('toolbar');
+	if (!toolbar)
+		return null;
+
+	var regexp = new RegExp('\\b' + className + '\\b');
+	for (var child = toolbar.firstChild; child; child = child.nextSibling)
+		if (child.nodeType == 1 && regexp.test(child.className))
+			return child;
+
+	return null;
+}
+
+function pressToolbarButton(className, press)
+{
+	var button = getToolbarButton(className);
+	if (button)
+	{
+		if (press && !button.className.match(/\bpressed\b/))
+			button.className += ' pressed';
+		else if (!press)
+			button.className = button.className.replace(/\s?\bpressed\b/,'');
+	}
+}
+
+function setColor(color)
+{
+	sendText('/color ' + color);
+}
+
+function setShowTime(newValue)
+{
+	pressToolbarButton('img_menu_showtime', newValue);
+	show_time = newValue;
+}
+
+function setNoSmileys(newValue)
+{
+	pressToolbarButton('img_menu_nosmileys', newValue);
+	nosmileys = newValue;
+}
+
+function setAdminMode(newValue)
+{
+	pressToolbarButton('img_menu_adminmode', newValue);
+	admin_mode = newValue;
+}
+
+function minimizeMenu()
+{
+	document.getElementById('menu').style.display = 'none';
+	document.getElementById('restore_menu').style.display = '';
+	sendText('/menuminimized 1');
+}
+
+function restoreMenu()
+{
+	document.getElementById('restore_menu').style.display = 'none';
+	document.getElementById('menu').style.display = '';
+	sendText('/menuminimized 0');
+}
+
+function minimizeSecondary()
+{
+	if (typeof(window.opera) != 'undefined')
+		return;
+
+	var messages = document.getElementById('messagesCell');
+	var secondary = document.getElementById('secondaryCell');
+
+	if (!messages || !secondary)
+		return;
+
+	if (messagesWidth == '')
+	{
+		messagesWidth = messages.width;
+		secondaryWidth = secondary.width;
+	}
+
+	secondary.width = 40;
+	messages.width = '';
+}
+
+function restoreSecondary()
+{
+	if (typeof(window.opera) != 'undefined')
+		return;
+
+	var messages = document.getElementById('messagesCell');
+	var secondary = document.getElementById('secondaryCell');
+
+	if (!messages || !secondary)
+		return;
+
+	messages.width = messagesWidth;
+	secondary.width = secondaryWidth;
+}
+
+function minimizeUsers()
+{
+	try
+	{
+		window.secondary.document.getElementById('users').style.display = 'none';
+		window.secondary.document.getElementById('restore_users').style.display = '';
+		if (window.secondary.document.getElementById('rooms').style.display == 'none')
+			minimizeSecondary();
+		sendText('/usersminimized 1');
+	}
+	catch (e) {}
+}
+
+function restoreUsers()
+{
+	try
+	{
+		window.secondary.document.getElementById('restore_users').style.display = 'none';
+		window.secondary.document.getElementById('users').style.display = '';
+		if (window.secondary.document.getElementById('rooms').style.display == 'none')
+			restoreSecondary();
+		sendText('/usersminimized 0');
+	}
+	catch (e) {}
+}
+
+function minimizeRooms()
+{
+	try
+	{
+		window.secondary.document.getElementById('rooms').style.display = 'none';
+		window.secondary.document.getElementById('restore_rooms').style.display = '';
+		if (window.secondary.document.getElementById('users').style.display == 'none')
+			minimizeSecondary();
+		sendText('/roomsminimized 1');
+	}
+	catch (e) {}
+}
+
+function restoreRooms()
+{
+	try
+	{
+		window.secondary.document.getElementById('restore_rooms').style.display = 'none';
+		window.secondary.document.getElementById('rooms').style.display = '';
+    if (window.secondary.document.getElementById('users').style.display == 'none')
+		  restoreSecondary();
+		sendText('/roomsminimized 0');
+	}
+	catch (e) {}
+}
+
+// Clears the messages frame
+function clear()
+{
+	exiting = 1;
+	restore = '';
+
+	try
+	{
+		log += window.messages.getMessages();
+	}
+	catch (e) {}
+
+	window.messages.location.href = cgi + ';action=messages';
 }

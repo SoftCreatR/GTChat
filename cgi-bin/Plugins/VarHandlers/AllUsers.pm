@@ -1,17 +1,17 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin loads provides the template variables to access    #
 #  the complete users list.                                       #
 ###################################################################
 
-package GTChat::Plugins::AllUsers::095_01;
+package GT_Chat::Plugins::AllUsers::096_01;
 use strict;
 use vars qw(@ISA);
 
-@ISA = ('GTChat::Enum');
+@ISA = ('GT_Chat::Enum');
 
 bless({
 	template_var_handlers => {

@@ -1,18 +1,18 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021225                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the template variables that are necessary #
 #  to show the rooms, online users or both.                       #
 ###################################################################
 
-package GTChat::Plugins::Roomlist::095_02;
+package GT_Chat::Plugins::Roomlist::096_01;
 use strict;
 
-@GTChat::Plugins::Rooms_enum::095_01::ISA = ('GTChat::Enum');
-@GTChat::Plugins::Onlineusers_enum::095_01::ISA = ('GTChat::Enum');
-@GTChat::Plugins::Rooms_Onlineusers_enum::095_01::ISA = ('GTChat::Enum');
+@GT_Chat::Plugins::Rooms_enum::096_01::ISA = ('GT_Chat::Enum');
+@GT_Chat::Plugins::Onlineusers_enum::096_01::ISA = ('GT_Chat::Enum');
+@GT_Chat::Plugins::Rooms_Onlineusers_enum::096_01::ISA = ('GT_Chat::Enum');
 
 bless({
 	template_var_handlers => {
@@ -32,29 +32,27 @@ sub handler
 	{
 		my $rooms = $main->getAllRooms || [];
 	
-		$main->{template_vars}{roomlist} = GTChat::Plugins::Rooms_enum::095_01::new($main,$rooms);
+		$main->{template_vars}{roomlist} = GT_Chat::Plugins::Rooms_enum::096_01::new($main,$rooms);
 		$main->{template_vars}{roomlist_count} = $#$rooms+1;
 	}
 
 	if ($var =~ /onlineusers/)
 	{
 		my @users = sort {
-			my @a1 = split(/\|/,$a);
-			my @a2 = split(/\|/,$b);
-			$main->lowercase($a1[3]) cmp $main->lowercase($a2[3]) or $main->lowercase($a1[2]) cmp $main->lowercase($a2[2]);
+			$main->lowercase($a->{room}) cmp $main->lowercase($b->{room}) or $main->lowercase($a->{nick}) cmp $main->lowercase($b->{nick});
 		} @{$main->getOnlineUsers || []};
 		
-		$main->{template_vars}{onlineusers} = GTChat::Plugins::Onlineusers_enum::095_01::new($main,\@users);
+		$main->{template_vars}{onlineusers} = GT_Chat::Plugins::Onlineusers_enum::096_01::new($main,\@users);
 		$main->{template_vars}{onlineusers_count} = $#users+1;
 	}
 
 	if ($var =~ /onlineusers/ && $var =~ /roomlist/)
 	{
-		$main->{template_vars}{'roomlist&onlineusers'} = GTChat::Plugins::Rooms_Onlineusers_enum::095_01::new($main);
+		$main->{template_vars}{'roomlist&onlineusers'} = GT_Chat::Plugins::Rooms_Onlineusers_enum::096_01::new($main);
 	}
 }
 
-package GTChat::Plugins::Rooms_enum::095_01;
+package GT_Chat::Plugins::Rooms_enum::096_01;
 
 sub new
 {
@@ -67,6 +65,7 @@ sub new
 		opened => 0,
 		main => $main,
 		index => -1,
+		default_room => $main->lowercase($main->{settings}{default}{room}),
 	});
 }
 
@@ -84,6 +83,7 @@ sub open
 		my $room = $self->{main}->loadRoom($self->{list}[$self->{index}]);
 		if ($self->{main}->isRoomPermitted($room))
 		{
+			$room->{default} = ($room->{name_lc} eq $self->{default_room});
 			$self->{room} = $room;
 			last;
 		}
@@ -112,6 +112,7 @@ sub next
 		my $room = $self->{main}->loadRoom($self->{list}[$self->{index}]);
 		if ($self->{main}->isRoomPermitted($room))
 		{
+			$room->{default} = ($room->{name_lc} eq $self->{default_room});
 			$self->{room} = $room;
 			last;
 		}
@@ -127,7 +128,7 @@ sub close
 	$self->{opened}=0;
 }
 
-package GTChat::Plugins::Onlineusers_enum::095_01;
+package GT_Chat::Plugins::Onlineusers_enum::096_01;
 
 sub new
 {
@@ -166,7 +167,7 @@ sub next
 	return undef unless $self->{opened};
 
 	$self->{index}++;
-	my $ret = $self->{main}->translateOnlineString($self->{list}[$self->{index}]);
+	my $ret = $self->{list}[$self->{index}];
 	$ret->{vip} = 1 if defined($self->{vips}) && grep {$_ eq $ret->{name}} split(/\s/,$self->{vips});
 	return $ret;
 }
@@ -186,13 +187,13 @@ sub setRoom
 	{
 		$self->{vips} = $vips;
 
-		while ($self->{index}<$#{$self->{list}} && ((split(/\|/,$self->{list}[$self->{index}+1]))[3] cmp $room) < 0)
+		while ($self->{index}<$#{$self->{list}} && ($self->{list}[$self->{index}+1]->{room} cmp $room) < 0)
 		{
 			$self->{index}++;
 		}
 		
 		$self->{stopindex} = $self->{index};
-		while ($self->{stopindex}<$#{$self->{list}} && (split(/\|/,$self->{list}[$self->{stopindex}+1]))[3] eq $room)
+		while ($self->{stopindex}<$#{$self->{list}} && $self->{list}[$self->{stopindex}+1]->{room} eq $room)
 		{
 			$self->{stopindex}++;
 		}
@@ -206,7 +207,7 @@ sub setRoom
 	}
 }
 
-package GTChat::Plugins::Rooms_Onlineusers_enum::095_01;
+package GT_Chat::Plugins::Rooms_Onlineusers_enum::096_01;
 use strict;
 use vars qw(@ISA);
 

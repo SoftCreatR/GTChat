@@ -1,4 +1,27 @@
-<script>
-	cgi='{GET_JS|$runtime.completeurl}';
-	changed('{GET_JS|$current_user.name}','{GET_JS|$params.name}','{GET_JS|$current_user.room}','{GET_JS|$params.room}','{GET_JS|$params.oldroom}',new Array({FOREACH|$changed|$params.*}'{GET_JS|$changed}'{NOTLAST},{ENDFOR}));
-</script> 
+<script type="text/javascript">
+	//<![CDATA[
+	{IF|$params.user}
+		{UPDATE_MEMBERINFO}
+		parent.setShowTime({IIF|$current_user.show_time|true|false});
+		parent.setNoSmileys({IIF|$current_user.nosmileys|true|false});
+	{ENDIF}
+	{IF|$params.online}
+		{UPDATE_ONLINEINFO}
+	{ENDIF}
+	{IF|$params.room}
+		{UPDATE|$current_room}
+	{ENDIF}
+	{IF|$params.userlist or $params.roomlist}
+		{UPDATE|$roomlist&onlineusers}
+	{ENDIF}
+	{IF|$params.userlist}
+		parent.updateUsers('{DOFILTER|escape_js}{INCLUDE|users}{ENDDO}');
+	{ENDIF}
+	{IF|$params.roomlist}
+		parent.updateRooms('{DOFILTER|escape_js}{INCLUDE|rooms}{ENDDO}');
+	{ENDIF}
+	{IF|$params.menu}
+		parent.updateMenu('{DOFILTER|escape_js}{INCLUDE|menu}{ENDDO}');
+	{ENDIF}
+	//]]>
+</script>

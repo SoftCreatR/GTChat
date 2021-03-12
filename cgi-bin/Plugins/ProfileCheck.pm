@@ -1,22 +1,51 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin checks the user's profile when changed or when     #
 #  a new user is registered.                                      #
 ###################################################################
 
-package GTChat::Plugins::ProfileCheck::095_03;
+package GT_Chat::Plugins::ProfileCheck::096_01;
 use strict;
 
 return bless({});
 
-sub checkProfile
+sub beforeUserSave
 {
 	my ($self,$main,$user,$olduser) = @_;
 
-	$main->fatal_error('nickchange_nopermission') if (defined($olduser) && $user->{nick} ne $olduser->{nick} && !$main->hasPermission('profile_change_nick'));
+	if (defined($olduser))
+	{
+		if ($olduser->{nick} ne $user->{nick})
+		{
+			$main->fatal_error('nickchange_nopermission') unless $main->hasPermission('profile_change_nick');
+			$main->fatal_error('nickalreadychanged',{interval => $main->{settings}{min_nickchange_interval}}) if defined($olduser->{lastnickchange}) && $main->{runtime}{now}-$olduser->{lastnickchange} < $main->{settings}{min_nickchange_interval}*60 && !$main->hasPermission('ignore_nickchange_interval');
+
+			my $tmpname = $main->getUsername($user->{nick});
+			$main->fatal_error('nicknameexists',{nick => $user->{nick}}) if defined($tmpname) && $tmpname ne $main->{current_user}{name};
+
+			$user->{lastnickchange} = $main->{runtime}{now};
+		}
+
+		if ($user->{name} eq $main->{current_user}{name} || $main->{current_user}{group} <= $user->{group})
+		{
+			$user->{group} = $olduser->{group};
+		}
+
+		$user->{registration} = $olduser->{registration};
+		$user->{browser} = $olduser->{browser};
+		$user->{ip} = $olduser->{ip};
+		$user->{forwardedfor} = $olduser->{forwardedfor};
+		$user->{host} = $olduser->{host};
+		$user->{lastlogin} = $olduser->{lastlogin};
+	}
+
+	$user->{email} =~ s/[\s"&#|<>]//g;
+
+	$user->{color} = $main->toColor(my $color = $user->{color});
+	$user->{color} = $main->{settings}{default}{color} unless defined($user->{color});
 
 	if (exists($main->{settings}{check_profile_fields_range}))
 	{
@@ -63,12 +92,6 @@ sub checkProfile
 		$user->{homepagetitle} = $main->toHTML($user->{homepagetitle});
 	}
 
-	if ($olduser && $olduser->{nick} ne $user->{nick})
-	{
-		$main->fatal_error('nickalreadychanged',{interval => $main->{settings}{min_nickchange_interval}}) if defined($olduser->{lastnickchange}) && $main->{runtime}{now}-$olduser->{lastnickchange} < $main->{settings}{min_nickchange_interval}*60 && !$main->hasPermission('ignore_nickchange_interval');
-		$user->{lastnickchange} = $main->{runtime}{now};
-	}
-
 	if ($user->{style})
 	{
 		my $stylefound = 0;
@@ -85,7 +108,7 @@ sub checkProfile
 
 	$main->fatal_error('noemailgiven') if ($user->{group}>=0 && $user->{email} eq "");
 	$main->fatal_error('illegalemail') if($user->{email} ne "" && $user->{email} !~ /^([\w\-_.]+@[\w\-_.]+\.[a-z]{2,})$/);
-	
+
 	if (exists($main->{settings}{check_profile_fields_length}))
 	{
 		foreach (keys %{$main->{settings}{check_profile_fields_length}})

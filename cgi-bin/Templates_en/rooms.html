@@ -1,0 +1,19 @@
+{NEED_PERMISSION|user}
+{NEED|$roomlist&onlineusers}
+<table class="bordered1" width="100%" cellspacing="0">
+<tr>
+	<th>
+		<img src="{GET|$settings.urls.imagesurl}minimize.gif" class="img_minimize clickable" align="right" onclick="parent.minimizeRooms();"/>
+		Rooms
+	</th>
+</tr>
+{FOREACH|$room|$roomlist&onlineusers}
+	<tr>
+		<td>
+			{IF|$room.name_lc ne $current_user.room}<a href="javascript:void(0)" onclick="parent.sendText('/room {GET_JS|$room.name_lc}');return false;">{ELSE}<strong>{ENDIF}
+			{GET|$room.name}{IIF|$room.name_lc eq $current_user.room|</strong>|</a>}
+			{IF|$room.onlineusers_count} (<a href="javascript:void(0)" onclick="parent.openWindow('room_users;roomname={GET_ESCAPED|$room.name_lc}',480,480);return false;">{GET|$room.onlineusers_count}</a>){ENDIF}
+		</td>
+	</tr>
+{ENDFOR}
+</table>

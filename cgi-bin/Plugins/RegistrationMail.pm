@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin sends user a mail with an authentication code on   #
@@ -8,13 +8,13 @@
 #  then.                                                          #
 ###################################################################
 
-package GTChat::Plugins::RegistrationMail::095_01;
+package GT_Chat::Plugins::RegistrationMail::096_01;
 
 use strict;
 
 return bless({});
 
-sub checkProfile
+sub beforeUserSave
 {
 	my ($self,$main,$user,$olduser) = @_;
 
@@ -37,11 +37,11 @@ sub checkProfile
 	}
 }
 
-sub userRegistered
+sub afterUserSave
 {
-	my($self,$main,$user) = @_;
+	my($self,$main,$user,$olduser) = @_;
 	
-	if (exists($user->{email}) && $user->{email} ne '')
+	if (!defined($olduser) && exists($user->{email}) && $user->{email} ne '')
 	{
 		$main->{template_vars}{user} = $user;
 		$main->sendMailTemplate('mails/registration');

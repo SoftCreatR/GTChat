@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::SimpleTemplateEnginePerl;
@@ -139,8 +139,6 @@ sub parseTemplate
 	$sub = 'sub{my($main,$output,$modules,$handlers)=@_;'.$sub.'}';
 
 	$main->fatal_error('endblock_missing',{template => $main->{template_vars}{template_name}, line => $line_stack[-1], tag => $block_stack[-1], endtag => $end_stack[-1]}) if ($#block_stack>=0);
-
-#    print "Content-Type: text/html\n\n$sub";
 
 	my $compiled = eval($sub);
 	die $@ if $@;

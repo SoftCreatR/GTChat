@@ -1,48 +1,56 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{NEED_PERMISSION|user}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>Farbpalette</title>
-	<script>
+	<script type="text/javascript">
+		//<![CDATA[
 		function set(color)
 		{
-			if (window.opener && !window.opener.closed && window.opener.setColor)
-				window.opener.setColor(color);
+			if (window.opener && !opener.closed)
+				opener.setColor(color);
 
 			close();
 		}
+		//]]>
 	</script>
 </head>
 
 <body onload="opener.autosize(window)">
 
-<table align=center border=0 cellspacing=1 cellpadding=0>
-<script language="JavaScript">
+<table align="center" cellspacing="1">
+<script type="text/javascript">
+	//<![CDATA[
 	var parts = ['00','33','66','99','cc','ff'];
+	var html = '';
 
 	for (var i=0;i<2;i++)
 	{
 		for (var b=0;b<parts.length;b++)
 		{
-			document.writeln('<tr>');
+			html += '<tr>';
 			for (var g=0;g<parts.length/2;g++)
 			{
 				for (var r=0;r<parts.length;r++)
 				{
 					var color = '#'+parts[g==1?parts.length-r-1:r]+parts[g*2+i]+parts[i==0?b:parts.length-b-1];
-					document.writeln('<td width=12 bgcolor="'+color+'"><a href="javascript:set(\''+color+'\')">{IMAGE|blank|width=12 height=12 border=0 alt="'+color+'"}</a></td>');
+					html += '<td width="12" bgcolor="'+color+'"><a href="javascript:set(\''+color+'\')">{IMAGE|blank|width="12" height="12" border="0" title="'+color+'"}</a></td>';
 				}
 			}
-			document.writeln('</tr>');
+			html += '</tr>';
 		}
 	}
+	document.write(html);
+	//]]>
 </script>
 </table>
 
-<div class="headertext" align="center">
-	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
-</div>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Fenster schlie&szlig;en</a>
+</p>
 
 </body>
 </html> 

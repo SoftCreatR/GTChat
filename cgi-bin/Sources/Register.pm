@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::Register;
@@ -113,11 +113,8 @@ sub register_handler
 	$main->fatal_error('usernameexists',{name => $user{name}}) if ($main->existsUser($user{name}));
 	$main->fatal_error('nicknameexists',{nick => $user{nick}}) if ($main->getUsername($user{nick}));
 
-	$main->addUser(\%user);
+	$main->saveUser(\%user);
 
-	my $name = ($main->{settings}{default}{is_username} ? $user{name} : $user{nick});
-	$name =~ s/\W/"%".unpack("H2",$&)/eg;
-	$name = ($main->{settings}{default}{is_username} ? 'username=' : 'nickname=') . $name;
-
-	$main->redirect($main->{runtime}{completeurl} . '&template=register_success&' . $name);
+	$main->{template_vars}{user} = \%user;
+	$main->printTemplate('register_success');
 }

@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20020911                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #       !!! This plugin will be replaced by a better one !!!      #
@@ -10,12 +10,12 @@
 #  taken from Variables/banlist.txt.                              #
 ###################################################################
 
-package GTChat::Plugins::BanList::095_01;
+package GT_Chat::Plugins::BanList::096_01;
 use strict;
 
 return bless({});
 
-sub checkLogin
+sub beforeLogin
 {
 	my($self,$main,$user,$room) = @_;
 

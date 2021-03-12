@@ -1,15 +1,15 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>{GET|$settings.chatname} - Befehlsliste</title>
-	<script language="JavaScript" src="chat.js" type="text/javascript">
-	</script>
+	<script src="general.js" type="text/javascript"></script>
 </head>
-<body onload="autosize(window)">
+<body onload="autosize()">
 
-<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
-<table border=0 width="100%" cellspacing=1 cellpadding=3>
+<table class="bordered2" width="100%" cellspacing="0">
 <tr>
 	<th>Befehl</th>
 	<th>Aliases</th>
@@ -17,12 +17,12 @@
 	<th>Beschreibung</th>
 </tr>
 {FOREACH|$command|$commandslist}
-	<tr class="row2">
-		<td nowrap width="15%">
-			{IF|$command.command}/{GET|$command.command} {ENDIF}<i>{GET|$command.params}</i>
+	<tr>
+		<td width="15%" nowrap="nowrap">
+			{IF|$command.command}/{GET|$command.command} {ENDIF}<em>{GET|$command.params}</em>
 		</td>
 		<td width="15%">
-			{FOREACH|$alias|$command.aliases}/{GET|$alias}{NOTLAST}, <nobr>{ENDFOR}&nbsp;
+			{FOREACH|$alias|$command.aliases}/{GET|$alias}{NOTLAST}, {ENDFOR}&nbsp;
 		</td>
 		<td width="10%">
 			{GROUPNAME|$command.permission}
@@ -34,11 +34,10 @@
 {ENDFOR} 
 
 </table>
-</td></tr></table>
 
-<div class="headertext" align="center">
-	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
-</div>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Fenster schlie&szlig;en</a>
+</p>
 
 </body>
 </html> 

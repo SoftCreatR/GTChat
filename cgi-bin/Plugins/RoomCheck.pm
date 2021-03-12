@@ -1,18 +1,18 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin checks a room when changed or when a new room is   #
 #  created.                                                       #
 ###################################################################
 
-package GTChat::Plugins::RoomCheck::095_02;
+package GT_Chat::Plugins::RoomCheck::096_01;
 use strict;
 
 return bless({});
 
-sub checkRoom
+sub beforeRoomSave
 {
 	my ($self,$main,$room,$oldroom) = @_;
 

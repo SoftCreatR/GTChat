@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::Login;
@@ -125,18 +125,22 @@ sub login_handler
 		$room = $main->loadRoom($main->{settings}{default}{room}) if (!defined($room) || !$main->isRoomPermitted($room,\%user));
 		$user{room} = $room->{name_lc};
 
-		$main->invokeModulesList($main->{settings}{custom_login_checker},'checkLogin',\%user,$room);
-
-		$main->saveUser(\%user);
-
-		$main->invokeModulesList($main->{settings}{custom_login_logger},'loginPerformed',\%user,$room);
+		if (defined($main->{cookie}{cookieid}) && $main->{cookie}{cookieid} ne '')
+		{
+			my $old_name = $main->getUsernameFromID($main->{cookie}{cookieid});
+			if (defined($old_name))
+			{
+				my $old_user = $main->loadOnlineInfo($old_name);
+				if ($old_user)
+				{
+					$main->kickUser($old_user,{error_name => 'error_second_login'});
+					sleep(2);       # sleep some seconds to let the other instance disconnect and remove the cookie
+				}
+			}
+		}
 
 		my $old_user = $main->loadOnlineInfo($user{name});
-		if ($old_user)                # already logged in
-		{
-			$main->kickUser($old_user,{error_name => 'error_second_login'});
-			sleep(1);                                                         # leave some time for the old pipe to disconnect
-		}
+		$main->kickUser($old_user,{error_name => 'error_second_login'}) if $old_user;
 
 		my $filename = unpack("H*",$user{name});
 		if ($user{pull})
@@ -145,12 +149,17 @@ sub login_handler
 			$main->close(*QUEUE);
 		}
 
+		$main->invokeModulesList($main->{settings}{custom_login_listener},'beforeLogin',\%user,$room);
+
+		$main->saveUser(\%user);
 		$main->addOnlineInfo(\%user);
+
+		$main->invokeModulesList($main->{settings}{custom_login_listener},'afterLogin',\%user,$room);
 	};
 	if ($@)
 	{
 		my $error = $@;
-		$main->invokeModulesList($main->{settings}{custom_login_logger},'loginAborted',\%user,$error);
+		$main->invokeModulesList($main->{settings}{custom_login_listener},'onLoginError',\%user,$error);
 
 		if (exists($user{generator}) && $user{generator} ne "")
 		{
@@ -160,26 +169,6 @@ sub login_handler
 		die $error;
 	}
 
-	$main->sendOutputStrings(
-		[undef,$user{room},$main->toOutputString(
-			{
-				template => 'entered',
-				name => $user{name},
-				nick => $user{nick},
-				room => $user{room},
-			}
-		)],
-		[undef,undef,$main->toOutputString(
-			{
-				template => 'changed',
-				name => $user{name},
-				room => $user{room},
-				oldroom => $user{room},
-				'*' => ['online'],
-			}
-		)],
-	);
-
 	$main->setCookie("cookieid=$user{id}; expires=Mon, 31-Jan-3000 12:00:00 GMT;");
-	$main->redirect("$main->{runtime}{completeurl}&id=$user{id}&template=chatentrance");
+	$main->redirect("$main->{runtime}{completeurl};id=$user{id};template=chatentrance");
 }

@@ -1,30 +1,28 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>{GET|$settings.chatname}</title>
-	{IF|$input.username}
-		<meta http-equiv="refresh" content="10; URL={GET|$runtime.completeurl}&username={GET_ESCAPED|$input.username}">
-	{ELSE}
-		<meta http-equiv="refresh" content="10; URL={GET|$runtime.completeurl}&nickname={GET_ESCAPED|$input.nickname}">
-	{ENDIF}
+	<meta http-equiv="refresh" content="10; URL={GET|$runtime.completeurl};{IF|$settings.default.is_username}username={GET_ESCAPED|$user.name}{ELSE}nickname={GET_ESCAPED|$user.nick}{ENDIF}"/>
 </head>
 <body>
 
-<table align=center border=0 cellspacing=0 cellpadding=0 class="outer"><tr><td>
-<table width="100%" border=0 cellspacing=1 cellpadding=0>
+<table class="bordered1" width="70%" align="center" cellspacing="0">
 <tr>
-	<th><b>Registrierung erfolgreich</b></th>
+	<th>Registrierung erfolgreich</th>
 </tr>
-<tr class="row2">
+<tr>
 	<td>
-		Ihre Registrierung ist erfolgreich vorgenommen worden. Klicken Sie nun 
-		<a href="{GET|$runtime.completeurl}&{IF|$input.username}username={GET_ESCAPED|$input.username}{ELSE}nickname={GET_ESCAPED|$input.nickname}{ENDIF}">hier</a>, um sich im Chat einzuloggen. In 10 Sekunden werden Sie automatisch weitergeleitet.
+		{IF|$user.code}
+			Ihre Registrierung ist erfolgreich vorgenommen worden. In K&uuml;rze bekommen Sie eine Mail mit dem Authentifizierungscode, den Sie beim ersten Login statt dem Pa&szlig;wort verwenden m&uuml;ssen. Klicken Sie nun <a href="{GET|$runtime.completeurl};{IF|$settings.default.is_username}username={GET_ESCAPED|$user.name}{ELSE}nickname={GET_ESCAPED|$user.nick}{ENDIF}">hier</a>, um zur Login-Seite zur&uuml;ckzukehren. In 10 Sekunden werden Sie automatisch weitergeleitet.
+		{ELSE}
+			Ihre Registrierung ist erfolgreich vorgenommen worden. Klicken Sie nun <a href="{GET|$runtime.completeurl};{IF|$settings.default.is_username}username={GET_ESCAPED|$user.name}{ELSE}nickname={GET_ESCAPED|$user.nick}{ENDIF}">hier</a>, um sich im Chat einzuloggen. In 10 Sekunden werden Sie automatisch weitergeleitet.
+		{ENDIF}
 	</td>
 </tr>
 </table>
-
-</td></tr></table>
 
 </body>
 </html> 

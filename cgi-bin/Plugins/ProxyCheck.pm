@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin checks for a proxy that does not allow server      #
@@ -8,7 +8,7 @@
 #  page accordingly.                                              #
 ###################################################################
 
-package GTChat::Plugins::ProxyCheck::095_01;
+package GT_Chat::Plugins::ProxyCheck::096_01;
 use strict;
 
 return bless({
@@ -52,7 +52,7 @@ sub proxyCheck
 
 	if (!exists($main->{input}{proxy}))
 	{
-		$main->redirect($main->{runtime}{completeurl}.'&action=proxycheck');
+		$main->redirect($main->{runtime}{completeurl}.';action=proxycheck');
 		$main->exit;
 	}
 }

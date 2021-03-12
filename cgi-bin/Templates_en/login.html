@@ -1,13 +1,16 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{PROXYCHECK}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>{GET|$settings.chatname}</title>
-	<script language="JavaScript" src="chat.js" type="text/javascript">
-	</script>
-	<script language="JavaScript">
-		cgi='{GET_JS|$runtime.completeurl}';
+	<script src="general.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		//<![CDATA[
+		var cgi='{GET_JS|$runtime.completeurl}';
+		//]]>
 	</script>
 </head>
 <body marginwidth=36 leftmargin=36>
@@ -18,7 +21,7 @@
 			<td width="100%">&nbsp;</td>
 			{FOREACH|$language|$settings.languages}
 				<td align="center">
-					{IF|$language ne $runtime.language}<a href="{GET|$runtime.completeurl}&language={GET|$language}">{ELSE}<b>{ENDIF}
+					{IF|$language ne $runtime.language}<a href="{GET|$runtime.completeurl};language={GET|$language}">{ELSE}<b>{ENDIF}
 						{IMAGE|$language}<br>
 						{GETLNG|$language|$lang_name}
 					{IF|$language ne $runtime.language}</a>{ELSE}</b>{ENDIF}
@@ -30,37 +33,34 @@
 	<noscript>
 		<br><br>
 		<font color="red">
-			Java script must be enabled to use the chat. Java script is currently disabled in your browser.
-			For directions how to activate Java script please see the <a href="faq.html" class="stdlink" target="_blank">Chat FAQ</a>.
+		Java script must be enabled to use the chat. Java script is currently disabled in your browser.
 		</font>
 	</noscript>
 	{IF|$input.proxy}
 		<br><br>
 		<font color="red">
-			The chat detected that your connection allows only the secure mode.
-			Click <a href="{GET|$runtime.completeurl}&action=proxycheck" class="stdlink">here</a>, to test your connection again.
+		The chat detected that your connection allows only the secure mode.
+		Click <a href="{GET|$runtime.completeurl};action=proxycheck">here</a>, to test your connection again.
 		</font>
 	{ENDIF}
 	
 	<br><br>
 	
-	Welcome message here, set in Template login.html...<br>
-	If you have any problems using the chat please see the <a href="faq.html" class="stdlink" target="_blank">FAQ</a>.
+	Welcome message here, set in Template login.html...<br/>
 	<br>
 	<br>
-	{IF|$news.message}
-		<b>Chat news</b> ({GETDATE|$news.date}): {DOFILTER|links|formatting|smileys}{GET|$news.message}{ENDDO} {IF|$news.author}- <i>from {GET|$news.author}</i>{ENDIF}
-		<br>
+{IF|$news.message}
+	<p>
+		<strong>Chat news</strong> ({GETDATE|$news.date}): {DOFILTER|links|formatting|smileys}{GET|$news.message}{ENDDO} {IF|$news.author}- <em>from {GET|$news.author}</em>{ENDIF}
 		{IF|$news.messagecount>1}
-			<div class="smalltext">
-				<a href="{GET|$runtime.completeurl}&template=allnews" onclick="openWindow('allnews',600,200);return false;" class="stdlink">Show all chat news</a>
-			</div>
+			<br/><span class="smalltext"><a href="{GET|$runtime.completeurl};template=allnews" onclick="openWindow('allnews',600,200);return false;">Show all chat news</a></span>
 		{ENDIF}
-	{ENDIF}
-</div>
+	</p>
+{ENDIF}
 
 {NEED|$environment}
 {NEED|$roomlist&onlineusers}
+
 <table border=0 width="100%" cellspacing=0 cellpadding=10>
 <tr>
 	<td width="70%" valign=top>
@@ -69,16 +69,16 @@
 		{GET|$runtime.hiddenfields}
 		<input type=hidden name=action value=login>
 
-		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="bordered1"><tr><td>
 		<table border=0 width="100%" cellspacing=1 cellpadding=0>
 
 		<tr>
 			<th>User login</th>
 		</tr>
 		<tr class="row2"><td><table cellspacing=5>
-		<tr>
-			<td colspan=2>No name registered for the chat yet? To create a new account <a href="{GET|$runtime.completeurl}&template=register">click here</a>. To log in as guest leave the password field empty.</td>
-		</tr>
+<tr>
+	<td colspan="2">No name registered for the chat yet? To create a new account <a href="{GET|$runtime.completeurl};template=register">click here</a>. To log in as guest leave the password field empty.</td>
+</tr>
 		<tr>
 			<td colspan=2>&nbsp;</td>
 		</tr>
@@ -94,7 +94,7 @@
 		</tr>
 		{IF|!$environment.has_password}
 			<tr>
-				<td><b>Password:</b></td>
+				<td><b>Password</b></td>
 				<td><input type=password name=password size=20 style="width:100%"></td>
 			</tr>
 		{ENDIF}
@@ -117,7 +117,7 @@
 			<td>
 				<input type=checkbox name=cookie value="1" {IIF|$environment.has_cookie|checked}> Remember my login information
 				{IF|$environment.has_cookie}
-					(<a href="{GET|$runtime.completeurl}&action=removecookie" class=smalltext>Remove saved information</a>)
+					(<a href="{GET|$runtime.completeurl};action=removecookie" class=smalltext>Remove saved information</a>)
 				{ENDIF}
 			</td>
 		</tr>
@@ -141,7 +141,7 @@
 	</td>
 	<td width="30%" valign=top>
 
-		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="bordered1"><tr><td>
 		<table border=0 width="100%" cellspacing=1 cellpadding=0>
 		<tr>
 			<th>{GET|$onlineusers_count} Users online</th>
@@ -151,7 +151,7 @@
 				{IF|$room.onlineusers_count}
 					{SET|$flag|1}
 					<tr class="row1">
-						<td><b>{GET|$room.name}</b></td>
+						<td class="subheader"><b>{GET|$room.name}</b></td>
 					</tr>
 					<tr class="row2"><td>
 						{FOREACH|$user|$room.onlineusers}
@@ -179,4 +179,4 @@
 </div>
 
 </body>
-</html> 
+</html>

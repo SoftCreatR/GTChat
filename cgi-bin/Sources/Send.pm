@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::Send;
@@ -23,7 +23,6 @@ sub send_handler
 	if ($main->{input}{textid} ne $main->{current_user}{lasttextid})
 	{
 		my $talked=0;
-		my %changed=();
 		my $oldroom=$main->{current_user}{room};
 
 		my @todo=();
@@ -34,7 +33,16 @@ OUTER:
 			$text =~ s/^\s+|\s+$//g;
 			$text =~ s/\s+/ /g;
 
-			$main->invokeModulesList($main->{settings}{custom_send_checker},'checkText',\$text);
+			eval
+			{
+				$main->invokeModulesList($main->{settings}{custom_send_listener},'beforeTextProcessing',\$text);
+			};
+			if ($@)
+			{
+				my $error = errorToOutput($main, $@);
+				push @todo, $error if defined($error);
+				next;
+			}
 
 			next if $text eq '';
 
@@ -72,62 +80,23 @@ OUTER:
 
 						$ret=$handler->{command_handlers}{$command}->($handler,$main,$command,$text);
 					};
-
 					if ($@)
 					{
-						my $error = $@;
-
-						$error = {error_name => 'error_custom', error => "Fatal error occured: $error"} unless ref($error);
-
-						$error = {error_name => 'error_custom!', error => $error->{error_message}} if $error->{error_message} && !$error->{error_name};
-
-						if ($error->{error_name})
-						{
-							my $name = $error->{error_name};
-							delete $error->{error_name};
-
-							my @params = ();
-							foreach (keys %$error)
-							{
-								my $param = "$_=$error->{$_}";
-								$param =~ s/[\n\r|]//g;
-								push @params,$param;
-							}
-
-							push @todo,[$main->{current_user}{name},
-										undef,
-										$main->toOutputString({template => 'message',
-															message => $name,
-															'*' => \@params,
-															}),
-									];
-						}
+						my $error = errorToOutput($main, $@);
+						push @todo, $error if defined($error);
 					}
 					else
 					{
-						my $stop = 0;
-						foreach (@$ret)
+						if (ref($ret) eq 'ARRAY')
 						{
-							if ($_->[3])
-							{
-								foreach my $flag (@{$_->[3]})
-								{
-									$changed{$flag}=1;
-								}
-							}
-
-							if (!exists($main->{current_user}{id}))
-							{
-								$stop = 1;
-								last;
-							}
-							else
-							{
-								push @todo,$_;
-							}
+							push @todo, @$ret;
 						}
-						last if $stop;
+						elsif (ref($ret) && $ret->isa('ARRAY'))
+						{
+							push @todo, $ret;
+						}
 					}
+					last unless exists($main->{current_user}{id});
 				}
 			}
 			else
@@ -142,41 +111,19 @@ OUTER:
 			}
 		}
 
-		if (keys %changed > 0)
-		{
-			push @todo,[undef,
-						undef,
-						$main->toOutputString({template => 'changed',
-											name => $main->{current_user}{name},
-											room => $main->{current_user}{room},
-											oldroom => $oldroom,
-											'*' => [keys %changed],
-											})
-					];
-		}
-
 		$main->{current_user}{lasttextid} = $main->{input}{textid};
 		delete $main->{input}{textid};
+		$main->{current_user}{lastalive} = $main->{runtime}{now};
 		$main->{current_user}{lasttalk} = $main->{runtime}{now} if $talked;
-		$main->saveOnlineInfo($main->{current_user}) if ($main->{current_user}{id});
 
-		if (exists($changed{room}))
+		eval
 		{
-			my $room = $main->loadRoom($oldroom);
-			if (!$room->{permanent})
-			{
-				my $users = $main->getOnlineUsers();
-				my $found = 0;
-				foreach my $user (@$users)
-				{
-					if ($main->translateOnlineString($user)->{room} eq $oldroom)
-					{
-						$found = 1;
-						last;
-					}
-				}
-				$main->removeRoom($oldroom) if (!$found)
-			}
+			$main->saveOnlineInfo($main->{current_user}) if ($main->{current_user}{id});
+		};
+		if ($@)
+		{
+			my $error = errorToOutput($main, $@);
+			push @todo, $error if defined($error);
 		}
 
 		sendOutputStrings($main,@todo) if ($#todo>=0);
@@ -190,20 +137,53 @@ OUTER:
 	$main->printTemplate($template);
 }
 
+sub errorToOutput
+{
+	my($main,$error) = @_;
+
+	$error = {error_name => 'error_custom', error => "Fatal error occured: $error"} unless ref($error);
+
+	$error = {error_name => 'error_custom!', error => $error->{error_message}} if $error->{error_message} && !$error->{error_name};
+
+	if ($error->{error_name})
+	{
+		my $name = $error->{error_name};
+		delete $error->{error_name};
+
+		my @params = ();
+		foreach (keys %$error)
+		{
+			my $param = "$_=$error->{$_}";
+			$param =~ s/[\n\r|]//g;
+			push @params,$param;
+		}
+
+		return [$main->{current_user}{name},
+					undef,
+					$main->toOutputString({template => 'message',
+										message => $name,
+										'*' => \@params,
+										}),
+				];
+	}
+	return undef;
+}
+
 sub sendOutputStrings
 {
 	my ($main,@commands)=@_;
 
-	$main->invokeModulesList($main->{settings}{custom_messages_filter},'filterOutputStrings',\@commands);
+	eval
+	{
+		$main->invokeModulesList($main->{settings}{custom_send_listener},'beforeSend',\@commands);
+	};
 
 	return if $#commands < 0;
 
 	my $users = $main->getOnlineUsers(1);
-#    my $quotedname = quotemeta($main->{current_user}{name});
 
-	for (my $i=0;$i<=$#$users;$i++)
+	foreach my $user (@$users)
 	{
-		my $user=$main->translateOnlineString($users->[$i]);
 		my @toSend=();
 
 		foreach (@commands)
@@ -214,7 +194,6 @@ sub sendOutputStrings
 			{
 				my $template = (split(/\|/,$command))[0];
 				push @toSend,$command unless $main->{settings}{ignore_messages}{$template} && defined($user->{ignored}) && $main->{current_user} && grep {$_ eq $main->{current_user}{name}} split(/\s/,$user->{ignored});
-#                push @toSend,$command unless $main->{settings}{ignore_messages}{$template} && defined($user->{ignored}) && $main->{current_user} && " $user->{ignored} " =~ /\s$quotedname\s/;
 			}
 		}
 
@@ -241,7 +220,10 @@ sub sendOutputStrings
 		}
 	}
 
-	$main->invokeModulesList($main->{settings}{custom_messages_logger},'logOutputStrings',\@commands);
+	eval
+	{
+		$main->invokeModulesList($main->{settings}{custom_send_listener},'afterSend',\@commands);
+	};
 }
 
 sub toOutputString

@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021225                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin loads the file <language>.commands and provides    #
@@ -8,10 +8,11 @@
 #  commands.                                                      #
 ###################################################################
 
-package GTChat::Plugins::CommandsList::095_02;
+package GT_Chat::Plugins::CommandsList::096_01;
 use strict;
+use vars qw(@ISA);
 
-@GTChat::Plugins::Commands_enum::095_01::ISA = ('GTChat::Enum');
+@ISA = ('GT_Chat::Enum');
 
 bless({
 	template_var_handlers => {
@@ -61,11 +62,9 @@ sub handler
 		push @commands,$commands{$_} if !exists($main->{settings}{permissions}{"command.$_"}) || $main->hasPermission("command.$_");
 	}
 
-	$main->{template_vars}{commandslist} = GTChat::Plugins::Commands_enum::095_01::new($main,\@commands);
+	$main->{template_vars}{commandslist} = new($main,\@commands);
 	$main->{template_vars}{commands_count} = $#commands+1;
 }
-
-package GTChat::Plugins::Commands_enum::095_01;
 
 sub new
 {

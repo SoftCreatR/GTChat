@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021225                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin writes a messages log to Variables/messages.log    #
@@ -8,12 +8,12 @@
 #  Settings.dat determines, which messages have to be logged.     #
 ###################################################################
 
-package GTChat::Plugins::MessagesLog::095_02;
+package GT_Chat::Plugins::MessagesLog::096_01;
 use strict;
 
 return bless({});
 
-sub logOutputStrings
+sub afterSend
 {
 	my($self,$main,$commands) = @_;
 

@@ -1,13 +1,13 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin is an alternative template engine, based on        #
 #  Embedder.pm by Dmitrij Koterov (http://www.dklab.ru).          #
 ###################################################################
 
-package GTChat::Plugins::EmbedderTemplateEngine::095_01;
+package GT_Chat::Plugins::EmbedderTemplateEngine::096_01;
 use strict;
 
 return bless({});

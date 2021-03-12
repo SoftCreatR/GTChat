@@ -61,7 +61,7 @@
 	{FOREACH|$user|$admin_inactiveaccounts}
 		<tr class=row2>
 			<td><input type=checkbox name="user_{GET|$user.name_hex}" value=1 checked></td>
-			<td><a href="javascript:void(0)" onclick="openWindow('profile&username={GET_ESCAPED|$user.name}',480,480);return false;">{GET|$user.nick}</a></td>
+			<td><a href="javascript:void(0)" onclick="openWindow('profile;username={GET_ESCAPED|$user.name}',480,480);return false;">{GET|$user.nick}</a></td>
 			<td>{GET|$user.inactive_days}</td>
 			<td>{GETDATE|$user.lastlogin}</td>
 			<td>{GETDATE|$user.registration}</td>

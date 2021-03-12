@@ -1,53 +1,58 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{NEED_PERMISSION|user}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>{GET|$settings.chatname} - Raumliste</title>
-	<script language="JavaScript">
+	<script src="general.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		//<![CDATA[
 		function send(text)
 		{
-			if (window.opener && !opener.closed && opener.sendText)
-				opener.sendText(text,1);
+			if (window.opener && !opener.closed)
+				opener.sendText(text, 1);
 		}
+		//]]>
 	</script>
 </head>
-<body onload="opener.autosize(window)">
+<body onload="autosize()">
 
 {NEED|$roomlist}
-<table border=0 width=100% cellspacing=0 cellpadding=0 class="outer"><tr><td>
-<table border=0 width=100% cellspacing=1 cellpadding=0>
-
+<table class="bordered2" width="100%" cellspacing="0">
 <tr>
 	<th>Bezeichnung</th>
 	<th>Status</th>
 	<th>Thema</th>
 </tr>
 {FOREACH|$room|$roomlist}
-	<tr class="row2">
+	<tr>
 		<td>
-			<a href="#room" onclick="send('/room {GET_JS|$room.name}');return false;" title="Springe zum Raum">{GET|$room.name}</a>
+			<a href="javascript:void(0)" onclick="send('/room {GET_JS|$room.name}');return false;" title="Springe zum Raum">{GET|$room.name}</a>
 			{IF|permission(rooms_modify) or $room.owner eq $current_user.name}
-				<span class="smalltext">(<a href="{GET|$runtime.completeurl}&template=editroom&roomname={GET_ESCAPED|$room.name}">Bearbeiten</a>)</span>
+				<span class="smalltext">(<a href="{GET|$runtime.completeurl};template=editroom;roomname={GET_ESCAPED|$room.name}">Bearbeiten</a>)</span>
+				{IF|!$room.default}
+					<span class="smalltext">(<a href="{GET|$runtime.completeurl};action=deleteroom;name={GET_ESCAPED|$room.name}" onclick="return confirm('Sind Sie sicher, da&szlig; Sie diesen Raum l&ouml;schen wollen? Beachten Sie, da&szlig; diese Operation nicht r&uuml;ckg&auml;ngig gemacht werden kann!')">L&ouml;schen</a>)</span>
+				{ENDIF}
 			{ENDIF}
 		</td>
-		<td>{IIF|$room.closed|privat|&ouml;ffentlich}{IIF|!$room.permanent|, tempor&auml;r}</td>
+		<td>{IIF|$room.closed|privat|&ouml;ffentlich}{IIF|!$room.permanent|, tempor&auml;r}{IIF|$room.moderated|, moderiert}</td>
 		<td>{GET|$room.topic}&nbsp;</td>
 	</tr>
 {ENDFOR}
 {IF|permission(rooms_create)}
-	<tr class="row2">
-		<td colspan=3>
-			<a href="{GET|$runtime.completeurl}&template=editroom&createnew=1">Neuen Raum erstellen</a>
+	<tr>
+		<td colspan="3">
+			<a href="{GET|$runtime.completeurl};template=editroom;createnew=1">Neuen Raum erstellen</a>
 		</td>
 	</tr>
 {ENDIF}
 </table>
-</td></tr></table>
 
-<div class="headertext" align="center">
-	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
-</div>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Fenster schlie&szlig;en</a>
+</p>
 
 </body>
 </html> 

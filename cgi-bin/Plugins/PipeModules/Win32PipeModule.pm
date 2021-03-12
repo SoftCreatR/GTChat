@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This pipe module (needed for the server push mode) uses the    #
@@ -8,7 +8,7 @@
 #  Windows-style pipes on Windows NT/2000/XP.                     #
 ###################################################################
 
-package GTChat::Plugins::Win32PipeModule::095_02;
+package GT_Chat::Plugins::Win32PipeModule::096_01;
 use strict;
 use IO::Handle;
 

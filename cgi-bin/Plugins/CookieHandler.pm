@@ -1,13 +1,13 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20020911                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin gives the user the option to save his username     #
 #  password in a cookie and restore them at the next login.       #
 ###################################################################
 
-package GTChat::Plugins::CookieHandler::095_02;
+package GT_Chat::Plugins::CookieHandler::096_01;
 use strict;
 
 return bless({
@@ -51,7 +51,7 @@ sub checkPassword
 	return $ret;
 }
 
-sub loginPerformed
+sub afterLogin
 {
 	my($self,$main,$user,$room) = @_;
 	if ($main->{input}{cookie} && $user->{group}>=0)
@@ -64,7 +64,7 @@ sub loginPerformed
 	}
 }
 
-sub loginAborted
+sub onLoginError
 {
 	my($self,$main,$user,$error) = @_;
 

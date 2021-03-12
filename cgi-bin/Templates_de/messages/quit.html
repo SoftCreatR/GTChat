@@ -1,8 +1,10 @@
-<script>
+<script type="text/javascript">
+	//<![CDATA[
 	parent.exiting=1;
-	if (parent.moderatedTexts)
-		parent.moderatedTexts = 0;
-	if (parent.moderationWnd && !parent.moderationWnd.closed)
+	if (typeof(parent.moderatedTexts) != 'undefined')
+		parent.moderatedTexts = false;
+	if (typeof(parent.moderationWnd) != 'undefined' && !parent.moderationWnd.closed)
 		parent.moderationWnd.close();
-	parent.location.replace('{GET_JS|$runtime.completeurl}&template=logout');
+	parent.location.replace('{GET_JS|$runtime.completeurl};template=logout');
+	//]]>
 </script> 

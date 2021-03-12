@@ -95,7 +95,7 @@
 		function callTemplate(template, title)
 		{
 			document.title='Chat administration - '+title;
-			content.location.replace('{GET_JS|$runtime.completeurl}&template=admin.'+template+'&backaddr='+escape('javascript:parent.writeMenu()'));
+			content.location.replace('{GET_JS|$runtime.completeurl};template=admin.'+template+';backaddr='+escape('javascript:parent.writeMenu()'));
 		}
 		
 		function init()

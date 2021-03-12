@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20020911                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the template variables $traceroute and    #
@@ -8,7 +8,7 @@
 #  ip query string parameter.                                     #
 ###################################################################
 
-package GTChat::Plugins::RouteTracer::095_01;
+package GT_Chat::Plugins::RouteTracer::096_01;
 use strict;
 
 bless({

@@ -1,0 +1,41 @@
+{IF|$current_user.name ne $params.name}
+	{NEED|$current_room}
+	{IF|!$current_room.moderated}
+		{IF|$params.fromroom eq $current_room.name_lc}
+			{IF|$current_user.show_time}({GETTIME}) {ENDIF}<span class="bigtext"><strong>{GET|$settings.chatname}</strong>: {MESSAGE|out_room|nick=$params.nick|roomname=$current_room.name}</span><br/>
+		{ENDIF}
+		{IF|$params.toroom eq $current_room.name_lc}
+			{IF|$current_user.show_time}({GETTIME}) {ENDIF}<span class="bigtext"><strong>{GET|$settings.chatname}</strong>: {MESSAGE|in_room|nick=$params.nick|roomname=$current_room.name}</span><br/>
+		{ENDIF}
+	{ENDIF}
+{ELSE}
+	<script type="text/javascript">
+		//<![CDATA[
+		if (typeof(parent.moderatedTexts) != 'undefined')
+			parent.moderatedTexts = false;
+		if (typeof(parent.moderatedTexts) != 'undefined' && !parent.moderationWnd.closed)
+			parent.moderationWnd.close();
+		//]]>
+	</script>
+
+	{UPDATE_ONLINEINFO}
+	{UPDATE|$current_room}
+	<p>
+		Hallo {GET|$current_user.nick}, Willkommen im Raum {GET|$current_room.name}!
+		{IF|$current_room.topic}<br/>Thema in diesem Raum: {GET|$current_room.topic}{ENDIF}
+	</p>
+	{IF|$current_room.moderated}
+		<p>
+			<em>Dieser Raum ist moderiert, deswegen d&uuml;rfen nur Moderatoren und VIPs normal sprechen. Bei allen anderen m&uuml;ssen die Texte erst durch einen Moderator freigegeben werden, bevor sie erscheinen.</em>
+		</p>
+	{ENDIF}
+{ENDIF}
+<script type="text/javascript">
+	//<![CDATA[
+	{UPDATE|$roomlist&onlineusers}
+	parent.updateRooms('{DOFILTER|escape_js}{INCLUDE|rooms}{ENDDO}');
+	{IF|$params.fromroom eq $current_user.room or $params.toroom eq $current_user.room}
+		parent.updateUsers('{DOFILTER|escape_js}{INCLUDE|users}{ENDDO}');
+	{ENDIF}
+	//]]>
+</script>

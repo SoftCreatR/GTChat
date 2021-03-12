@@ -1,5 +1,5 @@
 return {
-	charset => 'windows-1252',
+	charset => 'iso-8859-1',
 
 	timeformat => '%02i:%02i:%02i',            # Time format mask (see sprintf)
 	timevalues => [2,1,0],                     # Values to be inserted into the time mask (0: seconds, 1: minutes, 2:hours, 3:day, 4:month, 5:year)
@@ -211,7 +211,7 @@ return {
 
 		info_awayon_reason => '%%nick%% is gone now: %%reason%%',
 
-		info_disconnect => 'Your connection to the chat server has been lost. GTChat will try to re-establish the connection.',
+		info_disconnect => 'Your connection to the chat server has been lost. GT-Chat will try to re-establish the connection.',
 
 		error_nickalreadychanged => 'You can only change your nickname every %%interval%% minutes.',
 		
@@ -271,5 +271,15 @@ return {
 		info_enablemoderation_success => 'The moderation interface is activated now. You can disable it by using the /disablemoderation command.',
 
 		error_couldnotopendir => 'Can not open directory %%dir%%. Please contact the chat administrator.',
+
+		info_timeon => 'The chat currently displays the time for every message.',
+		info_timeoff => 'The message time is currently not displayed.',
+		info_timesuccessful_on => 'The chat will display the time for every message now.',
+		info_timesuccessful_off => 'The message time won\'t be displayed any more.',
+
+		info_smileyson => 'Your configuration currently allows smiley images in messages.',
+		info_smileysoff => 'Your configuration currently forbids smiley images in messages.',
+		info_smileyssuccessful_on => 'The smiley images have been activated.',
+		info_smileyssuccessful_off => 'The smiley images have been disabled, you will see them as text only.',
 	},
 };

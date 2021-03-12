@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::Logout;
@@ -18,9 +18,9 @@ sub logout
 	{
 		while (<FILE>)
 		{
-			$_ =~ s/[\n\r]//g;
+			s/[\n\r]//g;
 
-			my @parts = split(/\|/,$_);
+			my @parts = split(/\|/);
 			if (shift(@parts) == $main->{runtime}{id})
 			{
 				my $time = shift(@parts);
@@ -33,7 +33,7 @@ sub logout
 	}
 
 	$main->setCookie("cookieid=; expires=Mon, 31-Jan-3000 12:00:00 GMT;");
-	$main->{runtime}{completeurl} .= "&id=";
+	$main->{runtime}{completeurl} .= ";id=";
 	$main->{template_vars}{logout_reason}=$reason;
 
 	$main->printTemplate('logout');

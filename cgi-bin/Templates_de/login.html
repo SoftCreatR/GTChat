@@ -1,13 +1,16 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{PROXYCHECK}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>{GET|$settings.chatname}</title>
-	<script language="JavaScript" src="chat.js" type="text/javascript">
-	</script>
-	<script language="JavaScript">
-		cgi='{GET_JS|$runtime.completeurl}';
+	<script src="general.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		//<![CDATA[
+		var cgi='{GET_JS|$runtime.completeurl}';
+		//]]>
 	</script>
 </head>
 <body marginwidth=36 leftmargin=36>
@@ -18,7 +21,7 @@
 			<td width="100%">&nbsp;</td>
 			{FOREACH|$language|$settings.languages}
 				<td align="center">
-					{IF|$language ne $runtime.language}<a href="{GET|$runtime.completeurl}&language={GET|$language}">{ELSE}<b>{ENDIF}
+					{IF|$language ne $runtime.language}<a href="{GET|$runtime.completeurl};language={GET|$language}">{ELSE}<b>{ENDIF}
 						{IMAGE|$language}<br>
 						{GETLNG|$language|$lang_name}
 					{IF|$language ne $runtime.language}</a>{ELSE}</b>{ENDIF}
@@ -30,37 +33,34 @@
 	<noscript>
 		<br><br>
 		<font color="red">
-			F&uuml;r die Benutzung des Chats ist JavaScript erforderlich, das in Ihrem Browser deaktiviert ist.
-			Wie Sie JavaScript aktivieren k&ouml;nnen, finden Sie in den <a href="faq.html" class="stdlink" target="_blank">Chat-FAQ</a>.
+		F&uuml;r die Benutzung des Chats ist JavaScript erforderlich, das in Ihrem Browser deaktiviert ist.
 		</font>
 	</noscript>
 	{IF|$input.proxy}
 		<br><br>
 		<font color="red">
-			Die Verbindungs&uuml;berpr&uuml;fung hat festgestellt, da&szlig; Sie den Chat nur im sicheren Modus nutzen k&ouml;nnen.
-			Klicken Sie <a href="{GET|$runtime.completeurl}&action=proxycheck" class="stdlink">hier</a>, um Ihre Verbindung nochmal zu testen.
+		Die Verbindungs&uuml;berpr&uuml;fung hat festgestellt, da&szlig; Sie den Chat nur im sicheren Modus nutzen k&ouml;nnen.
+		Klicken Sie <a href="{GET|$runtime.completeurl};action=proxycheck">hier</a>, um Ihre Verbindung nochmal zu testen.
 		</font>
 	{ENDIF}
 	
 	<br><br>
 	
-	Und hier vielleicht eine Begr&uuml;&szlig;ungsnachricht, im Template login.html einstellen...<br>
-	Wenn Ihr Probleme beim Betreten des Chats habt, lest bitte die <a href="faq.html" class="stdlink" target="_blank">FAQ</a>.
+	Und hier vielleicht eine Begr&uuml;&szlig;ungsnachricht, im Template login.html einstellen...<br/>
 	<br>
 	<br>
-	{IF|$news.message}
-		<b>Chat-News</b> ({GETDATE|$news.date}): {DOFILTER|links|formatting|smileys}{GET|$news.message}{ENDDO} {IF|$news.author}- <i>von {GET|$news.author}</i>{ENDIF}
-		<br>
+{IF|$news.message}
+	<p>
+		<strong>Chat-News</strong> ({GETDATE|$news.date}): {DOFILTER|links|formatting|smileys}{GET|$news.message}{ENDDO} {IF|$news.author}- <em>von {GET|$news.author}</em>{ENDIF}
 		{IF|$news.messagecount>1}
-			<div class="smalltext">
-				<a href="{GET|$runtime.completeurl}&template=allnews" onclick="openWindow('allnews',600,200);return false;" class="stdlink">Alle Chat-News anzeigen</a>
-			</div>
+			<br/><span class="smalltext"><a href="{GET|$runtime.completeurl};template=allnews" onclick="openWindow('allnews',600,200);return false;">Alle Chat-News anzeigen</a></span>
 		{ENDIF}
-	{ENDIF}
-</div>
+	</p>
+{ENDIF}
 
 {NEED|$environment}
 {NEED|$roomlist&onlineusers}
+
 <table border=0 width="100%" cellspacing=0 cellpadding=10>
 <tr>
 	<td width="70%" valign=top>
@@ -69,16 +69,16 @@
 		{GET|$runtime.hiddenfields}
 		<input type=hidden name=action value=login>
 
-		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="bordered1"><tr><td>
 		<table border=0 width="100%" cellspacing=1 cellpadding=0>
 
 		<tr>
 			<th>User Login</th>
 		</tr>
 		<tr class="row2"><td><table cellspacing=5>
-		<tr>
-			<td colspan=2>Noch keinen Namen f&uuml;r den Chat reserviert? Ein neuer Chat-Account kann <a href="{GET|$runtime.completeurl}&template=register">hier</a> eingerichtet werden. Man kann sich auch als Gast einloggen - einfach kein Pa&szlig;wort eingeben.</td>
-		</tr>
+<tr>
+	<td colspan="2">Noch keinen Namen f&uuml;r den Chat reserviert? Ein neuer Chat-Account kann <a href="{GET|$runtime.completeurl};template=register">hier</a> eingerichtet werden. Man kann sich auch als Gast einloggen - einfach kein Pa&szlig;wort eingeben.</td>
+</tr>
 		<tr>
 			<td colspan=2>&nbsp;</td>
 		</tr>
@@ -94,12 +94,12 @@
 		</tr>
 		{IF|!$environment.has_password}
 			<tr>
-				<td><b>Pa&szlig;wort:</b></td>
+				<td><b>Pa&szlig;wort</b></td>
 				<td><input type=password name=password size=20 style="width:100%"></td>
 			</tr>
 		{ENDIF}
 		<tr>
-			<td><b>Raum:</b></td>
+			<td><b>Room:</b></td>
 			<td>
 				<select name=room style="width:100%">
 					{FOREACH|$room|$roomlist}
@@ -117,7 +117,7 @@
 			<td>
 				<input type=checkbox name=cookie value="1" {IIF|$environment.has_cookie|checked}> Eingaben f&uuml;r den n&auml;chsten Login speichern
 				{IF|$environment.has_cookie}
-					(<a href="{GET|$runtime.completeurl}&action=removecookie" class=smalltext>Gespeicherte Eingaben entfernen</a>)
+					(<a href="{GET|$runtime.completeurl};action=removecookie" class=smalltext>Gespeicherte Eingaben entfernen</a>)
 				{ENDIF}
 			</td>
 		</tr>
@@ -127,7 +127,7 @@
 		{IF|!$environment.has_password}
 			<tr>
 				<td colspan=2 align=center class="smalltext">
-					<a href="{GET|$runtime.completeurl}&template=reminder" onclick="openWindow('reminder',460,300);return false;">Pa&szlig;wort vergessen? Hier klicken!</a>
+					<a href="{GET|$runtime.completeurl};template=reminder" onclick="openWindow('reminder',460,300);return false;">Pa&szlig;wort vergessen? Hier klicken!</a>
 				</td>
 			</tr>
 		{ENDIF}
@@ -141,7 +141,7 @@
 	</td>
 	<td width="30%" valign=top>
 
-		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
+		<table border=0 width="100%" cellspacing=0 cellpadding=0 class="bordered1"><tr><td>
 		<table border=0 width="100%" cellspacing=1 cellpadding=0>
 		<tr>
 			<th>{GET|$onlineusers_count} Benutzer online</th>
@@ -151,7 +151,7 @@
 				{IF|$room.onlineusers_count}
 					{SET|$flag|1}
 					<tr class="row1">
-						<td><b>{GET|$room.name}</b></td>
+						<td class="subheader"><b>{GET|$room.name}</b></td>
 					</tr>
 					<tr class="row2"><td>
 						{FOREACH|$user|$room.onlineusers}
@@ -179,4 +179,4 @@
 </div>
 
 </body>
-</html> 
+</html>

@@ -1,15 +1,15 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>{GET|$settings.chatname}</title>
-	<meta http-equiv=refresh content="1; url={GET|$input.url}">
+	<meta http-equiv="refresh" content="1; url={GET|$input.url}"/>
 </head>
 <body>
-	<table border=0 width="100%" height="100%">
-		<tr>
-			<td align="center" valign="center" style="font-size:150%">Wenn Sie nicht automatisch weitergeleitet werden, klicken Sie <a href="{GET|$input.url}">hier</a>.</td>
-		</tr>
-	</table>
+	<p align="center" class="bigtext">
+		Wenn Sie nicht automatisch weitergeleitet werden, klicken Sie <a href="{GET|$input.url}">hier</a>.
+	</p>
 </body>
 </html> 

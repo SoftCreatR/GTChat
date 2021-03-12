@@ -1,5 +1,5 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
+#  GT-Chat 0.95 Alpha Plugin                                       #
 #  Written for release 20021225                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
@@ -7,7 +7,7 @@
 #  been used for a long time.                                     #
 ###################################################################
 
-package GTChat::Plugins::Administration::CleanupMembers::095_01;
+package GT_Chat::Plugins::Administration::CleanupMembers::095_01;
 use strict;
 
 return bless({

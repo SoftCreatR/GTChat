@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021225                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the auxiliary moderation commands         #
 ###################################################################
 
-package GTChat::Plugins::ModerationCommands::095_01;
+package GT_Chat::Plugins::ModerationCommands::096_01;
 use strict;
 
 return bless({
@@ -24,8 +24,8 @@ sub addvip_handler
 
 	my $room = $main->loadRoom($main->{current_user}{room});
 
-	return [$main->createErrorOutput('vip_nonmoderatedroom')] unless $room->{moderated};
-	return [$main->createErrorOutput('command_nopermission')] unless $room->{owner} eq $main->{current_user}{name} || $main->hasPermission('rooms_moderate');
+	return $main->createErrorOutput('vip_nonmoderatedroom') unless $room->{moderated};
+	return $main->createErrorOutput('command_nopermission') unless $room->{owner} eq $main->{current_user}{name} || $main->hasPermission('rooms_moderate');
 
 	$text =~ s/^\s+|\s+$//g;
 	my @users = split(/\s+/,$text);
@@ -39,11 +39,11 @@ sub addvip_handler
 
 		if ($#users < 0)
 		{
-			return [$main->createInfoOutput('vip_none')];
+			return $main->createInfoOutput('vip_none');
 		}
 		else
 		{
-			return [$main->createInfoOutput('vip',{list => join(', ',@users)})];
+			return $main->createInfoOutput('vip',{list => join(', ',@users)});
 		}
 	}
 	
@@ -91,20 +91,7 @@ sub addvip_handler
 		}
 	}
 	
-	if (changed)
-	{
-		$main->saveRoom($room);
-
-		my $output = $main->createOutput(
-			{
-				template => 'changed',
-				name => $main->{current_user}{name},
-				room => $room->{name_lc},
-				oldroom => $room->{name_lc},
-				'*' => ['rooms.vips'],
-			});
-		push @toDo,$output;
-	}
+	$main->saveRoom($room) if $changed;
 
 	return \@toDo;
 }
@@ -115,13 +102,13 @@ sub removevip_handler
 
 	my $room = $main->loadRoom($main->{current_user}{room});
 
-	return [$main->createErrorOutput('vip_nonmoderatedroom')] unless $room->{moderated};
-	return [$main->createErrorOutput('command_nopermission')] unless $room->{owner} eq $main->{current_user}{name} || $main->hasPermission('rooms_moderate');
+	return $main->createErrorOutput('vip_nonmoderatedroom') unless $room->{moderated};
+	return $main->createErrorOutput('command_nopermission') unless $room->{owner} eq $main->{current_user}{name} || $main->hasPermission('rooms_moderate');
 
 	$text =~ s/^\s+|\s+$//g;
 	my @users = split(/\s+/,$text);
 
-	return [$main->createErrorOutput('removevip_namenotgiven')] if ($#users < 0);
+	return $main->createErrorOutput('removevip_namenotgiven') if ($#users < 0);
 	
 	my @toDo = ();
 	my @vips = split(/\s/,$room->{vips});
@@ -167,20 +154,8 @@ sub removevip_handler
 		}
 	}
 	
-	if ($changed)
-	{
-		$main->saveRoom($room);
-
-		my $output = $main->createOutput(
-				{
-					template => 'changed',
-					name => $main->{current_user}{name},
-					room => $room->{name_lc},
-					oldroom => $room->{name_lc},
-					'*' => ['rooms.vips'],
-				});
-		push @toDo,$output;
-	}
+	
+	$main->saveRoom($room) if $changed;
 
 	return \@toDo;
 }

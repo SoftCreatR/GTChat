@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::joinedhash;
@@ -43,6 +43,11 @@ sub FETCH
 		{
 			my $ret2=$self->[1]{$key};
 			$ret = new($self,$ret,$ret2) if (UNIVERSAL::isa($ret2,'HASH'))
+		}
+		elsif (UNIVERSAL::isa($ret,'ARRAY'))
+		{
+			my $ret2=$self->[1]{$key};
+			$ret = [@$ret,@$ret2] if (UNIVERSAL::isa($ret2,'ARRAY'))
 		}
 		return $ret;
 	}

@@ -1,7 +1,11 @@
 {UPDATE_MEMBERINFO}
-<link rel="stylesheet" href="{GET|$runtime.style}.css">
-<script>
-	deactivateOldStyles();
-	scrollBy(0,50000);
-	resetScrollPos();
-</script> 
+{IF|$params.style}
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
+	<script type="text/javascript">
+		//<![CDATA[
+		deactivateOldStyles();
+		scrollBy(0,50000);
+		resetScrollPos();
+		//]]>
+	</script>
+{ENDIF}

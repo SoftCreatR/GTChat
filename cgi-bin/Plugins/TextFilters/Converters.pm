@@ -1,13 +1,13 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the text filters escape_js, escape_html   #
 #  and urlencode                                                  #
 ###################################################################
 
-package GTChat::Plugins::TextFilters::Converters::095_02;
+package GT_Chat::Plugins::TextFilters::Converters::096_01;
 use strict;
 
 return bless({
@@ -15,6 +15,7 @@ return bless({
 		escape_js => \&js_handler,
 		escape_html => \&html_handler,
 		urlencode => \&encode_handler,
+		nospaces => \&spaces_handler,
 	},
 });
 
@@ -41,4 +42,12 @@ sub encode_handler
 	my($self,$main,$text) = @_;
 
 	$$text =~ s/\W/"%".unpack("H2",$&)/eg;
+}
+
+sub spaces_handler
+{
+	my($self,$main,$text) = @_;
+
+	$$text =~ s/\s+</</g;
+	$$text =~ s/>\s+/>/g;
 }

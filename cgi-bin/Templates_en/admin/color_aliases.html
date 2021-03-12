@@ -20,7 +20,7 @@
 		{
 			colorElement = element;
 			top.opener.setColor = setColor;
-			top.opener.openWindow('palette',300,250);
+			top.opener.openWindow('palette',320,250);
 		}
 
 		function toHTML(str)
@@ -149,7 +149,7 @@
 			storeChanges();
 
 			window.cancelled = 1;
-			dummy.location.replace('{GET_JS|$runtime.completeurl}&template=admin.color_aliases_save');
+			dummy.location.replace('{GET_JS|$runtime.completeurl};template=admin.color_aliases_save');
 		}
 
 		function cancel(unload)

@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 use strict;
@@ -36,7 +36,7 @@ eval
 	unless (defined($modules))
 	{
 		my %modules;
-		tie %modules, "GTChat::module_loader";
+		tie %modules, "GT_Chat::module_loader";
 		$modules = \%modules;
 	}
 	$modules->{checktime} = defined($r);
@@ -61,7 +61,7 @@ eval
 		id => "",
 	};
 	$main->{modules} = $modules;
-	$main->{VERSION} = '0.95';
+	$main->{VERSION} = '0.96 RC 1';
 	$main->loadDefinitions;
 
 	if ($ENV{MOD_PERL} && !defined($r))
@@ -108,12 +108,10 @@ eval
 	$main->init;
 
 	my $language = $main->{runtime}{language};
-
-	if(!grep(/^$language$/,@{$settings->{languages}}))
-	{
-	$language = $settings->{default}{language};
-	}
-
+  if(!grep(/^$language$/,@{$settings->{languages}}))
+  {
+	       $language = $settings->{default}{language};
+  }
 	my $hashfactory = $modules->{'sourcedir::joinedhash.pm'};
 	$settings = $hashfactory->new($settings->{language_dependent}{$language},$settings);
 	$main->{settings} = $settings;
@@ -129,17 +127,8 @@ eval
 		$| = 1;
 	}
 
-	if ($settings->{urls}{htmlurl} eq "")
-	{
-	$settings->{urls}{htmlurl} = "http://$ENV{HTTP_HOST}/www/";
-	}
-	my $ownurl = "http://$ENV{HTTP_HOST}$ENV{SCRIPT_NAME}";
-	if ($settings->{urls}{chaturl} eq "")
-	{
-	$settings->{urls}{chaturl} = $ownurl;
-	}
-	$ownurl .= "?";
-	$ownurl .= "id=".$main->{runtime}{id}."&" unless $main->{runtime}{cookieid};
+	my $ownurl = "$settings->{urls}{chaturl}?id=";
+	$ownurl .= $main->{runtime}{id} unless $main->{runtime}{cookieid};
 
 	my @forwarded = ('language');
 	push @forwarded, @{$settings->{forward_params}} if (exists($settings->{forward_params}));
@@ -154,7 +143,7 @@ eval
 		$key =~ s/\W/"%".unpack("H2",$&)/eg;
 		$value =~ s/\W/"%".unpack("H2",$&)/eg;
 
-		$ownurl .= "&$key=$value";
+		$ownurl .= ";$key=$value";
 	}
 	$main->{runtime}{completeurl} = $ownurl;
 	$main->{runtime}{chaturl} = $settings->{urls}{chaturl};
@@ -183,9 +172,6 @@ eval
 
 		if (defined($user))
 		{
-			$user->{lastalive} = $main->{runtime}{now};
-			$main->saveOnlineInfo($user);
-
 			$main->{current_user} = $user;
 			$main->{template_vars}{current_user} = $user;
 			$main->{runtime}{style} = $user->{style} if defined($user->{style}) && $user->{style} ne '';
@@ -317,7 +303,7 @@ sub fatal_error2
 
 	if (defined($message))
 	{
-		warn 'GTChat error: '.$message;
+		warn 'GT-Chat error: '.$message;
 		if (defined($main))
 		{
 			eval
@@ -337,7 +323,7 @@ sub fatal_error2
 	}
 }
 
-package GTChat::module_loader;
+package GT_Chat::module_loader;
 
 sub TIEHASH
 {

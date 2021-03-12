@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the private messages commands /msg (for   #
@@ -8,7 +8,7 @@
 #  messages as well.                                              #
 ###################################################################
 
-package GTChat::Plugins::PrivateMessages::095_01;
+package GT_Chat::Plugins::PrivateMessages::096_01;
 use strict;
 
 return bless({
@@ -22,31 +22,15 @@ return bless({
 	},
 });
 
-sub check_gagged
-{
-	my $main = shift;
-
-	if (exists($main->{current_user}{gagtime}) && $main->{runtime}{now} < $main->{current_user}{gagtime})
-	{
-		return [$main->createErrorOutput('gagged',{seconds => $main->{current_user}{gagtime}-$main->{runtime}{now}})];
-	}
-	return undef;
-}
-
 sub msg_handler
 {
 	my($self,$main,$command,$text) = @_;
 
-	if (my $error=check_gagged($main))
-	{
-		return $error;
-	}
-	
 	my @parts = split(/\s+/,$text);
 	my $tonick = shift @parts;
 	$text = $main->toHTML(join(' ',@parts));
 
-	return [$main->createErrorOutput('msg_namenotgiven')] if (!defined($tonick));
+	return $main->createErrorOutput('msg_namenotgiven') unless defined($tonick);
 
 	return undef if ($text eq '');
 	
@@ -54,13 +38,13 @@ sub msg_handler
 
 	if ($#$candidates>0)    # Too many users online with nick starting like this
 	{
-		return [$main->createErrorOutput('ambiguousname',{nick => $tonick})];
+		return $main->createErrorOutput('ambiguousname',{nick => $tonick});
 	}
 	elsif ($#$candidates==0)   # User is online
 	{
 		my $user = $candidates->[0];
 		
-		return [$main->createErrorOutput('msgtooneself')] if ($user->{name} eq $main->{current_user}{name});
+		return $main->createErrorOutput('msgtooneself') if ($user->{name} eq $main->{current_user}{name});
 
 		my $output1 = $main->createOutput(
 					{
@@ -88,11 +72,11 @@ sub msg_handler
 
 		if ($#$candidates>1)        # There are too many users with nick starting like this
 		{
-			return [$main->createErrorOutput('ambiguousname',{nick => $tonick})];
+			return $main->createErrorOutput('ambiguousname',{nick => $tonick});
 		}
 		elsif ($#$candidates<0)     # No user with this nick found
 		{
-			return [$main->createErrorOutput('unknownname',{nick => $tonick})];
+			return $main->createErrorOutput('unknownname',{nick => $tonick});
 		}
 		else                        # User was found but isn't online
 		{
@@ -123,7 +107,7 @@ sub msg_handler
 						text => ($command eq 'msg'?$text:''),
 						url => ($command eq 'msg'?'':$text),
 					});
-			return [$output->restrictToCurrentUser];
+			return $output->restrictToCurrentUser;
 		}
 	}
 }
@@ -142,10 +126,10 @@ sub varhandler
 	$main->close(*FILE);
 	unlink($main->translateName("memberdir::$filename.msg"));
 	
-	$main->{template_vars}{offlinemsgs} = GTChat::Plugins::PrivateMessages::OfflineEnum::095_01::new($main,\@entries);
+	$main->{template_vars}{offlinemsgs} = GT_Chat::Plugins::PrivateMessages::OfflineEnum::096_01::new($main,\@entries);
 }
 
-package GTChat::Plugins::PrivateMessages::OfflineEnum::095_01;
+package GT_Chat::Plugins::PrivateMessages::OfflineEnum::096_01;
 use strict;
 use vars qw(@ISA);
 
@@ -153,7 +137,7 @@ sub new
 {
 	my($main,$list) = @_;
 
-	@ISA = ('GTChat::Enum');
+	@ISA = ('GT_Chat::Enum');
 	my $enum=$main->{modules}{'sourcedir::Enum.pm'};
 
 	return bless({

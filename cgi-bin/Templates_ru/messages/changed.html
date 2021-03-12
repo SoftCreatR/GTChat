@@ -1,4 +1,0 @@
-<script>
-	cgi='{GET_JS|$runtime.completeurl}';
-	changed('{GET_JS|$current_user.name}','{GET_JS|$params.name}','{GET_JS|$current_user.room}','{GET_JS|$params.room}','{GET_JS|$params.oldroom}',new Array({FOREACH|$changed|$params.*}'{GET_JS|$changed}'{NOTLAST},{ENDFOR}));
-</script> 

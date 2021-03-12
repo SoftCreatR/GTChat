@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::Messages;
@@ -19,12 +19,14 @@ bless({
 sub messages_handler
 {
 	my($self,$main) = @_;
-	my $pipe;
 
-	my $pull = $main->{current_user}{pull};
-	if ($pull)
+	if ($main->{current_user}{pull})
 	{
-		$main->printTemplate('messages_pull');
+		$main->printTemplate('messages_top');
+
+		my $output;
+		$main->parseTemplate('messages_bottom')->process($main,\$output);
+		print $output;
 	}
 	else
 	{

@@ -1,3 +1,15 @@
 {IF|$params.name ne $current_user.name}
-	{IF|$current_user.show_time}({GETTIME}) {ENDIF}<span class="bigtext"><b>{GET|$settings.chatname}</b>: {MESSAGE|out_chat|nick=$params.nick|chatname=$settings.chatname}</span><br>
+	{NEED|$current_room}
+	{IF|$params.room eq $current_room.name_lc and !$current_room.moderated and $params.logoutmsg}
+		<div>{IF|$current_user.show_time}({GETTIME}) {ENDIF}<span class="bigtext"><strong>{GET|$settings.chatname}</strong>: {MESSAGE|out_chat|nick=$params.nick|chatname=$settings.chatname}</span></div>
+	{ENDIF}
+	<script type="text/javascript">
+		//<![CDATA[
+		{UPDATE|$roomlist&onlineusers}
+		parent.updateRooms('{DOFILTER|escape_js}{INCLUDE|rooms}{ENDDO}');
+		{IF|$params.room eq $current_user.room}
+			parent.updateUsers('{DOFILTER|escape_js}{INCLUDE|users}{ENDDO}');
+		{ENDIF}
+		//]]>
+	</script>
 {ENDIF} 

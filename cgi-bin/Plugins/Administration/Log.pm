@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
+#  GT-Chat 0.95 Alpha Plugin                                       #
 #  Written for release 20021225                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides messages log analysis.                    #
 ###################################################################
 
-package GTChat::Plugins::Administration::Log::095_01;
+package GT_Chat::Plugins::Administration::Log::095_01;
 use strict;
 
 return bless({

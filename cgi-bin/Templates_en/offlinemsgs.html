@@ -1,19 +1,26 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{NEED_PERMISSION|user}
 	{NEED|$offlinemsgs}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
+	<script src="general.js" type="text/javascript"></script>
 	<title>{GET|$settings.chatname} - Offline messages for {GET|$current_user.nick}</title>
 </head>
 
-<body onload="opener.autosize(window)">
+<body onload="autosize()">
 
 {IF|$offlinemsgs_exist}
-	Please note: Offline messages are automatically deleted after reading them, and can not be recalled later!<br>
-	Here are your offline messages:<br><br>
+	<p>
+		Please note: Offline messages are automatically deleted after reading them, and can not be recalled later!
+	</p>
+	<p>
+		Here are your offline messages:
+	</p>
 
-	<table border=0 width="100%">
+	<table width="100%">
 
 	{FOREACH|$msg|$offlinemsgs}
 		<tr>
@@ -22,14 +29,15 @@
 	{ENDFOR}
 
 	</table>
-	<br><br>
 {ELSE}
-	There are no offline messages for you.<br><br><br>
+	<p>
+		There are no offline messages for you.
+	</p>
 {ENDIF}
 
-<div class="headertext" align="center">
-	<a href="javascript:window.close()" class="stdlink">Close window</a>
-</div>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Close window</a>
+</p>
 
 </body>
 </html> 

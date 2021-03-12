@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::Subs;
@@ -138,7 +138,8 @@ sub readInput
 
 	if (defined($input))
 	{
-		foreach my $pair (split(/&/, $input))
+		my @pairs = $input{method} eq 'POST' || $input =~ /&/ ? split(/&/, $input) : split(/;/, $input);
+		foreach my $pair (@pairs)
 		{
 			my($name, $value) = split(/=/, $pair);
 			$name =~ tr/+/ /;
@@ -245,6 +246,8 @@ sub printTemplate
 {
 	my ($main, $template) = @_;
 
+	my %types = ('text/html' => 1, 'text/xhtml' => 1, 'text/xml' => 1, 'application/xml' => 1, 'application/xhtml+xml' => 1);
+
 	$main->{template_vars}{mime_type} = 'text/html';
 
 	my $output = "";
@@ -256,6 +259,15 @@ sub printTemplate
 	{
 		$output =~ s/(?<=\n)[\t ]*\n//sg;
 		$output =~ s/[\t ]+/ /sg;
+	}
+
+	if (substr($output, 0, 6) eq '<?xml ' && $main->{template_vars}{mime_type} eq 'text/html' && $main->{settings}{xhtml_output})
+	{
+		my $accept = exists($main->{r}) ? $main->{r}->header_in("Accept") : $ENV{HTTP_ACCEPT};
+		if ($accept =~ /application\/xhtml\+xml/)
+		{
+			$main->{template_vars}{mime_type} = 'application/xhtml+xml';
+		}
 	}
 
 	my $charset = $main->{current_language}{charset};
@@ -272,7 +284,7 @@ sub printTemplate
 	}
 	else
 	{
-		print "Expires: Mon, 7 Jan 2080 00:00:00 GMT\n";
+		print "Expires: Mon, 7 Jan 1980 00:00:00 GMT\n";
 		print "Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0\n";
 		print "Pragma: no-cache\n";
 		if (defined($main->{template_vars}{file_name}) && $main->{template_vars}{file_name} ne '')
@@ -407,7 +419,7 @@ sub toHTML
 		'<' => '&lt;',
 		'>' => '&gt;',
 		"\t" => ' &nbsp; &nbsp; &nbsp;',
-		"\n" => '<br>',
+		"\n" => '<br/>',
 		'  ' => ' &nbsp;',
 	);
 
@@ -494,7 +506,7 @@ sub invokeModulesList
 	{
 		foreach my $module (@$list)
 		{
-			$main->{modules}{$module}->$proc($main,@_) ;
+			$main->{modules}{$module}->$proc($main,@_) if $main->{modules}{$module}->can($proc);
 		}
 	}
 }

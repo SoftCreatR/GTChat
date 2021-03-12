@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021225                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
-#  This plugin provides the chat commands /invite and /uninvite   #
+#  This plugin provides the chat commands /invite and /uninvite.  #
 ###################################################################
 
-package GTChat::Plugins::Invitations::095_02;
+package GT_Chat::Plugins::Invitations::096_01;
 use strict;
 
 return bless({
@@ -22,8 +22,8 @@ sub invite_handler
 
 	my $room = $main->loadRoom($main->{current_user}{room});
 
-	return [$main->createErrorOutput('invite_publicroom')] unless $room->{closed};
-	return [$main->createErrorOutput('invite_nopermission')] unless ($main->hasPermission('invite') || $room->{owner} eq $main->{current_user}{name});
+	return $main->createErrorOutput('invite_publicroom') unless $room->{closed};
+	return $main->createErrorOutput('invite_nopermission') unless ($main->hasPermission('invite') || $room->{owner} eq $main->{current_user}{name});
 	
 	$text =~ s/^\s+|\s+$//g;
 	my @users = split(/\s+/,$text);
@@ -37,11 +37,11 @@ sub invite_handler
 
 		if ($#users < 0)
 		{
-			return [$main->createInfoOutput('invite_none')];
+			return $main->createInfoOutput('invite_none');
 		}
 		else
 		{
-			return [$main->createInfoOutput('invite',{list => join(', ',@users)})];
+			return $main->createInfoOutput('invite',{list => join(', ',@users)});
 		}
 	}
 	
@@ -89,17 +89,14 @@ sub invite_handler
 				$output = $main->createOutput(
 						{
 							template => 'changed',
-							name => $main->{current_user}{name},
-							room => $room->{name_lc},
-							oldroom => $room->{name_lc},
-							'*' => ['rooms.invited'],
+							roomlist => 1,
 						});
 				push @toDo,$output->restrictToUser($candidates->[0]);
 			}
 		}
 	}
 	
-	$main->saveRoom($room) if ($changed);
+	$main->saveRoom($room) if $changed;
 
 	return \@toDo;
 }
@@ -110,13 +107,13 @@ sub uninvite_handler
 
 	my $room = $main->loadRoom($main->{current_user}{room});
 
-	return [$main->createErrorOutput('invite_publicroom')] unless $room->{closed};
-	return [$main->createErrorOutput('invite_nopermission')] unless ($main->hasPermission('invite') || $room->{owner} eq $main->{current_user}{name});
+	return $main->createErrorOutput('invite_publicroom') unless $room->{closed};
+	return $main->createErrorOutput('invite_nopermission') unless ($main->hasPermission('invite') || $room->{owner} eq $main->{current_user}{name});
 
 	$text =~ s/^\s+|\s+$//g;
 	my @users = split(/\s+/,$text);
 
-	return [$main->createErrorOutput('uninvite_namenotgiven')] if ($#users < 0);
+	return $main->createErrorOutput('uninvite_namenotgiven') if $#users < 0;
 	
 	my @toDo = ();
 	my @invited = split(/\s/,$room->{invited});
@@ -156,60 +153,30 @@ sub uninvite_handler
 
 				push @toDo,$main->createInfoOutput('uninvitesuccess',{nick => $candidates->[1]});
 				
-				my $output = $main->createInfoOutput('uninvited',{nick => $main->{current_user}{nick}, roomname => $room->{name}});
-				push @toDo,$output->restrictToUser($candidates->[0]);
-				
-				$output = $main->createOutput(
-						{
-							template => 'changed',
-							name => $main->{current_user}{name},
-							room => $room->{name_lc},
-							oldroom => $room->{name_lc},
-							'*' => ['rooms.invited'],
-						});
-				push @toDo,$output->restrictToUser($candidates->[0]);
-					
 				my $user = $main->loadOnlineInfo($candidates->[0]);
-				if ($user && $user->{room} eq $room->{name_lc} && !$main->isRoomPermitted($room,$user))
+				if ($user)
 				{
-					$user->{room} = $main->lowercase($main->{settings}{default}{room});
-					$main->saveOnlineInfo($user) if ($user->{name} ne $main->{current_user}{name});
+					my $output = $main->createInfoOutput('uninvited',{nick => $main->{current_user}{nick}, roomname => $room->{name}});
+					$main->sendOutputStrings($output->restrictToUser($user->{name}));
+	
+					$output = $main->createOutput(
+							{
+								template => 'changed',
+								roomlist => 1,
+							});
+					push @toDo, $output->restrictToUser($user->{name});
 
-					my $output1 = $main->createOutput(
-							{
-								template => 'room_leaved',
-								name => $user->{name},
-								nick => $user->{nick},
-								fromroom => $room->{name_lc},
-								toroom => $user->{room},
-							});
-					$output1->restrictToRoom($room->{name_lc});
-					$output1->setChangedAttributes('room');
-					my $output2 = $main->createOutput(
-							{
-								template => 'room_entered',
-								name => $user->{name},
-								nick => $user->{nick},
-								fromroom => $room->{name_lc},
-								toroom => $user->{room},
-							});
-					$output2->restrictToRoom($user->{room});
-					my $output3 = $main->createOutput(
-							{
-								template => 'room_greeting',
-								name => $user->{name},
-								nick => $user->{nick},
-								fromroom => $room->{name_lc},
-								toroom => $user->{room},
-							});
-					$output3->restrictToUser($user->{name});
-					push @toDo, $output1, $output2, $output3;
+					if ($user->{room} eq $room->{name_lc} && !$main->isRoomPermitted($room,$user))
+					{
+						$user->{room} = $main->lowercase($main->{settings}{default}{room});
+						$main->saveOnlineInfo($user) if ($user->{name} ne $main->{current_user}{name});
+					}
 				}
 			}
 		}
 	}
-	
-	$main->saveRoom($room) if ($changed);
+
+	$main->saveRoom($room) if $changed;
 
 	return \@toDo;
 }

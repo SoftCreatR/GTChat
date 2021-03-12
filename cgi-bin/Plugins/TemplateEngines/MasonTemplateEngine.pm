@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This template engine plugin uses the Perl module HTML::Mason   #
 ###################################################################
 
-package GTChat::Plugins::MasonTemplateEngine::095_01;
+package GT_Chat::Plugins::MasonTemplateEngine::096_01;
 use strict;
 
 use HTML::Mason::Interp ();

@@ -2,10 +2,10 @@ Lizenzbedingungen auf Deutsch weiter unten
 
 ===========================================
 
-GTChat Version 0.95 License
+GTChat Version 0.96 License
 Freeware version
 
-Copyright (c) 2001-2002 by Wladimir Palant.  All rights reserved.
+Copyright (c) 2001-2004 by Wladimir Palant.  All rights reserved.
 Copyright (c) 2006 by Sascha Heldt.  All rights reserved.
 
 Redistribution and use are permitted
@@ -18,7 +18,7 @@ provided that the following conditions are met:
 2. At all chat entrances the following message must be visible
    in a way that it can be read without scrolling down:
 
-		 GTChat 0.95 (c) 2006 by Sascha Heldt
+		 GTChat 0.96 (c) 2006 by Sascha Heldt
 
    The best way to achieve this is to include the predefined
    tag {COPYRIGHT} into the templates.
@@ -40,10 +40,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 ===========================================
 
-Lizenzbedingungen für GTChat Version 0.95
+Lizenzbedingungen für GTChat Version 0.96
 Freeware-Version
 
-Copyright (c) 2001-2002 by Wladimir Palant.  All rights reserved.
+Copyright (c) 2001-2004 by Wladimir Palant.  All rights reserved.
 Copyright (c) 2006 by Sascha Heldt.  All rights reserved.
 
 Benutzung und Weitergabe
@@ -56,7 +56,7 @@ sind erlaubt, falls folgende Bedingungen eingehalten werden:
 2. Alle Chat-Eingänge müssen den Copyright-Text des Autors enthalten,
    und zwar deutlich sichtbar ohne daß man scrollen muß:
 
-		 GTChat 0.95 (c) 2006 by Sascha Heldt
+		 GTChat 0.96 (c) 2006 by Sascha Heldt
 
    Am besten erreicht man das, indem man in die Templates die vordefinierte
    Marke {COPYRIGHT} einfügt.

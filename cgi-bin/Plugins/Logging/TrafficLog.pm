@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin writes traffic statistics to the file              #
@@ -8,7 +8,7 @@
 #  restricts the number of days to be kept in this log.           #
 ###################################################################
 
-package GTChat::Plugins::TraficLogger::095_01;
+package GT_Chat::Plugins::TraficLogger::096_01;
 use strict;
 
 return bless({});

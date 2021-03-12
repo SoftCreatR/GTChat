@@ -1,18 +1,22 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This template engine plugin uses the Perl module Template      #
 #  (part of the Template Toolkit)                                 #
 ###################################################################
 
-package GTChat::Plugins::ToolkitTemplateEngine::095_01;
+package GT_Chat::Plugins::ToolkitTemplateEngine::096_01;
 use strict;
 
 use Template::Context ();
 
-return bless({});
+return bless({
+	context => new Template::Context({
+			EVAL_PERL => 1,
+	}),
+});
 
 sub process
 {
@@ -32,22 +36,18 @@ sub parseTemplate
 {
 	my($self, $main, $file) = @_;
 
-	my $context = new Template::Context({
-			EVAL_PERL => 1,
-		});
-		
 	local $/;
 	my $input = <$file>;
 
 	my $template;
 	eval
 	{
-		$template = $context->template(\$input);
+		$template = $self->{context}->template(\$input);
 	};
 	if ($@)
 	{
 		die "Failed to fetch template $main->{template_vars}{template_name}: ".$main->toHTML($@);
 	}
 	
-	return bless([$context,$template]);
+	return bless([$self->{context},$template]);
 }

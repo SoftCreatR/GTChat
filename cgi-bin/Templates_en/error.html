@@ -1,31 +1,31 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>{GET|$settings.chatname}</title>
 </head>
 <body>
 
-<table align=center border=0 cellspacing=0 cellpadding=0 class="outer"><tr><td>
-<table width="100%" border=0 cellspacing=1 cellpadding=3>
+<table class="bordered1" width="70%" align="center" cellspacing="0">
 <tr>
-	<th><b>Error</b></th>
+	<th>Error</th>
 </tr>
-<tr class="row2">
+<tr>
 	<td>
-		{GET|$error}
+		<p>
+			{GET|$error}
+		</p>
 
 		{IF|$backaddr}
-			<br>
-			<br>
-
-			<center><a href="{GET|$backaddr}">go back</a></center>
+			<p align="center">
+				<a href="{GET|$backaddr}">go back</a>
+			</p>
 		{ENDIF}
 	</td>
 </tr>
 </table>
-
-</td></tr></table>
 
 </body>
 </html> 

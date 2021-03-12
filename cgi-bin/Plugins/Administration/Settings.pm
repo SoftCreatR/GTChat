@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
+#  GT-Chat 0.95 Alpha Plugin                                       #
 #  Written for release 20021225                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin manages the file Settings.dat.                     #
 ###################################################################
 
-package GTChat::Plugins::Administration::Settings::095_01;
+package GT_Chat::Plugins::Administration::Settings::095_02;
 use strict;
 
 return bless({
@@ -212,9 +212,8 @@ sub maintenance_handler
 		if ($maintenance)
 		{
 			my $users = $main->getOnlineUsers;
-			foreach my $string (@$users)
+			foreach my $user (@$users)
 			{
-				my $user = $main->translateOnlineString($string);
 				$main->loadUser($user->{name}, $user);
 				$main->kickUser($user, {error_name => 'error_maintenance_activated'}) unless $main->hasPermission('ignore_maintenance', $user);
 			}

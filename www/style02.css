@@ -1,76 +1,125 @@
-A
+@import url("images.css");
+
+body
 {
-	color: #00296E;
-}
-A:active
-{
-	color: #0060FF;
-}
-A:hover
-{
-	color: #0060FF;
+	font-family: Verdana, Arial, Helvetica;
+	font-size: 10pt;
+	color: #000000;
+	background-color: #E0E0E0;
 }
 
-TD,.normaltext
+table
 {
 	font-family: Verdana, Arial, Helvetica;
 	font-size: 10pt;
 	color: #000000;
 }
+
+a
+{
+	color: #003080;
+}
+a:active
+{
+	color: #0060FF;
+}
+a:hover
+{
+	color: #0060FF;
+}
+
 .smalltext
 {
-	font-size: 8pt;
-}
-
-TH
-{
-	font-family: Verdana, Arial, Helvetica;
-	font-size: 10pt;
-	font-weight: bold;
-	color: #FFFFFF;
-	background-color: #3C62A2;
-}
-
-TABLE.outer
-{
-	background-color: #000000;
-}
-
-TR.row1
-{
-	background-color: #B5C4DD;
-}
-TR.row2
-{
-	background-color: #FCF2BB;
-}
-
-BODY
-{
-	font-family: Verdana, Arial, Helvetica;
-	font-size: 10pt;
-	color: #000000;
-	background-color: #FEF8D6;
+	font-size: 80%;
 }
 .bigtext
 {
 	font-size: 120%;
 }
-.headertext
+
+table.bordered1, table.bordered2
 {
-	font-family: Verdana, Arial, Helvetica;
-	font-size: 10pt;
-	color: #000000;
+	background-color: #F0F0E8;
+	border-collapse: collapse;
 }
-.bigheadertext
+
+table.bordered1 td, table.bordered2 td, table.bordered1 th, table.bordered2 th
 {
-	font-family: Verdana, Arial, Helvetica;
-	font-size: 14pt;
-	color: #000000;
+	padding: 4px;
+}
+
+th
+{
+	font-weight: bold;
+	color: #C0C0C0;
+	background-color: #404040;
+}
+
+table.bordered1 td.subheader, table.bordered2 td.subheader
+{
+	background-color: #D0D0D0;
+	padding: 1px;
+	font-weight: bold;
+}
+
+table.bordered1, table.bordered1 th, table.bordered2 th, table.bordered2 td
+{
+	border: 1px solid black;
 }
 
 input.plain
 {
 	background-color: #D0D0D0;
 	border: 1px solid #606060;
+}
+
+form
+{
+	margin: 0px;
+}
+
+.fullsize
+{
+	width : 100%;
+}
+
+img.clickable
+{
+	cursor: pointer;
+	cursor: hand; /* for IE 5.0 compatibility */
+}
+
+#toolbar
+{
+	background-color: #D4D0C8;
+	border: 2px outset;
+	user-select: none;
+	-moz-border-left-colors: #D4D0C8 #FFFFFF;
+	-moz-border-top-colors: #D4D0C8 #FFFFFF;
+	-moz-border-right-colors: #808080 #B0B0B0;
+	-moz-border-bottom-colors: #808080 #B0B0B0;
+	-moz-user-select: none;
+}
+
+#toolbar .button
+{
+	margin: 4px;
+	border: 1px solid #D4D0C8;
+	cursor: pointer;
+	cursor: hand; /* for IE 5.0 compatibility */
+}
+
+#toolbar .button.pointed
+{
+	background-color: #F0F0F0;
+}
+
+#toolbar .button.pressed
+{
+	border-color: #606060 #FFFFFF #FFFFFF #606060;
+}
+
+#toolbar .img_menu_separator
+{
+	margin: 5px;
 }

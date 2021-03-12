@@ -1,5 +1,8 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+	{NEED_PERMISSION|user}
 	{NEED|$user_information}
 	{IF|$user_information.name ne $current_user.name}
 		{NEED_PERMISSION|profile_modify}
@@ -9,11 +12,13 @@
 	{ELSE}
 		{NEED|$environment}
 	{ENDIF}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
 	<title>{GET|$settings.chatname} - Profil von {GET|$user_information.nick}</title>
-	<script language="JavaScript">
-		cgi = '{GET_JS|$runtime.completeurl}';
+	<script src="general.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		//<![CDATA[
+		var cgi = '{GET_JS|$runtime.completeurl}';
 
 		function setColor(text)
 		{
@@ -28,229 +33,223 @@
 			form.popup_privatemsg.value = form.popup_privatemsg_dummy.checked ? 1 : 0;
 			form.show_time.value = form.show_time_dummy.checked ? 1 : 0;
 		}
+		//]]>
 	</script>
 </head>
 
-<body onload="opener.autosize(window)">
+<body onload="autosize()">
 
-<form name="profileForm" method=POST action="{GET|$runtime.chaturl}" onsubmit="copyDummies(this)">
+<form name="profileForm" method="POST" action="{GET|$runtime.chaturl}" onsubmit="copyDummies(this);">
 {GET|$runtime.hiddenfields}
-<input type="hidden" name="action" value="modifyprofile">
-<input type="hidden" name="template" value="profile">
-<input type="hidden" name="name" value="{GET|$user_information.name}">
+<input type="hidden" name="action" value="modifyprofile"/>
+<input type="hidden" name="template" value="profile"/>
+<input type="hidden" name="name" value="{GET|$user_information.name}"/>
 
-<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
-<table border=0 width="100%" cellspacing=1 cellpadding=0>
-
+<table class="bordered1" width="100%" cellspacing="0">
 <tr>
-	<th>
+	<th colspan="2">
 		Profil von {GET|$user_information.nick}
 	</th>
 </tr>
-<tr class="row2"><td><table width="100%" cellspacing=5>
-	{IF|$user_information.group != -1 and !$environment.has_uncrypted_password}
-		<tr class="row1">
-			<td colspan=2><b>Pa&szlig;wort&auml;nderung</b></td>
-		</tr>
-		<tr>
-			<td colspan=2>
-				Falls Sie jetzt ein neues Pa&szlig;wort setzen wollen, geben Sie es hier ein (zweimal zur Kontrolle):
-			</td>
-		</tr>
-		<tr>
-			<td>Pa&szlig;wort:</td>
-			<td><input type=password name=password size=30 style="width:100%" maxlength=10></td>
-		</tr>
-		<tr>
-			<td>Pa&szlig;wortwiederholung:</td>
-			<td><input type=password name=password2 size=30 style="width:100%" maxlength=10></td>
-		</tr>
-	{ENDIF}
-
-	<tr class="row1">
-		<td colspan=2><b>Ben&ouml;tigte Informationen</b></td>
-	</tr>
-
+{IF|$user_information.group != -1 and !$environment.has_uncrypted_password}
 	<tr>
-		<td width="30%">Nickname:</td>
-		<td width="70%">
-			{IF|$environment.is_username or !$environment.has_uncrypted_password}
-				{IF|permission(profile_change_nick)}
-					<input type=text name=nick size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.nick[0]}" value="{GET|$user_information.nick}">
-				{ELSE}
-					<input type=hidden name=nick value="{GET|$user_information.nick}">{GET|$user_information.nick}
-				{ENDIF}
+		<td colspan="2" class="subheader">Pa&szlig;wort&auml;nderung</td>
+	</tr>
+	<tr>
+		<td colspan="2">
+			Falls Sie jetzt ein neues Pa&szlig;wort setzen wollen, geben Sie es hier ein (zweimal zur Kontrolle):
+		</td>
+	</tr>
+	<tr>
+		<td>Pa&szlig;wort:</td>
+		<td><input type="password" name="password" class="fullsize" maxlength="10"/></td>
+	</tr>
+	<tr>
+		<td>Pa&szlig;wortwiederholung:</td>
+		<td><input type="password" name="password2" class="fullsize" maxlength="10"/></td>
+	</tr>
+	<tr><td colspan="2">&nbsp;</td></tr>
+{ENDIF}
+
+<tr>
+	<td colspan="2" class="subheader">Ben&ouml;tigte Informationen</td>
+</tr>
+
+<tr>
+	<td width="30%">Nickname:</td>
+	<td width="70%">
+		{IF|$environment.is_username or !$environment.has_uncrypted_password}
+			{IF|permission(profile_change_nick)}
+				<input type="text" name="nick" class="fullsize" maxlength="{GET|$settings.check_profile_fields_length.nick[0]}" value="{GET|$user_information.nick}"/>
 			{ELSE}
-				<input type=hidden name=nick value="{GET|$environment.name}">{GET|$environment.name}
+				<input type="hidden" name="nick" value="{GET|$user_information.nick}"/>{GET|$user_information.nick}
 			{ENDIF}
-		</td>
-	</tr>
+		{ELSE}
+			<input type="hidden" name="nick" value="{GET|$environment.name}"/>{GET|$environment.name}
+		{ENDIF}
+	</td>
+</tr>
+<tr>
+	<td>E-Mail:</td>
+	<td>
+		<input type="text" name="email" class="fullsize" maxlength="{GET|$settings.check_profile_fields_length.email[0]}" value="{GET|$user_information.email}"/>
+		<div class="smalltext"><input type="hidden" name="privateemail"/><input type="checkbox" name="privateemail_dummy" value="1"{IIF|$user_information.privateemail| checked="checked"}/> nur den Admins zeigen</div>
+	</td>
+</tr>
+<tr>
+	<td>Status:</td>
+	<td>
+		{IF|$user_information.group != -1 and $current_user.group > $user_information.group}
+			<select name="group">
+			{FOR|$group|-2|10}
+				{IF_HAS_GROUPNAME|$group}
+					{IF|$group<$current_user.group and $group!=-1}
+						<option value="{GET|$group}"{IIF|$group==$user_information.group| selected="selected"}>{GROUPNAME|$group}</option>
+					{ENDIF}
+				{ENDIF}
+			{ENDFOR}
+			</select>
+		{ELSE}
+			<input type="hidden" name="group" value="{GET|$user_information.group}"/>{GROUPNAME|$user_information.group}
+		{ENDIF}
+	</td>
+</tr>
+{IF|$user_information.online and permission(profile_settempgroup) and $current_user.group > $user_information.tempgroup}
 	<tr>
-		<td>E-Mail:</td>
+		<td>Vor&uuml;bergehend:</td>
 		<td>
-			<input type=text name=email size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.email[0]}" value="{GET|$user_information.email}"><br>
-			<input type=hidden name=privateemail><input type=checkbox name="privateemail_dummy" value="1" {IIF|$user_information.privateemail|checked}><span class="smalltext">nur den Admins zeigen</span>
-		</td>
-	</tr>
-	<tr>
-		<td>Status:</td>
-		<td>
-			{IF|$user_information.group != -1 and $current_user.group > $user_information.group}
-				<select name=group>
-				{FOR|$group|-2|10}
-					{IF_HAS_GROUPNAME|$group}
-						{IF|$group<$current_user.group and $group!=-1}
-							<option value="{GET|$group}" {IIF|$group==$user_information.group|selected}>{GROUPNAME|$group}
+			<select name="tempgroup">
+			{FOR|$group|-1|10}
+				{IF_HAS_GROUPNAME|$group}
+					{IF|$group!=-1 or $user_information.group==-1}
+						{IF|$group<$current_user.group}
+							<option value="{GET|$group}"{IIF|$group==$user_information.tempgroup| selected="selected"}>{GROUPNAME|$group}</option>
 						{ENDIF}
 					{ENDIF}
-				{ENDFOR}
-				</select>
-			{ELSE}
-				<input type=hidden name=group value="{GET|$user_information.group}">{GROUPNAME|$user_information.group}
-			{ENDIF}
+				{ENDIF}
+			{ENDFOR}
+			</select>
 		</td>
 	</tr>
-	{IF|$user_information.online and permission(profile_settempgroup) and $current_user.group > $user_information.tempgroup}
+{ELSE}
+	{IF|$user_information.online and $user_information.group!=$user_information.tempgroup}
 		<tr>
 			<td>Vor&uuml;bergehend:</td>
 			<td>
-				<select name=tempgroup>
-				{FOR|$group|-1|10}
-					{IF_HAS_GROUPNAME|$group}
-						{IF|$group!=-1 or $user_information.group==-1}
-							{IF|$group<$current_user.group}
-								<option value="{GET|$group}" {IIF|$group==$user_information.tempgroup|selected}>{GROUPNAME|$group}
-							{ENDIF}
-						{ENDIF}
-					{ENDIF}
-				{ENDFOR}
-				</select>
+				<input type="hidden" name="tempgroup" value="{GET|$user_information.tempgroup}"/>{GROUPNAME|$user_information.tempgroup}
 			</td>
 		</tr>
-	{ELSE}
-		{IF|$user_information.online and $user_information.group!=$user_information.tempgroup}
-			<tr>
-				<td>Vor&uuml;bergehend:</td>
-				<td>
-					<input type=hidden name=tempgroup value="{GET|$user_information.tempgroup}">{GROUPNAME|$user_information.tempgroup}
-				</td>
-			</tr>
-		{ENDIF}
 	{ENDIF}
-	<tr>
-		<td>Farbe:</td>
-		<td>
-			<input type=text name=color size=10 style="width:100%" maxlength=10 value="{GET|$user_information.color}"><br>
-			<span class="smalltext"><a href="javascript:void(0)" onclick="opener.setColor=setColor;opener.openWindow('palette',300,250);return false;">Farbe ausw&auml;hlen</a></span>
-		</td>
-	</tr>
+{ENDIF}
+<tr>
+	<td>Farbe:</td>
+	<td>
+		<input type="text" name="color" class="fullsize" maxlength="10" value="{GET|$user_information.color}"/>
+		<div class="smalltext"><a href="javascript:void(0)" onclick="openWindow('palette',320,250);return false;">Farbe ausw&auml;hlen</a></div>
+	</td>
+</tr>
 
-	<tr class="row1">
-		<td colspan=2><b>Zus&auml;tzliche Informationen</b></td>
-	</tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr>
+	<td colspan="2" class="subheader">Zus&auml;tzliche Informationen</td>
+</tr>
 
-	<tr>
-		<td width="30%">Website&nbsp;(Bezeichnung):</td>
-		<td width="70%"><input type=text name=homepagetitle size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.homepagetitle[0]}" value="{GET|$user_information.homepagetitle}"></td>
-	</tr>
-	<tr>
-		<td>Website&nbsp;(URL):</td>
-		<td><input type=text name=homepage size=30 style="width:100%" maxlength="{GET|$settings.check_profile_fields_length.homepage[0]}" value="{GET|$user_information.homepage}"></td>
-	</tr>
+<tr>
+	<td width="30%">Website&nbsp;(Bezeichnung):</td>
+	<td width="70%"><input type="text" name="homepagetitle" class="fullsize" maxlength="{GET|$settings.check_profile_fields_length.homepagetitle[0]}" value="{GET|$user_information.homepagetitle}"/></td>
+</tr>
+<tr>
+	<td>Website&nbsp;(URL):</td>
+	<td><input type="text" name="homepage" class="fullsize" maxlength="{GET|$settings.check_profile_fields_length.homepage[0]}" value="{GET|$user_information.homepage}"/></td>
+</tr>
 
-	<tr>
-		<td>Geschlecht:</td>
-		<td>
-			<select name=gender style="width:100%">
-				<option value=0>(kein Kommentar)
-				<option value=1 {IIF|$user_information.gender==1|selected}>m&auml;nnlich
-				<option value=2 {IIF|$user_information.gender==2|selected}>weiblich
-			</select>
-		</td>
-	</tr>
+<tr>
+	<td>Geschlecht:</td>
+	<td>
+		<select name="gender" style="width:100%">
+			<option value="0">(kein Kommentar)</option>
+			<option value="1"{IIF|$user_information.gender==1| selected="selected"}>m&auml;nnlich</option>
+			<option value="2"{IIF|$user_information.gender==2| selected="selected"}>weiblich</option>
+		</select>
+	</td>
+</tr>
 
-	<tr>
-		<td>Geburtsdatum:</td>
-		<td>
-			{READSTDDATE|$date|$user_information.birth_date}
-			<input type=text name="birth_day" size=4 maxlength=3 value="{IF|$date.day}{GET|$date.day}{ELSE}Tag{ENDIF}" onFocus="if (value=='Tag') value=''" onBlur="if (value=='') value='Tag'">
-			<select name="birth_month">
-				<option value=0>Monat
-				<option value=1 {IIF|$date.month==1|selected}>Januar
-				<option value=2 {IIF|$date.month==2|selected}>Februar
-				<option value=3 {IIF|$date.month==3|selected}>M&auml;rz
-				<option value=4 {IIF|$date.month==4|selected}>April
-				<option value=5 {IIF|$date.month==5|selected}>Mai
-				<option value=6 {IIF|$date.month==6|selected}>Juni
-				<option value=7 {IIF|$date.month==7|selected}>Juli
-				<option value=8 {IIF|$date.month==8|selected}>August
-				<option value=9 {IIF|$date.month==9|selected}>September
-				<option value=10 {IIF|$date.month==10|selected}>Oktober
-				<option value=11 {IIF|$date.month==11|selected}>November
-				<option value=12 {IIF|$date.month==12|selected}>Dezember
-			</select>
-			<input type=text name="birth_year" size=4 maxlength=4  value="{IF|$date.year}{GET|$date.year}{ELSE}Jahr{ENDIF}" onFocus="if (value=='Jahr') value=''" onBlur="if (value=='') value='Jahr'">
-		</td>
-	</tr>
+<tr>
+	<td>Geburtsdatum:</td>
+	<td>
+		{READSTDDATE|$date|$user_information.birth_date}
+		<input type="text" name="birth_day" size="4" value="{IF|$date.day}{GET|$date.day}{ELSE}Tag{ENDIF}" onfocus="if (value=='Tag') value=''" onblur="if (value=='') value='Tag'"/>
+		<select name="birth_month">
+			<option value="0">Monat</option>
+			<option value="1"{IIF|$date.month==1| selected="selected"}>Januar</option>
+			<option value="2"{IIF|$date.month==2| selected="selected"}>Februar</option>
+			<option value="3"{IIF|$date.month==3| selected="selected"}>M&auml;rz</option>
+			<option value="4"{IIF|$date.month==4| selected="selected"}>April</option>
+			<option value="5"{IIF|$date.month==5| selected="selected"}>Mai</option>
+			<option value="6"{IIF|$date.month==6| selected="selected"}>Juni</option>
+			<option value="7"{IIF|$date.month==7| selected="selected"}>Juli</option>
+			<option value="8"{IIF|$date.month==8| selected="selected"}>August</option>
+			<option value="9"{IIF|$date.month==9| selected="selected"}>September</option>
+			<option value="10"{IIF|$date.month==10| selected="selected"}>Oktober</option>
+			<option value="11"{IIF|$date.month==11| selected="selected"}>November</option>
+			<option value="12"{IIF|$date.month==12| selected="selected"}>Dezember</option>
+		</select>
+		<input type="text" name="birth_year" size="4" value="{IF|$date.year}{GET|$date.year}{ELSE}Jahr{ENDIF}" onfocus="if (value=='Jahr') value=''" onblur="if (value=='') value='Jahr'"/>
+	</td>
+</tr>
 
-   <tr class="row1">
-		<td colspan=2><b>Chat-Einstellungen</b></td>
-	</tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr>
+	<td colspan="2" class="subheader">Chat-Einstellungen</td>
+</tr>
 
-	<tr>
-		<td>Farbschema:</td>
-		<td>
-			<select name=style style="width:100%">
-				{FOREACH|$style|$settings.styles}
-					<option value="{GET|$style[0]}" {IIF|$style[0] eq $runtime.style|selected}>{GET|$style[1]}
-				{ENDFOR}
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td width="30%">
-			Zeitdifferenz:<br>
-			<span class="smalltext">Anzahl Stunden +/- zur Chat-Zeit f&uuml;r Zeit-Anzeigen</span>
-		</td>
-		<td width="70%">
-			<input type=input name=timeoffset size=6 maxlength=3 value="{GET|$user_information.timeoffset}"><br>
-			<span class="smalltext">Aktuelle Chat-Zeit: {GETTIME}</span>
-		</td>
-	</tr>
-	<tr>
-		<td>Smileys deaktivieren:</td>
-		<td><input type=hidden name=nosmileys><input type=checkbox name="nosmileys_dummy" value="1" {IIF|$user_information.nosmileys|checked}></td>
-	</tr>
-	<tr>
-		<td>Privatnachrichten im Extra-Fenster anzeigen:</td>
-		<td><input type=hidden name="popup_privatemsg"><input type=checkbox name="popup_privatemsg_dummy" value="1" {IIF|$user_information.popup_privatemsg|checked}></td>
-	</tr>
-	<tr>
-		<td>Zeit anzeigen:</td>
-		<td><input type=hidden name="show_time"><input type=checkbox name="show_time_dummy" value="1" {IIF|$user_information.show_time|checked}></td>
-	</tr>
+<tr>
+	<td>Farbschema:</td>
+	<td>
+		<select name="style" class="fullsize">
+			{FOREACH|$style|$settings.styles}
+				<option value="{GET|$style[0]}"{IIF|$style[0] eq $runtime.style| selected="selected"}>{GET|$style[1]}</option>
+			{ENDFOR}
+		</select>
+	</td>
+</tr>
+<tr>
+	<td width="30%">
+		Zeitdifferenz:
+		<div class="smalltext">Anzahl Stunden +/- zur Chat-Zeit f&uuml;r Zeit-Anzeigen</div>
+	</td>
+	<td width="70%">
+		<input type="input" name="timeoffset" size="6" maxlength="3" value="{GET|$user_information.timeoffset}"/>
+		<div class="smalltext">Aktuelle Chat-Zeit: {GETTIME}</div>
+	</td>
+</tr>
+<tr>
+	<td>Smileys deaktivieren:</td>
+	<td><input type="hidden" name="nosmileys"/><input type="checkbox" name="nosmileys_dummy" value="1"{IIF|$user_information.nosmileys| checked="checked"}/></td>
+</tr>
+<tr>
+	<td>Privatnachrichten im Extra-Fenster anzeigen:</td>
+	<td><input type="hidden" name="popup_privatemsg"/><input type="checkbox" name="popup_privatemsg_dummy" value="1"{IIF|$user_information.popup_privatemsg| checked="checked"}/></td>
+</tr>
+<tr>
+	<td>Zeit anzeigen:</td>
+	<td><input type="hidden" name="show_time"/><input type="checkbox" name="show_time_dummy" value="1"{IIF|$user_information.show_time| checked="checked"}/></td>
+</tr>
 
-	<tr>
-		<td colspan=2>&nbsp;</td>
-	</tr>
-
-	<tr>
-		<td colspan=2 align=center>
-			<input type=submit value="Speichern">
-			&nbsp;
-			<input type=button value="Abbrechen" onclick="document.location.href='{GET_JS|$runtime.completeurl}&template=profile&username={GET_ESCAPED|$user_information.name}';return false">
-		</td>
-	</tr>
-
-</table></td></tr>
-
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr>
+	<td colspan="2" align="center">
+		<input type="submit" value="Speichern"/>
+		&nbsp;
+		<input type="button" value="Abbrechen" onclick="document.location.href='{GET_JS|$runtime.completeurl};template=profile;username={GET_ESCAPED|$user_information.name}';return false"/>
+	</td>
+</tr>
 </table>
-</td></tr></table>
 </form>
 
-<div class="headertext" align="center">
-	<a href="javascript:window.close()" class="stdlink">Fenster schlie&szlig;en</a>
-</div>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Fenster schlie&szlig;en</a>
+</p>
 
 </body>
 </html>

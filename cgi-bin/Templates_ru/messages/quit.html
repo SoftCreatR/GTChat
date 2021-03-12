@@ -1,8 +1,0 @@
-<script>
-	parent.exiting=1;
-	if (parent.moderatedTexts)
-		parent.moderatedTexts = 0;
-	if (parent.moderationWnd && !parent.moderationWnd.closed)
-		parent.moderationWnd.close();
-	parent.location.replace('{GET_JS|$runtime.completeurl}&template=logout');
-</script> 

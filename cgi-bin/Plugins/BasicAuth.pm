@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin takes the username from authentication at the      #
@@ -8,7 +8,7 @@
 #  described in the file .htaccess                                #
 ###################################################################
 
-package GTChat::Plugins::BasicAuth::095_01;
+package GT_Chat::Plugins::BasicAuth::096_01;
 use strict;
 
 return bless({});

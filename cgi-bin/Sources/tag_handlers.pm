@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::tag_handlers;
@@ -21,23 +21,18 @@ sub getCopyrightText
 {
 	my $main = shift;
 
-	return 'GT-Chat '.$main->{VERSION}.' (c) 2006 by <a href="http://www.gt-chat.de" target="_blank">Sascha Heldt</a>';
+	return 'GT-Chat '.$main->{VERSION}.' &copy; 2006 by <a href="http://www.gt-chat.de" target="_blank">Sascha Heldt</a>';
 }
 
 sub getImageText
 {
 	my($main,$image,$additional) = @_;
 
-	my ($width,$height);
-	($width,$height) = @{$main->{settings}{images}{$image}} if defined($main->{settings}{images}{$image});
-	$width = (defined($width) ? " width=$width": '');
-	$height = (defined($height) ? " height=$height": '');
-
 	my $dir = $main->{settings}{urls}{imagesurl};
 
 	$additional = (defined($additional) ? ' '.$additional : '');
 
-	return "<img src=\"$dir$image.gif\" border=0$width$height$additional>";
+	return "<img src=\"$dir$image.gif\" class=\"img_$image\" border=\"0\"$additional/>";
 }
 
 sub copyright_handler
@@ -52,7 +47,7 @@ sub image_handler
 	my($self,$main,$params,$output) = @_;
 
 	my $image = $params->[1];
-	$main->fatal_error('tag_notenoughparameters',{template => $main->{template_vars}{template_name}, line => $main->{template_vars}{template_line}, tag => ${$params}[0]}) if (!defined($image));
+	$main->fatal_error('tag_notenoughparameters',{template => $main->{template_vars}{template_name}, line => $main->{template_vars}{template_line}, tag => ${$params}[0]}) unless defined($image);
 
 	$image = $main->getEx($1) if ($image =~ /^\$(.+)/);
 

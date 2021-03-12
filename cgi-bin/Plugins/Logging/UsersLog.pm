@@ -1,13 +1,13 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin saves account creation and removement events to    #
 #  the file Variables/users.log and creates backup copies of it.  #
 ###################################################################
 
-package GTChat::Plugins::UsersLog::095_01;
+package GT_Chat::Plugins::UsersLog::096_01;
 use strict;
 
 return bless({});
@@ -38,14 +38,17 @@ sub addToLog
 	}
 }
 
-sub userRegistered
+sub afterUserSave
 {
-	my($self,$main,$user) = @_;
+	my($self,$main,$user,$olduser) = @_;
 
-	addToLog($main,'registered',$user);
+	if (!defined($olduser))
+	{
+		addToLog($main,'registered',$user);
+	}
 }
 
-sub userDeleted
+sub afterUserDelete
 {
 	my($self,$main,$user) = @_;
 

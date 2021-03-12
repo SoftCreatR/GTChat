@@ -1,5 +1,5 @@
 return {
-	charset => 'windows-1252',
+	charset => 'iso-8859-1',
 
 	timeformat => '%02i:%02i:%02i',            # Time format mask (see sprintf)
 	timevalues => [2,1,0],                     # Values to be inserted into the time mask (0: seconds, 1: minutes, 2:hours, 3:day, 4:month, 5:year)
@@ -186,8 +186,8 @@ return {
 		error_max_homepage_len => 'Die URL der Webseite ist zu lang.',
 		error_max_homepagetitle_len => 'Die Bezeichnung der Webseite ist zu lang.',
 
-		error_max_chat_users => 'In diesem Chat dürfen sich nur %%maxcount%% Benutzer gleichzeitig befinden. Leider ist diese Zahl bereits erreicht. Versuchen Sie später nochmal.',
-		error_max_room_users => 'In diesem Raum dürfen sich nur %%maxcount%% Benutzer gleichzeitig befinden. Leider ist diese Zahl bereits erreicht. Versuchen Sie später nochmal.',
+		error_max_chat_users => 'In diesem Chat dürfen sich nur %%maxcount%% Benutzer gleichzeitig befinden. Leider ist diese Zahl bereits erreicht. Versuchen Sie es später nochmal.',
+		error_max_room_users => 'In diesem Raum dürfen sich nur %%maxcount%% Benutzer gleichzeitig befinden. Leider ist diese Zahl bereits erreicht. Versuchen Sie es später nochmal.',
 	
 		error_second_login => 'Sie werden ausgeloggt, weil sich jemand (möglicherweise Sie selbst) nochmal mit demselben Namen eingeloggt hat.',
 		error_nonexistent_room => 'Der Raum, in dem Sie sich befinden, existiert nicht (mehr). Deswegen werden Sie ausgeloggt.',
@@ -233,7 +233,7 @@ Viel Spaß in unserem Chat!',
 
 		info_awayon_reason => '%%nick%% ist jetzt weg: %%reason%%',
 
-		info_disconnect => 'Ihre Verbindung mit dem Chat-Server wurde getrennt, GTChat versucht jetzt, die Verbindung wiederherzustellen.',
+		info_disconnect => 'Ihre Verbindung mit dem Chat-Server wurde getrennt, GT-Chat versucht jetzt, die Verbindung wiederherzustellen.',
 		
 		error_nickalreadychanged => 'Sie dürfen Ihren Nick nur alle %%interval%% Minuten ändern.',
 
@@ -293,5 +293,15 @@ Viel Spaß in unserem Chat!',
 		info_enablemoderation_success => 'Das Moderationsinterface ist jetzt aktiv. Es kann mit dem Befehl /disablemoderation ausgeschaltet werden.',
 
 		error_couldnotopendir => 'Das Verzeichnis %%dir%% konnte nicht geöffnet werden. Bitte wenden Sie sich an den Chat-Betreiber.',
-	},
+
+		info_timeon => 'Die Zeitanzeige ist bei Ihnen aktiviert, neben den Meldungen wird ihre Uhrzeit angezeigt.',
+		info_timeoff => 'Die Zeitanzeige ist bei Ihnen deaktiviert.',
+		info_timesuccessful_on => 'Die Zeitanzeige wurde aktiviert, neben den Meldungen wird jetzt eine Uhrzeit angezeigt.',
+		info_timesuccessful_off => 'Die Zeitanzeige wurde abgeschaltet.',
+
+		info_smileyson => 'Die Smileys sind bei Ihnen aktiviert.',
+		info_smileysoff => 'Die Smileys sind bei Ihnen deaktiviert.',
+		info_smileyssuccessful_on => 'Die Anzeige der Smileys wurde jetzt eingeschaltet.',
+		info_smileyssuccessful_off => 'Die Anzeige der Smileys wurde ausgeschaltet.',
+	 },
 };

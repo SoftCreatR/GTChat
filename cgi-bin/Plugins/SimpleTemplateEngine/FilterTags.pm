@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the template block {DOFILTER}...{ENDDO}   #
@@ -8,7 +8,7 @@
 #  custom_output_filter variable in Settings.dat).                #
 ###################################################################
 
-package GTChat::Plugins::FilterTags::095_02;
+package GT_Chat::Plugins::FilterTags::096_01;
 use strict;
 
 return bless({

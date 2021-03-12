@@ -1,15 +1,16 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20020911                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin manages the user search.                           #
 ###################################################################
 
-package GTChat::Plugins::Search::095_01;
+package GT_Chat::Plugins::Search::096_01;
 use strict;
+use vars qw(@ISA);
 
-@GTChat::Plugins::Search::Results_enum::095_01::ISA = ('GTChat::Enum');
+@ISA = ('GT_Chat::Enum');
 
 return bless({
 	action_handlers => {
@@ -39,8 +40,8 @@ sub search_handler
 	$search =~ s/[?*]/($self->{replace_by}{$&})/g;
 	$search =~ s/\)\(//g;
 	
-	my $replace = "\"<b>$mask</b>\"";
-	for (my $i=1;$replace =~ s/[?*]+/<\/b>\$$i<b>/;$i++) {}
+	my $replace = "\"<strong>$mask</strong>\"";
+	for (my $i=1;$replace =~ s/[?*]+/<\/strong>\$$i<strong>/;$i++) {}
 
 	my @found = grep {
 		my ($nick,$name) = split(/\|/);
@@ -59,13 +60,11 @@ sub search_handler
 	
 	$mask =~ s/\\(.)/$1/g;
 	$main->{template_vars}{search_mask} = $main->toHTML($mask);
-	$main->{template_vars}{search_results} = GTChat::Plugins::Search::Results_enum::095_01::new($main,\@found);
+	$main->{template_vars}{search_results} = new($main,\@found);
 	$main->{template_vars}{search_results_count} = $#found+1;
 
 	$main->printTemplate('search_results');
 }
-
-package GTChat::Plugins::Search::Results_enum::095_01;
 
 sub new
 {

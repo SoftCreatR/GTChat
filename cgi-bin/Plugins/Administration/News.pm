@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
+#  GT-Chat 0.95 Alpha Plugin                                       #
 #  Written for release 20021225                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin receives the changed chat news.                    #
 ###################################################################
 
-package GTChat::Plugins::Administration::News::095_01;
+package GT_Chat::Plugins::Administration::News::095_01;
 use strict;
 
 return bless({

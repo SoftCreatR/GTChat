@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin sends user a mail with an authentication code if   #
@@ -8,7 +8,7 @@
 #  instead of the password then.                                  #
 ###################################################################
 
-package GTChat::Plugins::Reminder::095_01;
+package GT_Chat::Plugins::Reminder::096_01;
 
 use strict;
 

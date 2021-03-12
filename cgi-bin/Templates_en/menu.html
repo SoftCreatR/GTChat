@@ -1,0 +1,40 @@
+{NEED_PERMISSION|user}
+{DOFILTER|nospaces}
+<div id="toolbar" onmouseover="onToolbarMouseOver(event)" onmouseout="onToolbarMouseOut(event)" onmousedown="onToolbarMouseDown(event)" onmouseup="onToolbarMouseUp(event)">
+	<img src="{GET|$settings.urls.imagesurl}minimize.gif" class="img_minimize clickable" align="right" onclick="minimizeMenu();"/>
+
+	<table cellspacing="0" cellpadding="4" align="right" height="40"><tr height="100%">
+	<td class="smalltext" align="center">
+		connection:
+	</td>
+	<td>
+		<table class="bordered1" cellspacing="0" width="52">
+		<tr>
+			<td id="connection" title="connection" bgcolor="#00FF00" style="padding: 0px">{IMAGE|blank|width="49" height="10" name="connection1"}</td>
+			<td style="padding: 0px">{IMAGE|blank|width="1" height="10" name="connection2"}</td>
+		</tr>
+		</table>
+	</td>
+	</tr></table>
+
+	<img src="{GET|$settings.urls.imagesurl}menu_profile.gif" class="img_menu_profile button" title="Settings" onclick="sendText('/editprofile');"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_usersearch.gif" class="img_menu_usersearch button" title="Search user" onclick="sendText('/usersearch');"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_rooms.gif" class="img_menu_rooms button" title="Room list" onclick="sendText('/roomlist');"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_log.gif" class="img_menu_log button" title="Log" onclick="sendText('/viewlog');"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_smileys.gif" class="img_menu_smileys button" title="Smileys" onclick="sendText('/smileylist');"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_color.gif" class="img_menu_color button" title="Select text color" onclick="sendText('/colorchooser');"/>
+	{IF|permission(admin)}
+		<img src="{GET|$settings.urls.imagesurl}menu_admin.gif" class="img_menu_admin button" title="Administration menu" onclick="openWindow('admin.menu',700,480);"/>
+	{ENDIF}
+	<img src="{GET|$settings.urls.imagesurl}menu_separator.gif" class="img_menu_separator"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_showtime.gif" class="img_menu_showtime button{IIF|$current_user.show_time| pressed}" title="Show time" onclick="setShowTime(!show_time);sendText('/time ' + (show_time ? 'on' : 'off'));"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_nosmileys.gif" class="img_menu_nosmileys button{IIF|$current_user.nosmileys| pressed}" title="Deactivate smileys" onclick="setNoSmileys(!nosmileys);sendText('/smileys ' + (nosmileys ? 'off' : 'on'));"/>
+	{IF|permission(command.admin)}
+		<img src="{GET|$settings.urls.imagesurl}menu_adminmode.gif" class="img_menu_adminmode button" title="Activate admin mode" onclick="setAdminMode(!admin_mode)"/>
+	{ENDIF}
+	<img src="{GET|$settings.urls.imagesurl}menu_separator.gif" class="img_menu_separator"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_logout.gif" class="img_menu_logout button" title="Logout" onclick="sendText('/quit');"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_separator.gif" class="img_menu_separator"/>
+	<img src="{GET|$settings.urls.imagesurl}menu_help.gif" class="img_menu_help button" title="Help" onclick="sendText('/help');"/>
+</div>
+{ENDDO}

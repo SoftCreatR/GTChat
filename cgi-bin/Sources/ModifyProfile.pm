@@ -1,7 +1,7 @@
 ###################################################################
-#  GTChat GTChat 0.95 Alpha Build 20040120 core file              #
+#  GTChat GTChat 0.96 Alpha Build 20060923 core file              #
 #  Copyright 2001-2006 by Wladimir Palant (http://www.gtchat.de)  #
-#  Copyright 2006 by Sascha Heldt (https://www.gt-chat.de)        #
+#  Copyright 2006 by Sascha Heldt (https://www.softcreatr.de)     #
 ###################################################################
 
 package GT_Chat::ModifyProfile;
@@ -23,6 +23,8 @@ sub modify_handler
 	my $user = $main->loadUser($main->{input}{name});
 	$main->fatal_error('unknownusername',{name => $main->{input}{name}}) if (!defined($user));
 	$main->fatal_error('profile_nopermission') if ($user->{name} ne $main->{current_user}{name} && (!$main->hasPermission('profile_modify') || $main->{current_user}{tempgroup}<=$user->{group}));
+
+	$user->{online} = 1 if $main->loadOnlineInfo($user->{name}, $user);
 
 	my $olduser = {};
 	foreach (keys %$user)
@@ -76,10 +78,11 @@ sub modify_handler
 	}
 	delete($user->{password2});
 
-	$user->{group}=$olduser->{group} if ($user->{name} eq $main->{current_user}{name} || $main->{current_user}{group}<=$user->{group});
-	$user->{tempgroup}=$user->{group} if (exists($user->{tempgroup}) && $user->{tempgroup} < $user->{group});
-
-	$user->{email} =~ s/[\s"&#|<>]//g;
+	if (exists($user->{tempgroup}) && $user->{tempgroup} < $user->{group})
+	{
+		$user->{tempgroup} = $user->{group};
+	}
+	$user->{tempgroup}=$olduser->{tempgroup} if ($user->{online} && ($user->{name} eq $main->{current_user}{name} || !defined($user->{tempgroup}) || $main->{current_user}{group}<=$user->{tempgroup} || !$main->hasPermission('profile_settempgroup')));
 
 	if ($user->{name} ne $main->{current_user}{name} && $main->hasPermission('profile_modify_permissions'))
 	{
@@ -113,68 +116,11 @@ sub modify_handler
 		$user->{permissions} = $olduser->{permissions};
 	}
 
-	$user->{color}=$main->toColor(my $color = $user->{color});
-	$main->fatal_error('unknowncolor',{color => $color}) unless defined($user->{color});
-	$user->{registration}=$olduser->{registration};
-	$user->{browser}=$olduser->{browser};
-	$user->{ip}=$olduser->{ip};
-	$user->{forwardedfor}=$olduser->{forwardedfor};
-	$user->{host}=$olduser->{host};
-	$user->{lastlogin}=$olduser->{lastlogin};
-
-	$main->invokeModulesList($main->{settings}{custom_profile_checker},'checkProfile',$user,$olduser);
-
-	my $tmpname = $main->getUsername($user->{nick});
-	$main->fatal_error('nicknameexists',{nick => $user->{nick}}) if (defined($tmpname) && $tmpname ne $user->{name});
-
 	$main->saveUser($user,$olduser->{nick});
 
-	my $online = $main->loadOnlineInfo($user->{name});
-	if (defined($online))
+	if ($user->{online} && ($olduser->{nick} ne $user->{nick} || $olduser->{tempgroup} ne $user->{tempgroup}))
 	{
-		$user->{tempgroup}=$online->{tempgroup} if ($user->{name} eq $main->{current_user}{name} || !defined($user->{tempgroup}) || $main->{current_user}{group}<=$user->{tempgroup} || !$main->hasPermission('profile_settempgroup'));
-
-		my %changed = ();
-		my @toDo = ();
-		foreach (@{$main->getProfileFieldsList})
-		{
-			$changed{$_}=1 if ($olduser->{$_} ne $user->{$_});
-		}
-		$changed{tempgroup}=1 if ($online->{tempgroup}!=$user->{tempgroup});
-
-		if (exists($changed{nick}) || exists($changed{tempgroup}))
-		{
-			$online->{nick} = $user->{nick};
-			$online->{tempgroup} = $user->{tempgroup};
-			$main->saveOnlineInfo($online);
-		}
-
-		if (exists($changed{nick}))
-		{
-			push @toDo, [undef,$online->{room},$main->toOutputString(
-				{
-					template => 'nick_changed',
-					name => $user->{name},
-					nick => $user->{nick},
-					oldnick => $olduser->{nick},
-				}
-			)];
-		}
-
-		if (keys %changed > 0)
-		{
-			push @toDo, [undef,undef,$main->toOutputString(
-				{
-					template => 'changed',
-					name => $user->{name},
-					room => $online->{room},
-					oldroom => $online->{room},
-					'*' => [keys %changed],
-				}
-			)];
-
-			$main->sendOutputStrings(@toDo);
-		}
+		$main->saveOnlineInfo($user);
 	}
 
 	$main->{input}{username} = $user->{name};
@@ -194,16 +140,9 @@ sub delete_handler
 	$main->{template_vars}{backaddr} = 'javascript:history.back()';
 
 	my $user = $main->loadUser($main->{input}{username});
-	$main->fatal_error('unknownusername',{name => $main->{input}{username}}) if (!defined($user));
+	$main->fatal_error('unknownusername',{name => $main->{input}{username}}) unless defined($user);
 	$main->fatal_error('deleteuser_nopermission') if ($user->{name} ne $main->{current_user}{name} && (!$main->hasPermission('profile_modify') || $main->{current_user}{tempgroup}<=$user->{group}));
-	$main->fatal_error('deleteuser_chatmaster') if ($user->{group}>=10);
-
-	if ($main->isOnline($user->{name}))
-	{
-		$main->loadOnlineInfo($user->{name},$user);
-		$main->kickUser($user,{error_name => 'error_deleted'});
-		sleep(1);
-	}
+	$main->fatal_error('deleteuser_chatmaster') if $user->{group}>=10;
 
 	$main->removeUser($user);
 

@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
-#  This class should help creating chat outputs.                  #
+#  This is a helper class for creating chat output.               #
 ###################################################################
 
-package GTChat::Plugins::Output::095_02;
+package GT_Chat::Plugins::Output::096_01;
 use strict;
 
 bless({});
@@ -15,7 +15,7 @@ sub createOutput
 {
 	my($main,$params) = @_;
 	
-	return bless([undef,undef,$main->toOutputString($params),undef,$main]);
+	return bless([undef,undef,$main->toOutputString($params),$main]);
 }
 
 sub createErrorOutput
@@ -72,7 +72,7 @@ sub restrictToCurrentUser
 {
 	my $self = shift;
 	
-	$self->[0] = $self->[4]{current_user}{name};
+	$self->[0] = $self->[3]{current_user}{name};
 	return $self;
 }
 
@@ -88,14 +88,6 @@ sub restrictToCurrentRoom
 {
 	my $self = shift;
 	
-	$self->[1] = $self->[4]{current_user}{room};
-	return $self;
-}
-
-sub setChangedAttributes
-{
-	my $self = shift;
-	
-	$self->[3] = [@_];
+	$self->[1] = $self->[3]{current_user}{room};
 	return $self;
 }

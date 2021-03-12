@@ -1,2 +1,2 @@
-<td nowrap valign=top>({GETDATETIME|$params.time})</td>
-<td width="100%"><font color="{GET|$params.color}"><b>{GET|$params.nick}:</b> {IF|$params.url}<img src="{GET|$params.url}">{ELSE}{DOFILTER|links|formatting|smileys}{GET|$params.text}{ENDDO}{ENDIF}</font></td> 
+<td valign="top" nowrap="nowrap">({GETDATETIME|$params.time})</td>
+<td width="100%" style="color:{GET|$params.color}"><strong>{GET|$params.nick}:</strong> {IF|$params.url}<img src="{GET|$params.url}"/>{ELSE}{DOFILTER|links|formatting|smileys}{GET|$params.text}{ENDDO}{ENDIF}</td> 

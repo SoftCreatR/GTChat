@@ -1,4 +1,6 @@
-<html>
+<?xml version="1.0" encoding="{GET|$current_language.charset}"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	{NEED|$user_information}
 	{NEED_PERMISSION|profile_modify}
@@ -6,70 +8,62 @@
 	{IF|$current_user.tempgroup <= $user_information.group}
 		{ERROR|profile_nopermission}
 	{ENDIF}
-	<base href="{GET|$settings.urls.htmlurl}">
-	<link rel="stylesheet" href="{GET|$runtime.style}.css">
+	<base href="{GET|$settings.urls.htmlurl}"/>
+	<link rel="stylesheet" href="{GET|$runtime.style}.css"/>
+	<script src="general.js" type="text/javascript"></script>
 	<title>{GET|$settings.chatname} - Command permissions of {GET|$user_information.nick}</title>
 </head>
 
-<body onload="opener.autosize(window)">
+<body onload="autosize(window)">
 
-<form method=POST action="{GET|$runtime.chaturl}">
+<form method="POST" action="{GET|$runtime.chaturl}">
 {GET|$runtime.hiddenfields}
-<input type="hidden" name="action" value="modifyprofile">
-<input type="hidden" name="template" value="profile_commandpermissions">
-<input type="hidden" name="name" value="{GET|$user_information.name}">
+<input type="hidden" name="action" value="modifyprofile"/>
+<input type="hidden" name="template" value="profile_commandpermissions"/>
+<input type="hidden" name="name" value="{GET|$user_information.name}"/>
 
-<table border=0 width="100%" cellspacing=0 cellpadding=0 class="outer"><tr><td>
-<table border=0 width="100%" cellspacing=1 cellpadding=0>
-
+<table class="bordered1" width="100%" cellspacing="0">
 <tr>
-	<th>
+	<th colspan="2">
 		Command permissions of {GET|$user_information.nick}
 	</th>
 </tr>
-<tr class="row2"><td><table width="100%" cellspacing=5>
-	{FOREACH|$permission|$commandpermissions}
-		<tr>
-			<td width="50%">{GET|$permission.description}</td>
-			<td width="50%">
-				{IF|permission($permission.name)}
-					<select name="permissions.{GET|$permission.name}" style="width:100%">
-						<option value=0 {IIF|$permission.individualpermission==0| selected}>default ({IIF|$permission.defaultpermission|permitted|forbidden})
-						<option value=-1 {IIF|$permission.individualpermission==-1| selected}>forbidden
-						<option value=1 {IIF|$permission.individualpermission==1| selected}>permitted
-					</select>
+{FOREACH|$permission|$commandpermissions}
+	<tr>
+		<td width="50%">{GET|$permission.description}</td>
+		<td width="50%">
+			{IF|permission($permission.name)}
+				<select name="permissions.{GET|$permission.name}" style="width:100%">
+					<option value="0" {IIF|$permission.individualpermission==0| selected="selected"}>default ({IIF|$permission.defaultpermission|permitted|forbidden})</option>
+					<option value="-1" {IIF|$permission.individualpermission==-1| selected="selected"}>forbidden</option>
+					<option value="1" {IIF|$permission.individualpermission==1| selected="selected"}>permitted</option>
+				</select>
+			{ELSE}
+				{IF|$permission.individualpermission==0}
+					default ({IIF|$permission.defaultpermission|permitted|forbidden})
 				{ELSE}
-					{IF|$permission.individualpermission==0}
-						default ({IIF|$permission.defaultpermission|permitted|forbidden})
-					{ELSE}
-						{IIF|$permission.individualpermission==1|permitted|forbidden}
-					{ENDIF}
+					{IIF|$permission.individualpermission==1|permitted|forbidden}
 				{ENDIF}
-			</td>
-		</tr>
-	{ENDFOR}
-
-	<tr>
-		<td colspan=2>&nbsp;</td>
-	</tr>
-	
-	<tr>
-		<td colspan=2 align=center>
-			<input type=submit value="Save">
-			&nbsp;
-			<input type=button value="Cancel" onclick="document.location.href='{GET_JS|$runtime.completeurl}&template=profile_commandpermissions&username={GET_ESCAPED|$user_information.name}';return false">
+			{ENDIF}
 		</td>
 	</tr>
+{ENDFOR}
 
-</table></td></tr>
-
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr>
+	<td colspan="2" align="center">
+		<input type="submit" value="Save"/>
+		&nbsp;
+		<input type="button" value="Cancel" onclick="document.location.href='{GET_JS|$runtime.completeurl};template=profile_commandpermissions;username={GET_ESCAPED|$user_information.name}';return false"/>
+	</td>
+</tr>
 </table>
-</td></tr></table>
+
 </form>
 
-<div class="headertext" align="center">
-	<a href="javascript:window.close()" class="stdlink">Close window</a>
-</div>
+<p align="center" style="margin-bottom: 0px;">
+	<a href="javascript:window.close()">Close window</a>
+</p>
 
 </body>
 </html> 

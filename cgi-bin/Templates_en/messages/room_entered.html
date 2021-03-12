@@ -1,3 +1,0 @@
-{IF|$current_user.name ne $params.name}
-	{IF|$current_user.show_time}({GETTIME}) {ENDIF}<span class="bigtext"><b>{GET|$settings.chatname}</b>: {MESSAGE|in_room|nick=$params.nick|roomname=$params.toroom}</span><br>
-{ENDIF}

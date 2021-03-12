@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin manages the rooms information in the text files    #
@@ -9,11 +9,15 @@
 #  in Settings.dat.                                               #
 ###################################################################
 
-package GTChat::Plugins::RoomModule::095_03;
+package GT_Chat::Plugins::RoomModule::096_01;
 
 use strict;
 
 my @room_fields = ('name','owner','closed','permanent','invited');
+
+*addRoom = *saveRoom;   # make addRoom an alias for saveRoom for compatibility reasons
+
+my %rooms = ();
 
 return bless({});
 
@@ -51,56 +55,6 @@ sub existsRoom
 	return -e($main->translateName("roomdir::$filename.dat"));
 }
 
-sub addRoom
-{
-	my($main,$room) = @_;
-
-	$room->{name} =~ s/^\s+|\s+$//g;
-	$room->{name} =~ s/[\s=;<>:@|'"&#\n\r$main->{settings}{custom_forbidden_chars}]/_/g;
-	$room->{name_lc} = convertName($main,$room->{name});
-
-	# Write room file
-	saveRoom($main,$room);
-
-	$main->open(local *FILE,'+>>'.$main->translateName('roomdir::roomlist.txt')) || $main->fatal_error('couldnotopen',{file => $main->translateName('roomdir::roomlist.txt')});
-	seek(FILE,0,0);
-
-	my @rooms=<FILE>;
-	
-	my $min = 0;
-	my $max = $#rooms;
-	
-	# Find the insertion point for the new room in the rooms list
-	while ($min <= $max)
-	{
-		my $curindex = int(($min+$max)/2);
-		my $result = convertName($main,$rooms[$curindex]) cmp $room->{name_lc};
-
-		if ($result == 0)
-		{
-			$main->close(*FILE);
-			return;
-		}
-		elsif ($result < 0)
-		{
-			$min = $curindex + 1;
-		}
-		else
-		{
-			$max = $curindex - 1;
-		}
-	}
-	
-	# Insert the new room into the rooms list
-	splice(@rooms,$min,0,"$room->{name}\n");
-
-	seek(FILE,0,0);
-	truncate(FILE,0);
-	print FILE @rooms;
-
-	$main->close(*FILE);
-}
-
 sub saveRoom
 {
 	my($main,$room) = @_;
@@ -108,6 +62,12 @@ sub saveRoom
 	$room->{name} =~ s/^\s+|\s+$//g;
 	$room->{name} =~ s/[\s=;<>:@|'"&#\n\r$main->{settings}{custom_forbidden_chars}]/_/g;
 	$room->{name_lc} = convertName($main,$room->{name});
+
+	$main->fatal_error('illegalroomname') if $room->{name_lc} eq "";
+
+	my $oldroom = $rooms{$room->{name_lc}};
+
+	$main->invokeModulesList($main->{settings}{custom_room_listener},'beforeRoomSave',$room,$oldroom);
 
 	my $filename = unpack("H*",$room->{name_lc});
 
@@ -118,7 +78,9 @@ sub saveRoom
 	{
 		if ($i <= $#room_fields && defined($room->{$room_fields[$i]}))
 		{
-			print FILE $room->{$room_fields[$i]} . "\n";
+			my $field = $room->{$room_fields[$i]};
+			$field =~ s/[\r\n]//g;
+			print FILE "$field\n";
 		}
 		else
 		{
@@ -131,12 +93,59 @@ sub saveRoom
 	{
 		if (defined($room->{$_}))
 		{
+			$room->{$_} =~ s/[\r\n]//g;
 			print FILE "$_\n";
 			print FILE "$room->{$_}\n";
 		}
 	}
 	
 	$main->close(*FILE);
+
+	if (!defined($oldroom))
+	{
+		$main->open(local *FILE,'+>>'.$main->translateName('roomdir::roomlist.txt')) || $main->fatal_error('couldnotopen',{file => $main->translateName('roomdir::roomlist.txt')});
+		seek(FILE,0,0);
+	
+		my @rooms=<FILE>;
+		
+		my $min = 0;
+		my $max = $#rooms;
+		
+		# Find the insertion point for the new room in the rooms list
+		while ($min <= $max)
+		{
+			my $curindex = int(($min+$max)/2);
+			my $result = convertName($main,$rooms[$curindex]) cmp $room->{name_lc};
+	
+			if ($result == 0)
+			{
+				last;
+			}
+			elsif ($result < 0)
+			{
+				$min = $curindex + 1;
+			}
+			else
+			{
+				$max = $curindex - 1;
+			}
+		}
+		
+		if ($min > $max)  # room name not found
+		{
+			# Insert the new room into the rooms list
+			splice(@rooms,$min,0,"$room->{name}\n");
+		
+			seek(FILE,0,0);
+			truncate(FILE,0);
+			print FILE @rooms;
+		}
+	
+		$main->close(*FILE);
+	}
+
+	$main->invokeModulesList($main->{settings}{custom_room_listener},'afterRoomSave',$room,$oldroom);
+	$rooms{$room->{name}} = $room;
 }
 
 sub loadRoom
@@ -148,8 +157,8 @@ sub loadRoom
 
 	$main->open(local *FILE,$main->translateName("roomdir::$filename.dat")) || return undef;
 	
-	$room = {} if (!defined($room));
-	$room->{name_lc} = $roomname;
+	my %oldroom = ();
+	$oldroom{name_lc} = $roomname;
 	
 	my $i=0;
 	my $is_key=1;
@@ -160,7 +169,7 @@ sub loadRoom
 		$entry =~ s/[\n\r]//g;
 		if ($i<20)   # Load predefined fields
 		{
-			$room->{$room_fields[$i]} = $entry if ($i <= $#room_fields);
+			$oldroom{$room_fields[$i]} = $entry if ($i <= $#room_fields);
 			$i++;
 		}
 		else         # Load custom fields
@@ -171,7 +180,7 @@ sub loadRoom
 			}
 			else
 			{
-				$room->{$key} = $entry;
+				$oldroom{$key} = $entry;
 			}
 			$is_key=!$is_key;
 		}
@@ -179,12 +188,19 @@ sub loadRoom
 
 	$main->close(*FILE);
 
+	$room = {} if (!defined($room));
+	$room->{$_} = $oldroom{$_} foreach keys %oldroom;
+
+	$rooms{$oldroom{name_lc}} = \%oldroom;
+
 	return $room;
 }
 
 sub removeRoom
 {
 	my($main,$name) = @_;
+
+	$main->invokeModulesList($main->{settings}{custom_room_listener},'beforeRoomDelete',$rooms{$name});
 
 	$main->open(local *FILE,'+>>'.$main->translateName('roomdir::roomlist.txt')) || $main->fatal_error('couldnotopen',{file => $main->translateName('roomdir::roomlist.txt')});
 	seek(FILE,0,0);
@@ -225,6 +241,9 @@ sub removeRoom
 	#Remove the room's file
 	my $filename = unpack("H*",$name);
 	unlink($main->translateName("roomdir::$filename.dat"));
+
+	$main->invokeModulesList($main->{settings}{custom_room_listener},'afterRoomDelete',$rooms{$name});
+	delete($rooms{$name});
 }
 
 sub isRoomPermitted
@@ -251,22 +270,9 @@ sub isRoomPermitted
 sub getRoomFieldsList
 {
 	my($main) = @_;
-	
+
 	my @ret = @room_fields;
 	push @ret, @{$main->{settings}{custom_room_fields}} if exists($main->{settings}{custom_room_fields});
 	
 	return \@ret;
-}
-
-sub checkRoom
-{
-	my ($self,$main,$room) = @_;
-
-	$main->fatal_error('illegalroomname') if (convertName($main,$room->{name}) eq "");
-
-	my $owner_candidates = $main->getPossibleUsernames($room->{owner});
-	$main->fatal_error('unknownowner',{nick => $room->{owner}}) if ($#$owner_candidates < 0);
-	$main->fatal_error('ambiguousowner') if ($#$owner_candidates > 0);
-
-	$room->{owner} = $owner_candidates->[0];
 }

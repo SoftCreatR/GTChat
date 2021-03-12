@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021120                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin manages the users information in the text files    #
@@ -9,7 +9,7 @@
 #  variable in Settings.dat.                                      #
 ###################################################################
 
-package GTChat::Plugins::UserModule::095_03;
+package GT_Chat::Plugins::UserModule::096_01;
 use strict;
 
 # Profile fields:
@@ -19,6 +19,10 @@ use strict;
 # added: registration, timeoffset, code
 
 my @profile_fields = ('password','nick','group','email','privateemail','color','ip','forwardedfor','host','browser','registration','lastlogin','','timeoffset','code','permissions');
+
+*addUser = *saveUser;   # make addUser an alias for saveUser for compatibility reasons
+
+my %users = ();
 
 return bless({});
 
@@ -145,73 +149,21 @@ sub existsUser
 	return -e($main->translateName("memberdir::$filename.dat"));
 }
 
-sub addUser
-{
-	my($main,$user) = @_;
-
-	$user->{nick} =~ s/^\s+|\s+$//g;
-	$user->{nick} =~ s/[\s=;<>:@|'"&#$main->{settings}{custom_forbidden_chars}]/_/g;
-
-	# Write member file for the user
-	saveUser($main,$user);
-
-	my $nick = convertName($main,$user->{nick});
-	
-	$main->open(local *FILE,'+>>'.$main->translateName('memberdir::memberlist.txt')) || $main->fatal_error('couldnotopen',{file => $main->translateName('memberdir::memberlist.txt')});
-	seek(FILE,0,0);
-
-	my @users=<FILE>;
-	
-	my $min = 0;
-	my $max = $#users;
-	
-	# Find the insertion point for the new user in the member list
-	while ($min <= $max)
-	{
-		my $curindex = int(($min+$max)/2);
-		my ($curnick,$curname) = split(/\|/,$users[$curindex]);
-		my $result = convertName($main,$curnick) cmp $nick;
-		
-		if ($result == 0)
-		{
-			$users[$curindex] = "$user->{nick}|" . convertName($main,$user->{name}) . "\n";
-			last;
-		}
-		elsif ($result < 0)
-		{
-			$min = $curindex + 1;
-		}
-		else
-		{
-			$max = $curindex - 1;
-		}
-	}
-	
-	# Insert the new user into the member list
-	if ($min>$max)
-	{
-		splice(@users,$min,0,"$user->{nick}|" . convertName($main,$user->{name}) . "\n");
-	}
-	
-	seek(FILE,0,0);
-	truncate(FILE,0);
-	print FILE @users;
-
-	$main->invokeModulesList($main->{settings}{custom_registration_logger},'userRegistered',$user);
-
-	$main->close(*FILE);
-}
-
 sub saveUser
 {
-	my($main,$user,$oldnick) = @_;
-
+	my($main,$user) = @_;
+	
+	$user->{name} = convertName($main, $user->{name});
 	$user->{nick} =~ s/^\s+|\s+$//g;
 	$user->{nick} =~ s/[\s=;<>:@|'"&#$main->{settings}{custom_forbidden_chars}]/_/g;
 	
-	my $permissions = (defined($user->{permissions}) ? join('|',%{$user->{permissions}}) : "");
+	$main->fatal_error('illegalname') if $user->{name} eq "" || $user->{nick} eq "";
 
-	my $filename = unpack("H*",convertName($main,$user->{name}));
+	my $olduser = $users{$user->{name}};
+	$main->invokeModulesList($main->{settings}{custom_user_listener},'beforeUserSave',$user,$olduser);
+
+	my $permissions = (defined($user->{permissions}) ? join('|',%{$user->{permissions}}) : "");
+	my $filename = unpack("H*", $user->{name});
 
 	$main->open(local *FILE,'>'.$main->translateName("memberdir::$filename.dat")) || $main->fatal_error('couldnotcreate',{file => $main->translateName("memberdir::$filename.dat")});
 	
@@ -243,42 +195,45 @@ sub saveUser
 	
 	$main->close(*FILE);
 
-	if (defined($oldnick))
+	if (!defined($olduser) || $olduser->{nick} ne $user->{nick})
 	{
 		$main->open(local *FILE,'+>>'.$main->translateName('memberdir::memberlist.txt')) || $main->fatal_error('couldnotopen',{file => $main->translateName('memberdir::memberlist.txt')});
 		seek(FILE,0,0);
 	
 		my @users=<FILE>;
 		
-		# Remove the old nick from the list
-		$oldnick = convertName($main,$oldnick);
-		my $min = 0;
-		my $max = $#users;
-		while ($min <= $max)
+		if (defined($olduser))
 		{
-			my $curindex = int(($min+$max)/2);
-			my ($curnick,$curname) = split(/\|/,$users[$curindex]);
-			my $result = convertName($main,$curnick) cmp $oldnick;
-
-			if ($result == 0)
+			# Remove the old nick from the list
+			my $oldnick = convertName($main,$olduser->{nick});
+			my $min = 0;
+			my $max = $#users;
+			while ($min <= $max)
 			{
-				splice(@users,$curindex,1);
-				last;
-			}
-			elsif ($result < 0)
-			{
-				$min = $curindex + 1;
-			}
-			else
-			{
-				$max = $curindex - 1;
+				my $curindex = int(($min+$max)/2);
+				my ($curnick,$curname) = split(/\|/,$users[$curindex]);
+				my $result = convertName($main,$curnick) cmp $oldnick;
+	
+				if ($result == 0)
+				{
+					splice(@users,$curindex,1);
+					last;
+				}
+				elsif ($result < 0)
+				{
+					$min = $curindex + 1;
+				}
+				else
+				{
+					$max = $curindex - 1;
+				}
 			}
 		}
 		
 		# Find the insertion point for the new nick
 		my $nick = convertName($main,$user->{nick});
-		$min = 0;
-		$max = $#users;
+		my $min = 0;
+		my $max = $#users;
 		while ($min <= $max)
 		{
 			my $curindex = int(($min+$max)/2);
@@ -287,7 +242,7 @@ sub saveUser
 			
 			if ($result == 0)
 			{
-				$users[$curindex] = "$user->{nick}|" . convertName($main,$user->{name}) . "\n";
+				$users[$curindex] = "$user->{nick}|$user->{name}\n";
 				last;
 			}
 			elsif ($result < 0)
@@ -303,7 +258,7 @@ sub saveUser
 		# Insert new nick
 		if ($min>$max)
 		{
-			splice(@users,$min,0,"$user->{nick}|".convertName($main,$user->{name})."\n");
+			splice(@users,$min,0,"$user->{nick}|$user->{name}\n");
 		}
 		
 		seek(FILE,0,0);
@@ -312,12 +267,9 @@ sub saveUser
 
 		$main->close(*FILE);
 	}
-	
-	if ($main->isOnline($user->{name}))
-	{
-		my $output = $main->createOutput({template => 'user_changed'});
-		$main->sendOutputStrings($output->restrictToUser($user->{name}));
-	}
+
+	$main->invokeModulesList($main->{settings}{custom_user_listener},'afterUserSave',$user,$olduser);
+	$users{$user->{name}} = $user;
 }
 
 sub loadUser
@@ -332,8 +284,8 @@ sub loadUser
 
 	$main->open(local *FILE,$main->translateName("memberdir::$filename.dat")) || return undef;
 	
-	$user = {} if (!defined($user));
-	$user->{name} = $username;
+	my %olduser = ();
+	$olduser{name} = $username;
 	
 	my $i=0;
 	my $is_key=1;
@@ -345,7 +297,7 @@ sub loadUser
 
 		if ($i<20)   # Load predefined fields
 		{
-			$user->{$profile_fields[$i]} = $entry if ($i <= $#profile_fields);
+			$olduser{$profile_fields[$i]} = $entry if ($i <= $#profile_fields);
 			$i++;
 		}
 		else         # Load custom fields
@@ -356,7 +308,7 @@ sub loadUser
 			}
 			else
 			{
-				$user->{$key} = $entry;
+				$olduser{$key} = $entry;
 			}
 			$is_key=!$is_key;
 		}
@@ -364,11 +316,17 @@ sub loadUser
 	
 	$main->close(*FILE);
 
-	if (defined($user->{permissions}))
+	$user = {} if (!defined($user));
+	$user->{$_} = $olduser{$_} foreach keys %olduser;
+
+	if (defined($olduser{permissions}))
 	{
-		my %permissions = split(/\|/,$user->{permissions});
-		$user->{permissions} = \%permissions;
+		my %permissions = split(/\|/,$olduser{permissions});
+		my %permissions2 = %permissions;
+		$olduser{permissions} = \%permissions;
+		$user->{permissions} = \%permissions2;
 	}
+	$users{$olduser{name}} = \%olduser;
 
 	return $user;
 }
@@ -376,6 +334,13 @@ sub loadUser
 sub removeUser
 {
 	my($main,$user) = @_;
+
+	$main->invokeModulesList($main->{settings}{custom_user_listener},'beforeUserDelete',$users{$user->{name}});
+
+	if (!defined($user->{nick}) && exists($users{$user->{name}}))
+	{
+		$user->{nick} = $users{$user->{name}}->{nick};
+	}
 
 	my $nick = convertName($main,$user->{nick});
 
@@ -426,7 +391,8 @@ sub removeUser
 	unlink($main->translateName("memberdir::$filename.dat"));
 	unlink($main->translateName("memberdir::$filename.msg"));
 
-	$main->invokeModulesList($main->{settings}{custom_deletedusers_logger},'userDeleted',$user);
+	$main->invokeModulesList($main->{settings}{custom_user_listener},'afterUserDelete',$users{$user->{name}});
+	delete($users{$user->{name}});
 }
 
 sub getProfileFieldsList
@@ -437,11 +403,4 @@ sub getProfileFieldsList
 	push @ret, @{$main->{settings}{custom_profile_fields}} if exists($main->{settings}{custom_profile_fields});
 	
 	return \@ret;
-}
-
-sub checkProfile
-{
-	my ($self,$main,$user,$olduser) = @_;
-
-	$main->fatal_error('illegalname') if (convertName($main,$user->{name}) eq "" || convertName($main,$user->{nick}) eq "");
 }

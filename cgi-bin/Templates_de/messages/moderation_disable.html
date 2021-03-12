@@ -1,10 +1,12 @@
-<script>
-	parent.disableModeration = parseInt('{GET|$params.disable}');
+<script type="text/javascript">
+	//<![CDATA[
+	parent.disableModeration = parseInt('{GET_JS|$params.disable}');
 	if (parent.disableModeration)
 	{
 		if (parent.moderatedTexts)
-			parent.moderatedTexts = 0;
-		if (parent.moderationWnd && !parent.moderationWnd.closed)
+			parent.moderatedTexts = false;
+		if (typeof(parent.moderationWnd) != 'undefined' && !parent.moderationWnd.closed)
 			parent.moderationWnd.close();
 	}
+	//]]>
 </script> 

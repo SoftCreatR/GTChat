@@ -1,13 +1,13 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the template commands for handling with   #
 #  group tags and names.                                          #
 ###################################################################
 
-package GTChat::Plugins::GroupTags::095_01;
+package GT_Chat::Plugins::GroupTags::096_01;
 use strict;
 
 return bless({

@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20020911                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the template variables $room_information  #
@@ -8,7 +8,7 @@
 #  and $current_room (the room of the current user).              #
 ###################################################################
 
-package GTChat::Plugins::RoomLoader::095_01;
+package GT_Chat::Plugins::RoomLoader::096_01;
 use strict;
 
 bless({

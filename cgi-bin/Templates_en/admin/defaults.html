@@ -141,14 +141,14 @@
 			<td>
 				<table border=0 cellspacing=0 cellpadding=0 width="100%"><tr>
 				<td width="100%"><input type=text name="default.color" size=10 style="width:100%" maxlength=10 value="{GET|$settings.default.color}"></td>
-				<td><a href="javascript:void(0)" onclick="top.opener.setColor=setColor;top.opener.openWindow('palette',300,250);return false">{IMAGE|palette|alt="choose color"}</a></td>
+				<td><a href="javascript:void(0)" onclick="top.opener.setColor=setColor;top.opener.openWindow('palette',320,250);return false">{IMAGE|palette|alt="choose color"}</a></td>
 				</tr></table>
 			</td>
 		</tr>
 		<tr>
 			<td>Gender:</td>
 			<td>
-				<select name="default.gender" style="width=100%">
+				<select name="default.gender" style="width:100%">
 					<option value=0>(no comment)
 					<option value=1 {IIF|$settings.default.gender==1|selected}>male
 					<option value=2 {IIF|$settings.default.gender==2|selected}>female
@@ -158,7 +158,7 @@
 		<tr>
 			<td>Color scheme:</td>
 			<td>
-				<select name="default.style" style="width=100%">
+				<select name="default.style" style="width:100%">
 					{FOREACH|$style|$settings.styles}
 						<option value="{GET|$style[0]}" {IIF|$style[0] eq $settings.default.style|selected}>{GET|$style[1]}
 					{ENDFOR}

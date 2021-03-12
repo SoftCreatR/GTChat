@@ -1,12 +1,12 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20020911                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the chat commands /ignore and /unignore   #
 ###################################################################
 
-package GTChat::Plugins::Ignoring::095_01;
+package GT_Chat::Plugins::Ignoring::096_01;
 use strict;
 
 return bless({
@@ -35,11 +35,11 @@ sub ignore_handler
 
 		if ($#users < 0)
 		{
-			return [$main->createInfoOutput('ignore_none')];
+			return $main->createInfoOutput('ignore_none');
 		}
 		else
 		{
-			return [$main->createInfoOutput('ignore',{list => join(', ',@users)})];
+			return $main->createInfoOutput('ignore',{list => join(', ',@users)});
 		}
 	}
 	
@@ -83,7 +83,7 @@ sub ignore_handler
 				$main->{current_user}{ignored} = join(' ',@ignored);
 
 				my $output = $main->createInfoOutput('ignoresuccess',{nick => $candidates->[1]});
-				push @toDo,$output->setChangedAttributes('ignored');
+				push @toDo,$output;
 				
 				$output = $main->createInfoOutput('ignored',{nick => $main->{current_user}{nick}});
 				push @toDo,$output->restrictToUser($candidates->[0]);
@@ -101,7 +101,7 @@ sub unignore_handler
 	$text =~ s/^\s+|\s+$//g;
 	my @users = split(/\s+/,$text);
 
-	return [$main->createErrorOutput('unignore_namenotgiven')] if ($#users < 0);
+	return $main->createErrorOutput('unignore_namenotgiven') if ($#users < 0);
 
 	my @toDo = ();
 	my @ignored = defined($main->{current_user}{ignored}) ? split(/\s/,$main->{current_user}{ignored}) : ();
@@ -138,7 +138,7 @@ sub unignore_handler
 				$main->{current_user}{ignored} = join(' ',@ignored);
 
 				my $output = $main->createInfoOutput('unignoresuccess',{nick => $candidates->[1]});
-				push @toDo,$output->setChangedAttributes('ignored');
+				push @toDo,$output;
 				
 				$output = $main->createInfoOutput('unignored',{nick => $main->{current_user}{nick}});
 				push @toDo,$output->restrictToUser($candidates->[0]);

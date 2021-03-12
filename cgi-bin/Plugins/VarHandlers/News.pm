@@ -1,6 +1,6 @@
 ###################################################################
-#  GTChat 0.95 Alpha Plugin                                       #
-#  Written for release 20021101                                   #
+#  GT-Chat 0.96 Alpha Plugin                                       #
+#  Written for release whatever                                   #
 #  Author: Wladimir Palant                                        #
 #                                                                 #
 #  This plugin provides the template variables that are necessary #
@@ -8,10 +8,11 @@
 #  Variables/news.txt.                                            #
 ###################################################################
 
-package GTChat::Plugins::News::095_02;
+package GT_Chat::Plugins::News::096_01;
 use strict;
+use vars qw(@ISA);
 
-@GTChat::Plugins::News_enum::095_02::ISA = ('GTChat::Enum');
+@ISA = ('GT_Chat::Enum');
 
 return bless({
 	template_var_handlers => {
@@ -50,18 +51,15 @@ sub handler
 	if ($var eq 'news.messages')
 	{
 		my $enum = $main->{modules}{'sourcedir::Enum.pm'};
-		$ret{messages} = GTChat::Plugins::News_enum::095_02->new($main,\@messages);
+		$ret{messages} = new($main,\@messages);
 	}
 
 	$main->{template_vars}{news} = \%ret;
 }
 
-
-package GTChat::Plugins::News_enum::095_02;
-
 sub new
 {
-	my($self,$main,$list) = @_;
+	my($main,$list) = @_;
 
 	return bless({
 		main => $main,
@@ -75,7 +73,7 @@ sub open
 {
 	my $self=shift;
 
-	$self->{closed} if $self->{opened};
+	$self->close() if $self->{opened};
 
 	$self->{index} = -1;
 	$self->{opened} = 1;

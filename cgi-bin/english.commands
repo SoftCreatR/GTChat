@@ -1,6 +1,6 @@
 return {
 	__order => ['','admin','broadcast','callop','me','away','img','msg','imgmsg','quit','clear','refresh','room','nick','color','ignore','unignore','invite','uninvite','kick','gag','ungag','push','profile','editprofile','roomlist','editroom','addvip','removevip','disablemoderation','enablemoderation'],
-	__hide => ['alive','moderated_text'],
+	__hide => ['alive','moderated_text','menuminimized','usersminimized','roomsminimized'],
 	'' => {
 		params => '[@Nick1] [@Nick2] Text',
 		description => 'Sends a message to all users in this room. If one or more nicknames are prepended before the text with the @ character, "(to Nick1, Nick2)" is added.',
